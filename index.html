@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kios Pencarian Buku Mandiri - Toko Buku</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* Touch Kiosk UX Tweaks */
+      html,
+      body {
+        user-select: none;
+        -webkit-user-select: none;
+        overscroll-behavior: none;
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+      }
+      /* Thin scrollbar style */
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 9999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+    </style>
+  </head>
+  <body
+    oncontextmenu="return false;"
+    class="bg-slate-50 text-slate-900 font-sans antialiased h-screen w-screen overflow-hidden flex flex-col"
+  >
+    <!-- 1. HEADER / NAVBAR (Full 100% width across the top) -->
+    <header
+      class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shrink-0 shadow-sm z-30 w-full"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="h-9 w-9 bg-slate-900 text-white rounded-lg flex items-center justify-center font-bold text-lg shadow-inner"
+        >
+          <i data-lucide="book-open" class="w-4 h-4 text-amber-400"></i>
+        </div>
+        <div>
+          <h1
+            class="font-bold text-slate-900 text-base leading-tight flex items-center gap-2"
+          >
+            BOOKSTORE
+            <span
+              class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded font-semibold border border-amber-200"
+              >KIOSK</span
+            >
+          </h1>
+          <p class="text-[11px] text-slate-500">
+            Pencarian Lokasi Rak & Stok Buku Mandiri
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Status Koneksi Sheet (Bisa diklik untuk sinkron ulang) -->
+        <span
+          id="sheetStatusBadge"
+          onclick="loadDataFromGSheet()"
+          title="Klik untuk sinkronisasi data"
+          class="text-[11px] font-medium px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 flex items-center gap-1.5 border border-slate-200 cursor-pointer select-none hover:bg-slate-200 transition active:scale-95"
+        >
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          Memuat Data...
+        </span>
+        <!-- Touch Keyboard Toggle -->
+        <button
+          id="virtualKbBtn"
+          onclick="toggleVirtualKeyboard()"
+          class="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition active:scale-95"
+        >
+          <i data-lucide="keyboard" class="w-4 h-4 text-slate-500"></i>
+          <span>Virtual Keyboard</span>
+        </button>
+        <button
+          onclick="clearSearch()"
+          class="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 transition active:scale-95"
+        >
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
+          <span>Reset</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER (Split 2 Columns beneath the full-width navbar) -->
+    <div class="flex-1 flex min-h-0 w-full overflow-hidden">
+      <!-- LEFT COLUMN: SEARCH FORM WITH PILLS FILTER & RESULTS TABLE -->
+      <div
+        class="flex-1 flex flex-col min-w-0 border-r border-slate-200 bg-slate-50"
+      >
+        <!-- SEARCH SECTION WITH MULTI-SELECT PILLS FILTER -->
+        <section
+          class="p-4 bg-white border-b border-slate-200 shrink-0 relative z-20 shadow-xs"
+        >
+          <!-- MULTI-SELECT FILTER PILLS ABOVE SEARCH FIELD -->
+          <div class="mb-3">
+            <div class="flex items-center justify-between mb-1.5">
+              <label
+                class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"
+              >
+                <i
+                  data-lucide="sliders-horizontal"
+                  class="w-3.5 h-3.5 text-slate-400"
+                ></i>
+                Cari Berdasarkan (Bisa Pilih > 1):
+              </label>
+              <span
+                id="activeFilterCount"
+                class="text-[10px] text-slate-400 font-medium"
+                >1 Kategori Aktif</span
+              >
+            </div>
+
+            <div class="flex flex-wrap gap-1.5" id="filterPillsContainer">
+              <!-- Pills Button Toggles Injected via JS -->
+            </div>
+          </div>
+
+          <!-- Input Search with Autocomplete & 1-Sec Debounce -->
+          <div class="relative min-w-0">
+            <div class="relative">
+              <i
+                data-lucide="search"
+                class="w-5 h-5 text-slate-400 absolute left-3.5 top-3 pointer-events-none"
+              ></i>
+              <input
+                id="searchInput"
+                type="text"
+                autocomplete="off"
+                placeholder="Ketik kata kunci pencarian (Min. 3 Karakter)..."
+                class="w-full h-11 pl-11 pr-10 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:border-transparent transition"
+              />
+
+              <!-- Clear Search Button -->
+              <button
+                id="clearSearchBtn"
+                onclick="clearSearch()"
+                class="hidden absolute right-3 top-3 text-slate-400 hover:text-slate-600 rounded-full p-0.5"
+              >
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- AUTOCOMPLETE DROPDOWN PANEL -->
+            <div
+              id="autocompleteDropdown"
+              class="hidden absolute left-0 right-0 top-[calc(100%+4px)] bg-white border border-slate-200 rounded-lg shadow-lg z-50 overflow-hidden max-h-60 overflow-y-auto divide-y divide-slate-100"
+            >
+              <!-- Injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Virtual Keyboard Panel -->
+          <div
+            id="virtualKbPanel"
+            class="hidden mt-3 pt-3 border-t border-slate-200"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-semibold text-slate-500 uppercase"
+                >Virtual Keyboard Touchscreen</span
+              >
+              <button
+                onclick="toggleVirtualKeyboard()"
+                class="text-xs text-slate-400 hover:text-slate-600"
+              >
+                Tutup [x]
+              </button>
+            </div>
+            <div class="flex flex-col gap-1.5 max-w-2xl mx-auto">
+              <div class="flex justify-center gap-1" id="kbRow1"></div>
+              <div class="flex justify-center gap-1" id="kbRow2"></div>
+              <div class="flex justify-center gap-1" id="kbRow3"></div>
+              <div class="flex justify-center gap-1">
+                <button
+                  onclick="kbInput(' ')"
+                  class="h-9 flex-1 max-w-md bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded text-slate-800 text-xs font-semibold active:bg-slate-300"
+                >
+                  SPASI
+                </button>
+                <button
+                  onclick="kbBackspace()"
+                  class="h-9 px-4 bg-slate-200 hover:bg-slate-300 border border-slate-300 rounded text-slate-800 text-xs font-semibold active:bg-slate-400 flex items-center gap-1"
+                >
+                  <i data-lucide="delete" class="w-4 h-4"></i> HAPUS
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SEARCH RESULTS TABLE AREA -->
+        <main class="flex-1 flex flex-col min-h-0 relative">
+          <!-- Table Sub-header -->
+          <div
+            class="px-5 py-2.5 border-b border-slate-200 bg-slate-100/70 flex items-center justify-between shrink-0"
+          >
+            <div class="flex items-center gap-2">
+              <i data-lucide="list-filter" class="w-4 h-4 text-slate-500"></i>
+              <h2
+                class="font-semibold text-slate-800 text-xs uppercase tracking-wider"
+              >
+                Hasil Pencarian Buku
+              </h2>
+            </div>
+            <span
+              id="resultCountBadge"
+              class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700"
+              >0 Buku Ditemukan</span
+            >
+          </div>
+
+          <!-- Table Scrollable Content -->
+          <div class="flex-1 overflow-y-auto relative" id="tableContainer">
+            <table class="w-full text-left border-collapse">
+              <thead
+                class="bg-slate-100/90 sticky top-0 border-b border-slate-200 text-[11px] font-semibold text-slate-500 uppercase tracking-wider z-10 backdrop-blur-xs"
+              >
+                <tr>
+                  <th class="py-3 px-4">Buku & Pengarang</th>
+                  <th class="py-3 px-3 hidden sm:table-cell">Kode Produk</th>
+                  <th class="py-3 px-3">Kode Rak</th>
+                  <th class="py-3 px-3 text-center">Stok</th>
+                  <th class="py-3 px-3 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody
+                id="booksTableBody"
+                class="divide-y divide-slate-100 text-sm"
+              >
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+
+            <!-- EMPTY STATE INITIAL / LESS THAN 3 CHARS -->
+            <div
+              id="emptyState"
+              class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-white z-0"
+            >
+              <div
+                class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-3 border border-slate-200/60"
+              >
+                <i data-lucide="search" class="w-8 h-8 text-slate-400"></i>
+              </div>
+              <h3
+                id="emptyStateTitle"
+                class="font-semibold text-slate-800 text-base mb-1"
+              >
+                Mulai Pencarian Buku
+              </h3>
+              <p
+                id="emptyStateDesc"
+                class="text-xs text-slate-500 max-w-sm mb-4 leading-relaxed"
+              >
+                Ketik minimal <strong>3 karakter</strong> pada kolom di atas.
+                Hasil pencarian akan otomatis diproses setelah jeda 1 detik.
+              </p>
+              <div class="flex flex-wrap gap-2 justify-center max-w-md">
+                <span class="text-xs text-slate-400 self-center"
+                  >Contoh kata kunci:</span
+                >
+                <button
+                  onclick="quickSearch('Laskar')"
+                  class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-md border border-slate-200 transition"
+                >
+                  Laskar
+                </button>
+                <button
+                  onclick="quickSearch('Filosofi')"
+                  class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-md border border-slate-200 transition"
+                >
+                  Filosofi
+                </button>
+                <button
+                  onclick="quickSearch('101221')"
+                  class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-md border border-slate-200 transition"
+                >
+                  1012211200217
+                </button>
+                <button
+                  onclick="quickSearch('Tere')"
+                  class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-md border border-slate-200 transition"
+                >
+                  Tere
+                </button>
+              </div>
+            </div>
+
+            <!-- LOADING STATE (Appears during 1s debounce wait / processing) -->
+            <div
+              id="loadingState"
+              class="hidden absolute inset-0 bg-white/90 backdrop-blur-xs flex flex-col items-center justify-center z-20"
+            >
+              <div
+                class="w-8 h-8 border-3 border-slate-200 border-t-slate-900 rounded-full animate-spin mb-2"
+              ></div>
+              <p class="text-xs font-medium text-slate-600">
+                Mencari katalog buku (menunggu jeda 1s)...
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- RIGHT SIDEBAR: DETAIL BUKU & LOKASI RAK (Compact width ~320px - 360px) -->
+      <aside
+        class="w-80 md:w-88 h-full bg-white flex flex-col shrink-0 shadow-lg relative z-10 overflow-hidden border-l border-slate-200"
+      >
+        <!-- Panel Header -->
+        <div
+          class="px-5 py-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between shrink-0"
+        >
+          <div class="flex items-center gap-2">
+            <i data-lucide="book-marked" class="w-4 h-4 text-emerald-600"></i>
+            <h2 class="font-semibold text-slate-900 text-sm">
+              Detail & Lokasi Rak
+            </h2>
+          </div>
+          <span class="text-[11px] font-medium text-slate-400"
+            >Informasi Buku</span
+          >
+        </div>
+
+        <!-- Detail Scrollable Content Container -->
+        <div class="flex-1 overflow-y-auto p-5" id="detailContainer">
+          <!-- UNSELECTED STATE -->
+          <div
+            id="noSelectionState"
+            class="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400"
+          >
+            <div
+              class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mb-3 border border-slate-200/60"
+            >
+              <i
+                data-lucide="mouse-pointer-click"
+                class="w-7 h-7 text-slate-400"
+              ></i>
+            </div>
+            <p class="text-sm font-semibold text-slate-700">
+              Belum Ada Buku Dipilih
+            </p>
+            <p class="text-xs text-slate-400 max-w-xs mt-1 leading-relaxed">
+              Klik salah satu baris buku pada tabel hasil pencarian di sebelah
+              kiri untuk menampilkan posisi rak dan sinopsis.
+            </p>
+          </div>
+
+          <!-- SELECTED CONTENT -->
+          <div id="bookDetailContent" class="hidden space-y-5">
+            <!-- HIGHLIGHT LOKASI RAK UTAMA -->
+            <div
+              class="bg-emerald-50 border border-emerald-500/30 rounded-xl p-4 relative overflow-hidden shadow-xs"
+            >
+              <div class="flex items-start justify-between relative z-10">
+                <div>
+                  <span
+                    class="text-[10px] font-extrabold tracking-wider uppercase text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded border border-emerald-300"
+                  >
+                    Lokasi Pengambilan
+                  </span>
+                  <h3
+                    id="detailShelfCode"
+                    class="text-3xl font-black text-emerald-950 mt-1.5 tracking-tight"
+                  >
+                    RAK A-02
+                  </h3>
+                  <div
+                    class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-emerald-900"
+                  >
+                    <span id="detailFloor">Lantai 1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DETAIL INFORMASI BUKU -->
+            <div class="flex gap-3.5 items-start">
+              <!-- Cover Image -->
+              <div
+                class="w-20 h-28 bg-slate-100 rounded-lg border border-slate-200 overflow-hidden shrink-0 shadow-xs relative flex items-center justify-center"
+              >
+                <img
+                  id="detailCover"
+                  src=""
+                  alt="Cover Buku"
+                  class="w-full h-full object-cover"
+                  onerror="
+                    this.onerror = null;
+                    this.src =
+                      'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=300';
+                  "
+                />
+              </div>
+
+              <!-- Metadata Utama -->
+              <div class="flex-1 min-w-0">
+                <h4
+                  id="detailTitle"
+                  class="font-bold text-slate-900 text-sm leading-snug mt-1 line-clamp-2"
+                >
+                  Judul Buku Lengkap
+                </h4>
+                <p
+                  id="detailAuthor"
+                  class="text-xs text-slate-600 mt-0.5 font-medium"
+                >
+                  oleh Penulis Buku
+                </p>
+
+                <div
+                  class="mt-2.5 pt-2 border-t border-slate-100 space-y-1 text-xs"
+                >
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-400 text-[11px]">Stok Toko:</span>
+                    <span
+                      id="detailStockBadge"
+                      class="font-semibold text-emerald-600"
+                      >Tersedia (8)</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SPESIFIKASI TEKNIS & IDENTIFIKASI -->
+            <div
+              class="bg-slate-50 rounded-lg p-3 text-xs border border-slate-200/80 space-y-1.5 text-slate-600"
+            >
+              <div class="flex justify-between">
+                <span class="text-slate-400">Penerbit:</span>
+                <strong id="detailPublisher" class="text-slate-800 font-medium"
+                  >Bentang Pustaka</strong
+                >
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">SKU / ISBN:</span>
+                <strong id="detailSku" class="text-slate-800 font-mono"
+                  >9786020612345</strong
+                >
+              </div>
+              <!-- Kode Produk Field Below SKU -->
+              <div
+                class="flex justify-between pt-1 border-t border-slate-200/60"
+              >
+                <span class="text-slate-500 font-semibold">Kode Produk:</span>
+                <strong
+                  id="detailProductCode"
+                  class="text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 font-mono font-bold"
+                  >31-26-000032</strong
+                >
+              </div>
+            </div>
+
+            <!-- SINOPSIS BUKU -->
+            <div>
+              <h5
+                class="text-xs font-semibold text-slate-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"
+              >
+                <i
+                  data-lucide="align-left"
+                  class="w-3.5 h-3.5 text-slate-400"
+                ></i>
+                Sinopsis Ringkas
+              </h5>
+              <p
+                id="detailSynopsis"
+                class="text-xs text-slate-600 leading-relaxed bg-slate-50 border border-slate-200/60 rounded-lg p-3 max-h-48 overflow-y-auto"
+              >
+                Deskripsi sinopsis buku akan tampil di bagian ini secara
+                lengkap...
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script>
+      // LINK GSHEET CSV PUBLIK ANDA
+      const GSHEET_CSV_URL =
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vToC4BgoIFyLTZ9CyT0rwc5RQ8pIgCTBgiAF0EUOk05UTzuVpCTxiKqdqG-rOp6vN6zsA1NhhsP0n5e/pub?gid=0&single=true&output=csv";
+
+      // Global Database Container (Dimuat dari GSheet)
+      let BOOK_DATABASE = [];
+
+      // Definisi Filter Pills (Multi-Select, Tanpa 'Semua Kategori')
+      const FILTER_OPTIONS = [
+        { id: "title", label: "Judul Buku", icon: "book" },
+        { id: "sku", label: "SKU / ISBN", icon: "barcode" },
+        { id: "author", label: "Pengarang", icon: "user" },
+        { id: "publisher", label: "Penerbit", icon: "building" },
+      ];
+
+      // State Management
+      let activeFilters = new Set(["title"]); // Default selected 'title'
+      let currentResults = [];
+      let selectedBookId = null;
+      let debounceTimer = null;
+
+      // DOM Element references
+      const searchInput = document.getElementById("searchInput");
+      const clearSearchBtn = document.getElementById("clearSearchBtn");
+      const autocompleteDropdown = document.getElementById(
+        "autocompleteDropdown",
+      );
+      const booksTableBody = document.getElementById("booksTableBody");
+      const emptyState = document.getElementById("emptyState");
+      const emptyStateTitle = document.getElementById("emptyStateTitle");
+      const emptyStateDesc = document.getElementById("emptyStateDesc");
+      const loadingState = document.getElementById("loadingState");
+      const resultCountBadge = document.getElementById("resultCountBadge");
+      const filterPillsContainer = document.getElementById(
+        "filterPillsContainer",
+      );
+      const activeFilterCount = document.getElementById("activeFilterCount");
+      const sheetStatusBadge = document.getElementById("sheetStatusBadge");
+
+      // Detail panel DOMs
+      const noSelectionState = document.getElementById("noSelectionState");
+      const bookDetailContent = document.getElementById("bookDetailContent");
+      const detailShelfCode = document.getElementById("detailShelfCode");
+      const detailFloor = document.getElementById("detailFloor");
+      const detailCover = document.getElementById("detailCover");
+      const detailTitle = document.getElementById("detailTitle");
+      const detailAuthor = document.getElementById("detailAuthor");
+      const detailStockBadge = document.getElementById("detailStockBadge");
+      const detailPublisher = document.getElementById("detailPublisher");
+      const detailSku = document.getElementById("detailSku");
+      const detailProductCode = document.getElementById("detailProductCode");
+      const detailSynopsis = document.getElementById("detailSynopsis");
+
+      // State Management Kiosk
+      let lastActivityTimestamp = Date.now();
+      const IDLE_RESET_TIMEOUT_SEC = 60; // Reset ke halaman awal jika pengunjung diam 60 detik
+      const AUTO_SYNC_INTERVAL_MS = 10 * 60 * 1000; // Sinkronisasi otomatis dari sheet tiap 10 menit
+
+      window.addEventListener("DOMContentLoaded", () => {
+        renderFilterPills();
+        setupVirtualKeyboard();
+        lucide.createIcons();
+
+        // 1. Cek & Muat Cache Lokal Terlebih Dahulu (Start Instan 0-detik)
+        loadCachedDataIfExists();
+
+        // 2. Load data live dari Google Sheets di latar belakang
+        loadDataFromGSheet();
+
+        // 3. Pasang Sinkronisasi Berkala di Latar Belakang (setiap 10 menit)
+        setInterval(() => {
+          loadDataFromGSheet(true); // true = silent sync tanpa mengganggu user
+        }, AUTO_SYNC_INTERVAL_MS);
+
+        // 4. Pasang Deteksi Aktivitas untuk Kiosk Auto-Reset (Idle Timer)
+        setupKioskIdleReset();
+
+        // Setup input listener dengan 1000ms (1-second) Debounce
+        searchInput.addEventListener("input", onInputChanged);
+
+        // Initial state
+        renderTable([]);
+      });
+
+      // UPDATE TAMPILAN STATUS KONEKSI
+      function updateSheetStatusBadge(status, count = 0) {
+        if (status === "loading") {
+          sheetStatusBadge.className =
+            "text-[11px] font-medium px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 flex items-center gap-1.5 border border-slate-200 cursor-pointer select-none";
+          sheetStatusBadge.title =
+            "Sedang menyinkronkan data dengan Google Sheets...";
+          sheetStatusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Memuat Data...`;
+        } else if (status === "live") {
+          sheetStatusBadge.className =
+            "text-[11px] font-medium px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 flex items-center gap-1.5 border border-emerald-200 cursor-pointer select-none hover:bg-emerald-100 transition active:scale-95";
+          sheetStatusBadge.title =
+            "Data terhubung langsung ke Google Sheets. Klik untuk sinkronkan ulang.";
+          sheetStatusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${count.toLocaleString("id-ID")} Buku Terhubung`;
+        } else if (status === "cached") {
+          sheetStatusBadge.className =
+            "text-[11px] font-medium px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 flex items-center gap-1.5 border border-sky-200 cursor-pointer select-none hover:bg-sky-100 transition active:scale-95";
+          sheetStatusBadge.title =
+            "Menggunakan data cache lokal. Klik untuk mencoba hubungkan ke live sheet.";
+          sheetStatusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-sky-500"></span> ${count.toLocaleString("id-ID")} Buku (Offline/Cache)`;
+        } else {
+          sheetStatusBadge.className =
+            "text-[11px] font-medium px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 flex items-center gap-1.5 border border-rose-200 cursor-pointer select-none hover:bg-rose-100 transition active:scale-95";
+          sheetStatusBadge.title =
+            "Gagal memuat data live. Klik untuk mencoba kembali.";
+          sheetStatusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> Gagal Koneksi (Klik Coba Lagi)`;
+        }
+      }
+
+      // LOAD DARI LOCALSTORAGE
+      function loadCachedDataIfExists() {
+        try {
+          const cachedCsv = localStorage.getItem("kiosk_book_csv");
+          if (cachedCsv && cachedCsv.length > 50) {
+            const parsed = parseCSV(cachedCsv);
+            if (parsed.length > 0) {
+              BOOK_DATABASE = parsed;
+              updateSheetStatusBadge("cached", BOOK_DATABASE.length);
+              console.log(
+                `[Kiosk] Cache lokal dimuat seketika: ${BOOK_DATABASE.length} buku.`,
+              );
+            }
+          }
+        } catch (err) {
+          console.warn("[Kiosk] Tidak dapat membaca cache localStorage:", err);
+        }
+      }
+
+      // PARSER CSV KE JSON OBJECT (ROBUST & CRLF COMPLIANT)
+      function parseCSV(csvText) {
+        if (!csvText || typeof csvText !== "string") return [];
+        const lines = csvText.trim().split("\n");
+        if (lines.length < 2) return [];
+
+        const headers = lines[0]
+          .split(",")
+          .map((h) => h.trim().replace(/^"|"$/g, "").replace(/\r$/, ""));
+
+        return lines
+          .slice(1)
+          .map((rawLine, index) => {
+            const line = rawLine.replace(/\r$/, "");
+            // Regex parser untuk menangani nilai berkoma di dalam tanda petik
+            const regex = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
+            const matches = [];
+            let match;
+            while ((match = regex.exec(line)) !== null) {
+              if (match[1] !== undefined) {
+                matches.push(
+                  match[1].replace(/^"|"$/g, "").replace(/""/g, '"').trim(),
+                );
+              }
+            }
+
+            let rowObj = {};
+            headers.forEach((header, idx) => {
+              rowObj[header] = matches[idx] || "";
+            });
+
+            // Mapping ke struktur standar aplikasi
+            return {
+              id: `BK-${index + 1}`,
+              sku: rowObj.sku || "-",
+              productCode: rowObj.product_code || "-",
+              title: rowObj.title || "Tanpa Judul",
+              author: rowObj.author || "Tidak Diketahui",
+              publisher: rowObj.publisher || "-",
+              shelfCode: rowObj.shelf || "RAK -",
+              floor: rowObj.floor || "Lantai 1",
+              stock: parseInt(rowObj.stock) || 0,
+              synopsis: rowObj.synopsis || "Tidak ada sinopsis tersedia.",
+              cover:
+                rowObj.cover_url ||
+                "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=300",
+            };
+          })
+          .filter((book) => book.title !== "Tanpa Judul" || book.sku !== "-");
+      }
+
+      // FETCH DATA DARI GOOGLE SHEETS
+      async function loadDataFromGSheet(silent = false) {
+        if (!silent && BOOK_DATABASE.length === 0) {
+          updateSheetStatusBadge("loading");
+        }
+
+        try {
+          const response = await fetch(GSHEET_CSV_URL, { cache: "no-cache" });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const csvData = await response.text();
+
+          // Cegah parsing jika respon berupa halaman error HTML
+          if (
+            csvData.trim().startsWith("<!DOCTYPE") ||
+            csvData.trim().startsWith("<html")
+          ) {
+            throw new Error(
+              "Respon dari Google Sheets bukan format CSV valid.",
+            );
+          }
+
+          const parsed = parseCSV(csvData);
+          if (parsed.length > 0) {
+            BOOK_DATABASE = parsed;
+
+            // Simpan snapshot ke cache lokal
+            try {
+              localStorage.setItem("kiosk_book_csv", csvData);
+              localStorage.setItem(
+                "kiosk_book_synced_at",
+                new Date().toISOString(),
+              );
+            } catch (storageErr) {
+              console.warn(
+                "[Kiosk] LocalStorage kuota penuh atau diblokir:",
+                storageErr,
+              );
+            }
+
+            updateSheetStatusBadge("live", BOOK_DATABASE.length);
+            console.log(
+              `[Kiosk] Berhasil sinkronisasi Google Sheets live: ${BOOK_DATABASE.length} buku.`,
+            );
+
+            // Jika user sedang aktif melihat hasil pencarian, segarkan hasil
+            if (searchInput.value.trim().length >= 3) {
+              executeSearchNow();
+            }
+          } else {
+            throw new Error("Data CSV yang diterima kosong.");
+          }
+        } catch (error) {
+          console.error("[Kiosk] Gagal sinkronisasi data live:", error);
+
+          // Jika sebelumnya belum punya data di memori, coba ambil dari cache
+          if (BOOK_DATABASE.length === 0) {
+            loadCachedDataIfExists();
+          }
+
+          if (BOOK_DATABASE.length > 0) {
+            updateSheetStatusBadge("cached", BOOK_DATABASE.length);
+          } else {
+            updateSheetStatusBadge("error");
+          }
+        }
+      }
+
+      // KIOSK AUTO-RESET JIKA PENGUNJUNG IDLE / MENINGGALKAN LAYAR
+      function setupKioskIdleReset() {
+        const registerActivity = () => {
+          lastActivityTimestamp = Date.now();
+        };
+
+        // Deteksi sentuhan, gerakan mouse, tombol keyboard, scroll
+        [
+          "touchstart",
+          "touchmove",
+          "mousedown",
+          "mousemove",
+          "keydown",
+          "click",
+          "scroll",
+        ].forEach((evt) => {
+          window.addEventListener(evt, registerActivity, { passive: true });
+        });
+
+        // Periksa setiap 1 detik apakah idle melebihi batas waktu
+        setInterval(() => {
+          const elapsedSeconds = (Date.now() - lastActivityTimestamp) / 1000;
+          if (elapsedSeconds >= IDLE_RESET_TIMEOUT_SEC) {
+            const hasActiveQuery = searchInput.value.trim().length > 0;
+            const hasSelection = selectedBookId !== null;
+
+            if (hasActiveQuery || hasSelection) {
+              console.log(
+                "[Kiosk] Reset otomatis karena pengunjung tidak aktif.",
+              );
+              clearSearch();
+
+              // Tutup juga virtual keyboard jika sedang terbuka
+              const kbPanel = document.getElementById("virtualKbPanel");
+              if (kbPanel && !kbPanel.classList.contains("hidden")) {
+                kbPanel.classList.add("hidden");
+              }
+            }
+          }
+        }, 1000);
+      }
+
+      // RENDER FILTER PILLS BUTTONS (MULTI-SELECT TOGGLES)
+      function renderFilterPills() {
+        filterPillsContainer.innerHTML = FILTER_OPTIONS.map((filter) => {
+          const isActive = activeFilters.has(filter.id);
+          return `
+                    <button onclick="toggleFilterPill('${filter.id}')" type="button" 
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 border ${
+                          isActive
+                            ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                            : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+                        }">
+                        <i data-lucide="${filter.icon}" class="w-3.5 h-3.5 ${isActive ? "text-amber-400" : "text-slate-400"}"></i>
+                        <span>${filter.label}</span>
+                        ${isActive ? '<i data-lucide="check" class="w-3 h-3 ml-0.5"></i>' : ""}
+                    </button>
+                `;
+        }).join("");
+
+        activeFilterCount.textContent = `${activeFilters.size} Kategori Aktif`;
+        lucide.createIcons();
+      }
+
+      function toggleFilterPill(filterId) {
+        if (activeFilters.has(filterId)) {
+          if (activeFilters.size > 1) {
+            activeFilters.delete(filterId);
+          }
+        } else {
+          activeFilters.add(filterId);
+        }
+
+        renderFilterPills();
+
+        if (searchInput.value.trim().length >= 3) {
+          onInputChanged();
+        }
+      }
+
+      // INPUT EVENT HANDLER WITH 1-SECOND DEBOUNCE
+      function onInputChanged() {
+        const query = searchInput.value.trim();
+
+        if (query.length > 0) {
+          clearSearchBtn.classList.remove("hidden");
+        } else {
+          clearSearchBtn.classList.add("hidden");
+          autocompleteDropdown.classList.add("hidden");
+        }
+
+        clearTimeout(debounceTimer);
+
+        if (query.length < 3) {
+          loadingState.classList.add("hidden");
+          autocompleteDropdown.classList.add("hidden");
+          currentResults = [];
+          renderTable([]);
+
+          if (query.length > 0) {
+            emptyStateTitle.textContent = "Ketik Minimal 3 Karakter";
+            emptyStateDesc.innerHTML = `Anda baru mengetik <strong>${query.length} karakter</strong>. Tambahkan minimal <strong>${3 - query.length} karakter lagi</strong>.`;
+          } else {
+            emptyStateTitle.textContent = "Mulai Pencarian Buku";
+            emptyStateDesc.innerHTML = `Ketik minimal <strong>3 karakter</strong> pada kolom di atas. Hasil pencarian akan otomatis diproses setelah jeda 1 detik.`;
+          }
+          return;
+        }
+
+        loadingState.classList.remove("hidden");
+
+        debounceTimer = setTimeout(() => {
+          handleAutocomplete(query);
+          executeSearchNow();
+        }, 1000);
+      }
+
+      // FILTER SEARCH LOGIC ACCORDING TO ACTIVE PILLS
+      function getFilteredBooks(query) {
+        if (!query || query.length < 3) return [];
+        query = query.toLowerCase();
+
+        return BOOK_DATABASE.filter((book) => {
+          let matches = false;
+
+          if (
+            activeFilters.has("title") &&
+            book.title &&
+            book.title.toLowerCase().includes(query)
+          )
+            matches = true;
+          if (
+            activeFilters.has("sku") &&
+            ((book.sku && book.sku.toLowerCase().includes(query)) ||
+              (book.productCode &&
+                book.productCode.toLowerCase().includes(query)))
+          )
+            matches = true;
+          if (
+            activeFilters.has("author") &&
+            book.author &&
+            book.author.toLowerCase().includes(query)
+          )
+            matches = true;
+          if (
+            activeFilters.has("publisher") &&
+            book.publisher &&
+            book.publisher.toLowerCase().includes(query)
+          )
+            matches = true;
+
+          return matches;
+        });
+      }
+
+      function executeSearchNow() {
+        const query = searchInput.value.trim();
+        clearTimeout(debounceTimer);
+
+        if (query.length < 3) {
+          currentResults = [];
+          renderTable([]);
+          emptyStateTitle.textContent = "Ketik Minimal 3 Karakter";
+          emptyStateDesc.innerHTML = `Anda baru mengetik <strong>${query.length} karakter</strong>. Silakan ketik minimal 3 karakter untuk mencari.`;
+          loadingState.classList.add("hidden");
+          return;
+        }
+
+        currentResults = getFilteredBooks(query);
+        renderTable(currentResults);
+        loadingState.classList.add("hidden");
+      }
+
+      // AUTOCOMPLETE DROPDOWN
+      function handleAutocomplete(query) {
+        if (query.length < 3) {
+          autocompleteDropdown.classList.add("hidden");
+          return;
+        }
+
+        const matches = getFilteredBooks(query).slice(0, 4);
+
+        if (matches.length === 0) {
+          autocompleteDropdown.classList.add("hidden");
+          return;
+        }
+
+        autocompleteDropdown.innerHTML = matches
+          .map(
+            (book) => `
+                <div onclick="selectAutocomplete('${book.id}')" class="p-2.5 hover:bg-slate-50 cursor-pointer flex items-center justify-between transition">
+                    <div class="flex items-center gap-2.5">
+                        <i data-lucide="book" class="w-4 h-4 text-slate-400"></i>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-800">${highlightMatch(book.title, query)}</p>
+                            <p class="text-[10px] text-slate-500">${book.author} • Kode: <span class="font-mono text-slate-700 font-semibold">${book.productCode}</span></p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">${book.shelfCode}</span>
+                </div>
+            `,
+          )
+          .join("");
+
+        autocompleteDropdown.classList.remove("hidden");
+        lucide.createIcons();
+      }
+
+      function selectAutocomplete(bookId) {
+        const book = BOOK_DATABASE.find((b) => b.id === bookId);
+        if (book) {
+          searchInput.value = book.title;
+          autocompleteDropdown.classList.add("hidden");
+          executeSearchNow();
+          selectBook(book.id);
+        }
+      }
+
+      function highlightMatch(text, query) {
+        const regex = new RegExp(`(${query})`, "gi");
+        return text.replace(
+          regex,
+          '<mark class="bg-amber-100 text-slate-900 rounded px-0.5">$1</mark>',
+        );
+      }
+
+      function quickSearch(term) {
+        searchInput.value = term;
+        clearSearchBtn.classList.remove("hidden");
+        onInputChanged();
+      }
+
+      function clearSearch() {
+        clearTimeout(debounceTimer);
+        searchInput.value = "";
+        clearSearchBtn.classList.add("hidden");
+        autocompleteDropdown.classList.add("hidden");
+        loadingState.classList.add("hidden");
+        currentResults = [];
+        selectedBookId = null;
+        emptyStateTitle.textContent = "Mulai Pencarian Buku";
+        emptyStateDesc.innerHTML = `Ketik minimal <strong>3 karakter</strong> pada kolom di atas. Hasil pencarian akan otomatis diproses setelah jeda 1 detik.`;
+        renderTable([]);
+        resetDetailPanel();
+      }
+
+      // RENDER RESULTS TABLE
+      function renderTable(books) {
+        resultCountBadge.textContent = `${books.length} Buku Ditemukan`;
+
+        if (books.length === 0) {
+          booksTableBody.innerHTML = "";
+          emptyState.classList.remove("hidden");
+          resetDetailPanel();
+          return;
+        }
+
+        emptyState.classList.add("hidden");
+
+        booksTableBody.innerHTML = books
+          .map((book) => {
+            const isSelected = book.id === selectedBookId;
+            const isOutOfStock = book.stock === 0;
+
+            return `
+                    <tr onclick="selectBook('${book.id}')" 
+                        class="cursor-pointer transition hover:bg-slate-50 ${isSelected ? "bg-amber-50/80 border-l-4 border-l-amber-500" : ""}">
+                        <td class="py-3 px-4">
+                            <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
+                            <div class="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                                <span>${book.author}</span>
+                                <span>•</span>
+                                <span>${book.publisher}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
+                            <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${book.productCode}</span>
+                        </td>
+                        <td class="py-3 px-3">
+                            <span class="inline-flex items-center gap-1 text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 px-2.5 py-1 rounded-md">
+                                <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
+                                ${book.shelfCode}
+                            </span>
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            ${
+                              isOutOfStock
+                                ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
+                                : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock} Ada</span>`
+                            }
+                        </td>
+                        <td class="py-3 px-3 text-right">
+                            <button class="h-8 px-3 text-xs font-medium rounded-md ${isSelected ? "bg-slate-900 text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-700"} transition">
+                                ${isSelected ? "Dipilih" : "Lihat Lokasi"}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+          })
+          .join("");
+
+        lucide.createIcons();
+
+        if (books.length > 0 && !selectedBookId) {
+          selectBook(books[0].id);
+        }
+      }
+
+      // SELECT BOOK & UPDATE RIGHT SIDEBAR
+      function selectBook(bookId) {
+        selectedBookId = bookId;
+        const book = BOOK_DATABASE.find((b) => b.id === bookId);
+        if (!book) return;
+
+        renderTable(currentResults);
+
+        noSelectionState.classList.add("hidden");
+        bookDetailContent.classList.remove("hidden");
+
+        detailShelfCode.textContent = book.shelfCode;
+        detailFloor.textContent = book.floor;
+
+        detailCover.src = book.cover;
+        detailTitle.textContent = book.title;
+        detailAuthor.textContent = `oleh ${book.author}`;
+
+        if (book.stock > 0) {
+          detailStockBadge.className = "font-semibold text-emerald-600";
+          detailStockBadge.textContent = `Tersedia (${book.stock} eksemplar)`;
+        } else {
+          detailStockBadge.className = "font-semibold text-rose-600";
+          detailStockBadge.textContent = "Stok Habis (Pesan Kasir)";
+        }
+
+        detailPublisher.textContent = book.publisher;
+        detailSku.textContent = book.sku;
+        detailProductCode.textContent = book.productCode;
+        detailSynopsis.textContent = book.synopsis;
+      }
+
+      function resetDetailPanel() {
+        noSelectionState.classList.remove("hidden");
+        bookDetailContent.classList.add("hidden");
+      }
+
+      // Virtual Keyboard Support
+      function setupVirtualKeyboard() {
+        const row1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
+        const row2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
+        const row3 = ["Z", "X", "C", "V", "B", "N", "M"];
+
+        const makeBtn = (char) =>
+          `<button onclick="kbInput('${char}')" class="h-9 w-8 sm:w-10 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-800 text-xs font-semibold active:bg-slate-200 shadow-xs">${char}</button>`;
+
+        document.getElementById("kbRow1").innerHTML = row1
+          .map(makeBtn)
+          .join("");
+        document.getElementById("kbRow2").innerHTML = row2
+          .map(makeBtn)
+          .join("");
+        document.getElementById("kbRow3").innerHTML = row3
+          .map(makeBtn)
+          .join("");
+      }
+
+      function toggleVirtualKeyboard() {
+        const kbPanel = document.getElementById("virtualKbPanel");
+        kbPanel.classList.toggle("hidden");
+      }
+
+      function kbInput(char) {
+        searchInput.value += char;
+        onInputChanged();
+      }
+
+      function kbBackspace() {
+        searchInput.value = searchInput.value.slice(0, -1);
+        onInputChanged();
+      }
+    </script>
+  </body>
+</html>
