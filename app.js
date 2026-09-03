@@ -47,12 +47,11 @@ const emptyStateDesc = document.getElementById("emptyStateDesc");
 const loadingState = document.getElementById("loadingState");
 const resultCountBadge = document.getElementById("resultCountBadge");
 const filterPillsContainer = document.getElementById("filterPillsContainer");
-const activeFilterCount = document.getElementById("activeFilterCount");
 const sheetStatusBadge = document.getElementById("sheetStatusBadge");
+const tableContainer = document.getElementById("tableContainer");
 
-// Filter Dropdown & PWA DOMs
+// Filter Dropdown DOMs & State
 const resetDropdownsBtn = document.getElementById("resetDropdownsBtn");
-const pwaInstallBtn = document.getElementById("pwaInstallBtn");
 
 let selectedDropdownFilters = {
   publisher: "",
@@ -85,6 +84,7 @@ const detailCategory2 = document.getElementById("detailCategory2");
 const detailAuthorSpec = document.getElementById("detailAuthorSpec");
 const detailPublisher = document.getElementById("detailPublisher");
 const detailSku = document.getElementById("detailSku");
+const detailSkuInline = document.getElementById("detailSkuInline");
 const detailProductCode = document.getElementById("detailProductCode");
 const detailSynopsis = document.getElementById("detailSynopsis");
 
@@ -153,37 +153,24 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 8. Daftarkan Service Worker PWA untuk offline caching
+  // 8. Pasang listener infinite scroll pada tabel
+  if (tableContainer) {
+    tableContainer.addEventListener("scroll", () => {
+      if (renderedBatchCount >= currentResults.length) return;
+      const { scrollTop, scrollHeight, clientHeight } = tableContainer;
+      if (scrollTop + clientHeight >= scrollHeight - 120) {
+        renderNextBatch();
+      }
+    });
+  }
+
+  // 9. Daftarkan Service Worker PWA untuk offline caching
   registerServiceWorker();
 });
 
 // ==========================================
-// 6. PWA INSTALLATION & SERVICE WORKER
+// 6. SERVICE WORKER REGISTRATION (OFFLINE CACHE)
 // ==========================================
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPwaPrompt = e;
-  if (pwaInstallBtn) {
-    pwaInstallBtn.classList.remove("hidden");
-    pwaInstallBtn.classList.add("flex");
-  }
-});
-
-function triggerPwaInstall() {
-  if (deferredPwaPrompt) {
-    deferredPwaPrompt.prompt();
-    deferredPwaPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === "accepted") {
-        console.log("[PWA] Pengguna menyetujui instalasi aplikasi");
-      }
-      deferredPwaPrompt = null;
-      if (pwaInstallBtn) {
-        pwaInstallBtn.classList.add("hidden");
-        pwaInstallBtn.classList.remove("flex");
-      }
-    });
-  }
-}
 
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
@@ -439,7 +426,6 @@ function renderFilterPills() {
     `;
   }).join("");
 
-  activeFilterCount.textContent = `${activeFilters.size} Kategori Aktif`;
   if (window.lucide) {
     lucide.createIcons();
   }
@@ -733,6 +719,57 @@ function onInputChanged() {
   }, DEBOUNCE_WAIT_MS);
 }
 
+// ==========================================
+// 12. FUZZY SEARCH (TOLERANSI SALAH KETIK)
+// ==========================================
+function levenshteinDistance(a, b) {
+  if (a === b) return 0;
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1,
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function isWordFuzzyMatch(targetWords, queryWord) {
+  const qLen = queryWord.length;
+  const maxDist = qLen >= 7 ? 2 : qLen >= 4 ? 1 : 0;
+  for (const tWord of targetWords) {
+    if (tWord.includes(queryWord)) return true;
+    if (Math.abs(tWord.length - qLen) <= maxDist) {
+      if (levenshteinDistance(tWord, queryWord) <= maxDist) return true;
+    }
+  }
+  return false;
+}
+
+function fuzzyMatchText(text, query) {
+  if (!text || !query) return false;
+  const lowerText = text.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  if (lowerText.includes(lowerQuery)) return true;
+
+  const queryWords = lowerQuery.split(/\s+/).filter((w) => w.length >= 3);
+  if (queryWords.length === 0) return false;
+  const targetWords = lowerText.split(/[\s,.-]+/).filter(Boolean);
+
+  return queryWords.every((qw) => isWordFuzzyMatch(targetWords, qw));
+}
+
 function getFilteredBooks(query) {
   const selPublisher = selectedDropdownFilters.publisher;
   const selCategory = selectedDropdownFilters.category;
@@ -740,7 +777,7 @@ function getFilteredBooks(query) {
 
   const hasDropdown = Boolean(selPublisher || selCategory || selShelf);
   const hasKeyword = Boolean(query && query.length >= 3);
-  const lowerQuery = query ? query.toLowerCase() : "";
+  const cleanQuery = query ? query.trim() : "";
 
   if (!hasKeyword && !hasDropdown && !isShowingAll) return [];
 
@@ -750,49 +787,54 @@ function getFilteredBooks(query) {
     if (selCategory && book.category1 !== selCategory) return false;
     if (selShelf && book.shelfCode !== selShelf) return false;
 
-    // 2. Keyword Filters
+    // 2. Keyword Filters (Dengan Toleransi Typo / Fuzzy)
     if (hasKeyword) {
       let matches = false;
 
       if (
         activeFilters.has("title") &&
         book.title &&
-        book.title.toLowerCase().includes(lowerQuery)
-      )
+        fuzzyMatchText(book.title, cleanQuery)
+      ) {
         matches = true;
+      }
 
       if (
+        !matches &&
         activeFilters.has("sku") &&
-        ((book.sku && book.sku.toLowerCase().includes(lowerQuery)) ||
-          (book.productCode &&
-            book.productCode.toLowerCase().includes(lowerQuery)))
-      )
+        ((book.sku && fuzzyMatchText(book.sku, cleanQuery)) ||
+          (book.productCode && fuzzyMatchText(book.productCode, cleanQuery)))
+      ) {
         matches = true;
+      }
 
       if (
+        !matches &&
         activeFilters.has("author") &&
         book.author &&
-        book.author.toLowerCase().includes(lowerQuery)
-      )
+        fuzzyMatchText(book.author, cleanQuery)
+      ) {
         matches = true;
+      }
 
       if (
+        !matches &&
         activeFilters.has("publisher") &&
         book.publisher &&
-        book.publisher.toLowerCase().includes(lowerQuery)
-      )
+        fuzzyMatchText(book.publisher, cleanQuery)
+      ) {
         matches = true;
+      }
 
       if (
+        !matches &&
         activeFilters.has("category") &&
-        ((book.category1 &&
-          book.category1.toLowerCase().includes(lowerQuery)) ||
-          (book.category2 &&
-            book.category2.toLowerCase().includes(lowerQuery)) ||
-          (book.categoryCode &&
-            book.categoryCode.toLowerCase().includes(lowerQuery)))
-      )
+        ((book.category1 && fuzzyMatchText(book.category1, cleanQuery)) ||
+          (book.category2 && fuzzyMatchText(book.category2, cleanQuery)) ||
+          (book.categoryCode && fuzzyMatchText(book.categoryCode, cleanQuery)))
+      ) {
         matches = true;
+      }
 
       if (!matches) return false;
     }
@@ -855,8 +897,11 @@ function clearSearch() {
 }
 
 // ==========================================
-// 13. UI TABLE RENDERING
+// 13. UI TABLE RENDERING (INFINITE SCROLL 30/BATCH)
 // ==========================================
+const BATCH_SIZE = 30;
+let renderedBatchCount = 0;
+
 function renderTable(books) {
   resultCountBadge.textContent = `${books.length} Buku Ditemukan`;
 
@@ -868,18 +913,42 @@ function renderTable(books) {
   }
 
   emptyState.classList.add("hidden");
+  booksTableBody.innerHTML = "";
+  renderedBatchCount = 0;
 
-  booksTableBody.innerHTML = books
-    .map((book) => {
+  if (tableContainer) {
+    tableContainer.scrollTop = 0;
+  }
+
+  renderNextBatch();
+
+  if (books.length > 0) {
+    selectBook(books[0].id, false);
+  }
+}
+
+function renderNextBatch() {
+  if (renderedBatchCount >= currentResults.length) return;
+
+  const nextBatch = currentResults.slice(
+    renderedBatchCount,
+    renderedBatchCount + BATCH_SIZE,
+  );
+
+  const rowsHtml = nextBatch
+    .map((book, idx) => {
+      const rowNumber = renderedBatchCount + idx + 1;
       const isSelected = book.id === selectedBookId;
       const isOutOfStock = book.stock === 0;
 
       return `
         <tr onclick="selectBook('${book.id}')" 
-            class="cursor-pointer transition hover:bg-slate-50 ${isSelected ? "bg-amber-50/80 border-l-4 border-l-amber-500" : ""}">
+            data-book-id="${book.id}"
+            class="cursor-pointer transition duration-150 hover:bg-amber-50/70 select-none ${
+              isSelected ? "bg-amber-50/90 border-l-4 border-l-amber-500 font-medium" : ""
+            }">
             <td class="py-3 px-4">
                 <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
-                <!-- Info Kategori menggantikan Author -->
                 <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
                     <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                         ${book.category1 || "Umum"}
@@ -909,34 +978,43 @@ function renderTable(books) {
             <td class="py-3 px-3 text-right">
                 <span class="font-bold text-slate-900 text-xs font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
             </td>
-            <td class="py-3 px-3 text-right">
-                <button class="h-8 px-3 text-xs font-medium rounded-md ${isSelected ? "bg-slate-900 text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-700"} transition">
-                    ${isSelected ? "Dipilih" : "Lihat Lokasi"}
-                </button>
+            <!-- Kolom Nomor Urut Baris (Paling Kanan) -->
+            <td class="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
+                ${rowNumber}
             </td>
         </tr>
       `;
     })
     .join("");
 
+  booksTableBody.insertAdjacentHTML("beforeend", rowsHtml);
+  renderedBatchCount += nextBatch.length;
+
   if (window.lucide) {
     lucide.createIcons();
-  }
-
-  if (books.length > 0 && !selectedBookId) {
-    selectBook(books[0].id);
   }
 }
 
 // ==========================================
 // 14. DETAIL SIDEBAR RENDERING
 // ==========================================
-function selectBook(bookId) {
+function selectBook(bookId, updateTable = true) {
   selectedBookId = bookId;
   const book = BOOK_DATABASE.find((b) => b.id === bookId);
   if (!book) return;
 
-  renderTable(currentResults);
+  if (updateTable) {
+    const allRows = booksTableBody.querySelectorAll("tr");
+    allRows.forEach((row) => {
+      if (row.getAttribute("data-book-id") === bookId) {
+        row.className =
+          "cursor-pointer transition duration-150 hover:bg-amber-50/70 select-none bg-amber-50/90 border-l-4 border-l-amber-500 font-medium";
+      } else {
+        row.className =
+          "cursor-pointer transition duration-150 hover:bg-amber-50/70 select-none";
+      }
+    });
+  }
 
   noSelectionState.classList.add("hidden");
   bookDetailContent.classList.remove("hidden");
@@ -952,6 +1030,11 @@ function selectBook(bookId) {
   const formattedPrice = formatRupiah(book.price);
   if (detailPriceBadge) detailPriceBadge.textContent = formattedPrice;
   if (detailPrice) detailPrice.textContent = formattedPrice;
+
+  // SKU Inline di samping cover
+  if (detailSkuInline) {
+    detailSkuInline.textContent = book.sku || book.productCode || "-";
+  }
 
   // Status Stok Toko - Tampilan Pill Modern & Estetik
   if (book.stock > 0) {

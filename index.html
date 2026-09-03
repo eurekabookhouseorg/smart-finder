@@ -45,19 +45,8 @@
         </div>
       </div>
 
-      <!-- Right Header Actions: PWA Install, Live Status & Touch Keyboard Toggle -->
+      <!-- Right Header Actions: Live Status & Touch Keyboard Toggle -->
       <div class="flex items-center gap-3">
-        <!-- Install PWA Button (Tampil di Chrome jika belum di-install) -->
-        <button
-          id="pwaInstallBtn"
-          onclick="triggerPwaInstall()"
-          title="Install Smart Finder sebagai Aplikasi Komputer (PWA)"
-          class="hidden text-[11px] font-semibold px-2.5 py-1 rounded-md bg-slate-900 text-white hover:bg-slate-800 items-center gap-1.5 transition shadow-xs active:scale-95 cursor-pointer"
-        >
-          <i data-lucide="download" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span>Install Web App</span>
-        </button>
-
         <!-- Status Koneksi Sheet (Bisa diklik untuk sinkron ulang) -->
         <span
           id="sheetStatusBadge"
@@ -98,15 +87,7 @@
           class="p-4 bg-white border-b border-slate-200 shrink-0 relative z-20 shadow-xs"
         >
           <!-- FILTER SECTION (KEYWORD PILLS & DROPDOWN FILTERS) -->
-          <div class="mb-3 space-y-1">
-            <!-- Info X Kategori Aktif di Kanan Atas -->
-            <div class="flex items-center justify-end">
-              <span
-                id="activeFilterCount"
-                class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider"
-                >1 Kategori Aktif</span
-              >
-            </div>
+          <div class="mb-3">
 
             <!-- Baris Filter: Pills di Kiri & Dropdowns di Kanan -->
             <div class="flex items-center justify-between gap-2.5 flex-wrap">
@@ -146,18 +127,18 @@
                     class="hidden absolute right-0 top-[calc(100%+4px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
                     <div
-                      class="p-2 border-b border-slate-100 bg-slate-50 relative"
+                      class="p-2.5 border-b border-slate-100 bg-slate-50 relative flex items-center"
                     >
                       <i
                         data-lucide="search"
-                        class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"
+                        class="w-3.5 h-3.5 text-slate-400 absolute left-5 pointer-events-none"
                       ></i>
                       <input
                         id="dropdownPublisherSearch"
                         type="text"
                         placeholder="Ketik cari penerbit..."
                         oninput="filterDropdownOptions('publisher', this.value)"
-                        class="w-full h-7 pl-7 pr-3 bg-white border border-slate-200 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                        class="w-full h-8 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
                       />
                     </div>
                     <div
@@ -193,18 +174,18 @@
                     class="hidden absolute right-0 top-[calc(100%+4px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
                     <div
-                      class="p-2 border-b border-slate-100 bg-slate-50 relative"
+                      class="p-2.5 border-b border-slate-100 bg-slate-50 relative flex items-center"
                     >
                       <i
                         data-lucide="search"
-                        class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"
+                        class="w-3.5 h-3.5 text-slate-400 absolute left-5 pointer-events-none"
                       ></i>
                       <input
                         id="dropdownCategorySearch"
                         type="text"
                         placeholder="Ketik cari kategori..."
                         oninput="filterDropdownOptions('category', this.value)"
-                        class="w-full h-7 pl-7 pr-3 bg-white border border-slate-200 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                        class="w-full h-8 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
                       />
                     </div>
                     <div
@@ -237,18 +218,18 @@
                     class="hidden absolute right-0 top-[calc(100%+4px)] w-56 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
                     <div
-                      class="p-2 border-b border-slate-100 bg-slate-50 relative"
+                      class="p-2.5 border-b border-slate-100 bg-slate-50 relative flex items-center"
                     >
                       <i
                         data-lucide="search"
-                        class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"
+                        class="w-3.5 h-3.5 text-slate-400 absolute left-5 pointer-events-none"
                       ></i>
                       <input
                         id="dropdownShelfSearch"
                         type="text"
                         placeholder="Ketik cari rak..."
                         oninput="filterDropdownOptions('shelf', this.value)"
-                        class="w-full h-7 pl-7 pr-3 bg-white border border-slate-200 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                        class="w-full h-8 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
                       />
                     </div>
                     <div
@@ -369,7 +350,7 @@
                   <th class="py-3 px-3">Kode Rak</th>
                   <th class="py-3 px-3 text-center">Stok</th>
                   <th class="py-3 px-3 text-right">Harga</th>
-                  <th class="py-3 px-3 text-right">Aksi</th>
+                  <th class="py-3 px-3 text-center w-14">No</th>
                 </tr>
               </thead>
               <tbody
@@ -536,63 +517,81 @@
 
             <!-- DETAIL INFORMASI BUKU (CARD MODERN & ESTETIK) -->
             <div
-              class="flex gap-4 items-start bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70"
+              class="bg-slate-50/80 p-4 rounded-xl border border-slate-200/70 space-y-3"
             >
-              <!-- Cover Image -->
-              <div
-                class="w-24 h-34 bg-white rounded-lg border border-slate-200 overflow-hidden shrink-0 shadow-sm relative flex items-center justify-center"
-              >
-                <img
-                  id="detailCover"
-                  src=""
-                  alt="Cover Buku"
-                  class="w-full h-full object-cover"
-                  onerror="
-                    this.onerror = null;
-                    this.src = 'assets/images/book-placeholder.svg';
-                  "
-                />
-              </div>
-
-              <!-- Metadata Utama -->
-              <div class="flex-1 min-w-0">
+              <!-- Judul Buku Lebar Penuh (Tidak Terpotong) -->
+              <div>
                 <h4
                   id="detailTitle"
-                  class="font-bold text-slate-900 text-sm leading-snug line-clamp-2"
+                  class="font-bold text-slate-900 text-sm sm:text-base leading-snug break-words"
                 >
                   Judul Buku Lengkap
                 </h4>
                 <p
                   id="detailAuthor"
-                  class="text-xs text-slate-500 mt-1 font-medium line-clamp-1"
+                  class="text-xs text-slate-500 mt-1 font-medium"
                 >
                   oleh Penulis Buku
                 </p>
+              </div>
 
-                <!-- Harga Display Menarik -->
-                <div class="mt-2.5">
-                  <span
-                    class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block"
-                    >Harga</span
-                  >
-                  <div
-                    id="detailPriceBadge"
-                    class="text-lg font-black text-emerald-700 font-mono tracking-tight"
-                  >
-                    Rp 0
-                  </div>
+              <!-- Baris Gambar & Info (Stok, Harga, SKU) -->
+              <div class="flex gap-4 items-start pt-2.5 border-t border-slate-200/60">
+                <!-- Cover Image -->
+                <div
+                  class="w-24 h-34 bg-white rounded-lg border border-slate-200 overflow-hidden shrink-0 shadow-sm relative flex items-center justify-center"
+                >
+                  <img
+                    id="detailCover"
+                    src=""
+                    alt="Cover Buku"
+                    class="w-full h-full object-cover"
+                    onerror="
+                      this.onerror = null;
+                      this.src = 'assets/images/book-placeholder.svg';
+                    "
+                  />
                 </div>
 
-                <!-- Status Stok Pill Estetik -->
-                <div class="mt-2.5">
-                  <div
-                    id="detailStockBadge"
-                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs"
-                  >
+                <!-- Info di Samping Gambar: Stok, Harga, SKU -->
+                <div class="flex-1 min-w-0 space-y-2.5">
+                  <!-- Status Stok Pill Estetik -->
+                  <div>
+                    <div
+                      id="detailStockBadge"
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                      ></span>
+                      <span>Tersedia (8 eksemplar)</span>
+                    </div>
+                  </div>
+
+                  <!-- Harga Display Menarik -->
+                  <div>
                     <span
-                      class="w-1.5 h-1.5 rounded-full bg-emerald-500"
-                    ></span>
-                    <span>Tersedia (8 eksemplar)</span>
+                      class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block"
+                      >Harga</span
+                    >
+                    <div
+                      id="detailPriceBadge"
+                      class="text-lg font-black text-emerald-700 font-mono tracking-tight"
+                    >
+                      Rp 0
+                    </div>
+                  </div>
+
+                  <!-- SKU / ISBN -->
+                  <div class="text-xs text-slate-600">
+                    <span
+                      class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block"
+                      >SKU / ISBN</span
+                    >
+                    <span
+                      id="detailSkuInline"
+                      class="font-mono text-slate-800 font-semibold bg-white px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5 text-[11px]"
+                    >-</span>
                   </div>
                 </div>
               </div>
