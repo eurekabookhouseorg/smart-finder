@@ -21,7 +21,6 @@ const FILTER_OPTIONS = [
   { id: "sku", label: "SKU / ISBN", icon: "barcode" },
   { id: "author", label: "Pengarang", icon: "user" },
   { id: "publisher", label: "Penerbit", icon: "building" },
-  { id: "category", label: "Kategori", icon: "tags" },
 ];
 
 // ==========================================
@@ -165,6 +164,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // 9. Daftarkan Service Worker PWA untuk offline caching
   registerServiceWorker();
+
+  // 10. Fokuskan kursor ke input pencarian
+  setTimeout(() => {
+    if (searchInput) searchInput.focus();
+  }, 200);
 });
 
 // ==========================================
@@ -400,6 +404,10 @@ function setupKioskIdleReset() {
         if (kbPanel && !kbPanel.classList.contains("hidden")) {
           kbPanel.classList.add("hidden");
         }
+
+        setTimeout(() => {
+          if (searchInput) searchInput.focus();
+        }, 100);
       }
     }
   }, 1000);
@@ -618,11 +626,9 @@ function selectDropdownOption(type, value) {
 
   if (btnEl) {
     if (value) {
-      btnEl.className =
-        `h-8 text-xs font-bold bg-amber-50 border border-amber-300 text-slate-900 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
+      btnEl.className = `h-8 text-xs font-bold bg-amber-50 border border-amber-300 text-slate-900 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
     } else {
-      btnEl.className =
-        `h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
+      btnEl.className = `h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
     }
   }
 
@@ -676,8 +682,7 @@ function resetDropdownFilters() {
           : "w-[125px]";
 
     if (btnEl) {
-      btnEl.className =
-        `h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
+      btnEl.className = `h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
     }
     renderDropdownOptions(type, "");
   });
@@ -840,16 +845,6 @@ function getFilteredBooks(query) {
         matches = true;
       }
 
-      if (
-        !matches &&
-        activeFilters.has("category") &&
-        ((book.category1 && fuzzyMatchText(book.category1, cleanQuery)) ||
-          (book.category2 && fuzzyMatchText(book.category2, cleanQuery)) ||
-          (book.categoryCode && fuzzyMatchText(book.categoryCode, cleanQuery)))
-      ) {
-        matches = true;
-      }
-
       if (!matches) return false;
     }
 
@@ -908,6 +903,10 @@ function clearSearch() {
   emptyStateDesc.innerHTML = `Pilih <strong>Filter Dropdown</strong> di atas untuk melihat buku berdasarkan Penerbit/Kategori/Rak, atau ketik kata kunci pencarian.`;
   renderTable([]);
   resetDetailPanel();
+
+  setTimeout(() => {
+    if (searchInput) searchInput.focus();
+  }, 50);
 }
 
 // ==========================================
@@ -958,11 +957,7 @@ function renderNextBatch() {
       return `
         <tr onclick="selectBook('${book.id}')" 
             data-book-id="${book.id}"
-            class="cursor-pointer transition duration-150 hover:bg-amber-50/70 select-none ${
-              isSelected
-                ? "bg-amber-50/90 border-l-4 border-l-amber-500 font-medium"
-                : ""
-            }">
+            class="table-row-item ${isSelected ? "is-selected" : ""}">
             <!-- Kolom Nomor Urut Baris (Paling Kiri) -->
             <td class="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
                 ${rowNumber}
@@ -1023,11 +1018,9 @@ function selectBook(bookId, updateTable = true) {
     const allRows = booksTableBody.querySelectorAll("tr");
     allRows.forEach((row) => {
       if (row.getAttribute("data-book-id") === bookId) {
-        row.className =
-          "cursor-pointer transition duration-150 hover:bg-amber-50/70 select-none bg-amber-50/90 border-l-4 border-l-amber-500 font-medium";
+        row.className = "table-row-item is-selected";
       } else {
-        row.className =
-          "cursor-pointer transition duration-150 hover:bg-amber-50/70 select-none";
+        row.className = "table-row-item";
       }
     });
   }
@@ -1047,7 +1040,6 @@ function selectBook(bookId, updateTable = true) {
   // Harga Produk
   const formattedPrice = formatRupiah(book.price);
   if (detailPriceBadge) detailPriceBadge.textContent = formattedPrice;
-  if (detailPrice) detailPrice.textContent = formattedPrice;
 
   // Status Stok Toko - Format "Stok: X pcs"
   if (book.stock > 0) {
@@ -1077,7 +1069,6 @@ function selectBook(bookId, updateTable = true) {
     detailAuthorSpec.textContent = book.author || "Tidak Diketahui";
 
   detailPublisher.textContent = book.publisher || "-";
-  detailSku.textContent = book.sku || "-";
   detailProductCode.textContent = book.productCode || "-";
   detailSynopsis.textContent = book.synopsis || "Tidak ada sinopsis tersedia.";
 }
