@@ -17,7 +17,27 @@
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
     <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.0.0" defer></script>
+    <script src="app.js?v=2.0.1" defer></script>
+    <style>
+      /* Soft Amber Table Hover & Active States */
+      .table-row-item {
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+      }
+      .table-row-item:hover {
+        background-color: #fffbeb !important; /* Soft Amber-50 */
+      }
+      .table-row-item.is-selected {
+        background-color: #fef3c7 !important; /* Soft Amber-100 */
+        border-left: 4px solid #f59e0b !important; /* Warm Amber-500 */
+        font-weight: 600;
+      }
+      .table-row-item.is-selected:hover {
+        background-color: #fef3c7 !important;
+      }
+    </style>
   </head>
   <body
     oncontextmenu="return false;"
@@ -255,7 +275,10 @@
                   title="Bersihkan Filter Dropdown"
                   class="hidden w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 items-center justify-center transition active:scale-95 cursor-pointer shrink-0"
                 >
-                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-rose-600"></i>
+                  <i
+                    data-lucide="rotate-ccw"
+                    class="w-3.5 h-3.5 text-rose-600"
+                  ></i>
                 </button>
               </div>
             </div>
