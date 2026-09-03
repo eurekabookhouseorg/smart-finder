@@ -3,6 +3,7 @@
 Aplikasi web kiosk touchscreen mandiri untuk pengunjung toko buku mencari judul buku, pengarang, penerbit, kode produk/SKU, lokasi rak, lantai, dan ketersediaan stok secara real-time.
 
 ## Fitur Utama
+
 - **Live Google Sheets Sync:** Terhubung langsung ke spreadsheet katalog & stok buku.
 - **Offline Cache (LocalStorage):** Memuat instan 0-detik dari cache lokal jika jaringan toko sedang lambat atau terputus sementara.
 - **Background Auto-Sync:** Melakukan sinkronisasi otomatis setiap 10 menit tanpa mengganggu pencarian aktif pengunjung.
@@ -11,6 +12,7 @@ Aplikasi web kiosk touchscreen mandiri untuk pengunjung toko buku mencari judul 
 - **Multi-Filter Search:** Mendukung pencarian multi-kategori (Judul, SKU/ISBN, Pengarang, Penerbit).
 
 ## Deployment GitHub Pages
+
 1. Masuk ke tab **Settings > Pages** di repositori GitHub.
 2. Di bagian **Build and deployment**:
    - **Source**: `Deploy from a branch`
@@ -18,6 +20,7 @@ Aplikasi web kiosk touchscreen mandiri untuk pengunjung toko buku mencari judul 
 3. Klik **Save**. Halaman akan aktif di URL GitHub Pages Anda.
 
 ## Penggunaan di Layar Kiosk Toko (Chrome Kiosk Mode)
+
 Gunakan perintah shortcut berikut di komputer toko:
 
 ```bash

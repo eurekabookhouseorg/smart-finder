@@ -171,14 +171,6 @@
                 <i data-lucide="x" class="w-4 h-4"></i>
               </button>
             </div>
-
-            <!-- AUTOCOMPLETE DROPDOWN PANEL -->
-            <div
-              id="autocompleteDropdown"
-              class="hidden absolute left-0 right-0 top-[calc(100%+4px)] bg-white border border-slate-200 rounded-lg shadow-lg z-50 overflow-hidden max-h-60 overflow-y-auto divide-y divide-slate-100"
-            >
-              <!-- Injected dynamically -->
-            </div>
           </div>
 
           <!-- Virtual Keyboard Panel -->
@@ -247,10 +239,11 @@
                 class="bg-slate-100/90 sticky top-0 border-b border-slate-200 text-[11px] font-semibold text-slate-500 uppercase tracking-wider z-10 backdrop-blur-xs"
               >
                 <tr>
-                  <th class="py-3 px-4">Buku & Pengarang</th>
+                  <th class="py-3 px-4">Buku & Kategori</th>
                   <th class="py-3 px-3 hidden sm:table-cell">Kode Produk</th>
                   <th class="py-3 px-3">Kode Rak</th>
                   <th class="py-3 px-3 text-center">Stok</th>
+                  <th class="py-3 px-3 text-right">Harga</th>
                   <th class="py-3 px-3 text-right">Aksi</th>
                 </tr>
               </thead>
@@ -438,8 +431,16 @@
                 </p>
 
                 <div
-                  class="mt-2.5 pt-2 border-t border-slate-100 space-y-1 text-xs"
+                  class="mt-2.5 pt-2 border-t border-slate-100 space-y-1.5 text-xs"
                 >
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-400 text-[11px]">Harga:</span>
+                    <span
+                      id="detailPriceBadge"
+                      class="font-black text-emerald-700 font-mono text-sm"
+                      >Rp 0</span
+                    >
+                  </div>
                   <div class="flex justify-between items-center">
                     <span class="text-slate-400 text-[11px]">Stok Toko:</span>
                     <span
@@ -452,25 +453,45 @@
               </div>
             </div>
 
-            <!-- SPESIFIKASI TEKNIS & IDENTIFIKASI -->
+            <!-- SPESIFIKASI TEKNIS & IDENTIFIKASI LENGKAP -->
             <div
-              class="bg-slate-50 rounded-lg p-3 text-xs border border-slate-200/80 space-y-1.5 text-slate-600"
+              class="bg-slate-50 rounded-lg p-3 text-xs border border-slate-200/80 space-y-2 text-slate-600"
             >
-              <div class="flex justify-between">
-                <span class="text-slate-400">Penerbit:</span>
-                <strong id="detailPublisher" class="text-slate-800 font-medium"
-                  >Bentang Pustaka</strong
-                >
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">Harga Satuan:</span>
+                <strong id="detailPrice" class="text-emerald-700 font-mono font-bold text-sm">Rp 0</strong>
               </div>
-              <div class="flex justify-between">
+              <div class="flex justify-between items-center pt-1 border-t border-slate-200/60">
+                <span class="text-slate-400">Tipe Produk:</span>
+                <strong id="detailBookNonBook" class="text-slate-800 font-bold uppercase px-1.5 py-0.5 rounded bg-slate-200 text-[10px]">BOOK</strong>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">Kode Kategori:</span>
+                <strong id="detailCategoryCode" class="text-slate-800 font-mono font-medium">-</strong>
+              </div>
+              <div class="flex justify-between items-start">
+                <span class="text-slate-400 shrink-0">Kategori 1:</span>
+                <strong id="detailCategory1" class="text-slate-800 font-medium text-right ml-2">-</strong>
+              </div>
+              <div class="flex justify-between items-start">
+                <span class="text-slate-400 shrink-0">Kategori 2:</span>
+                <strong id="detailCategory2" class="text-slate-800 font-medium text-right ml-2">-</strong>
+              </div>
+              <div class="flex justify-between items-start pt-1 border-t border-slate-200/60">
+                <span class="text-slate-400 shrink-0">Pengarang / Penulis:</span>
+                <strong id="detailAuthorSpec" class="text-slate-800 font-medium text-right ml-2">Tidak Diketahui</strong>
+              </div>
+              <div class="flex justify-between items-start">
+                <span class="text-slate-400 shrink-0">Penerbit:</span>
+                <strong id="detailPublisher" class="text-slate-800 font-medium text-right ml-2">Bentang Pustaka</strong>
+              </div>
+              <div class="flex justify-between items-center">
                 <span class="text-slate-400">SKU / ISBN:</span>
-                <strong id="detailSku" class="text-slate-800 font-mono"
-                  >9786020612345</strong
-                >
+                <strong id="detailSku" class="text-slate-800 font-mono">9786020612345</strong>
               </div>
               <!-- Kode Produk Field Below SKU -->
               <div
-                class="flex justify-between pt-1 border-t border-slate-200/60"
+                class="flex justify-between items-center pt-1 border-t border-slate-200/60"
               >
                 <span class="text-slate-500 font-semibold">Kode Produk:</span>
                 <strong
@@ -514,11 +535,13 @@
       let BOOK_DATABASE = [];
 
       // Definisi Filter Pills (Multi-Select, Tanpa 'Semua Kategori')
+      // Definisi Filter Pills (Multi-Select)
       const FILTER_OPTIONS = [
         { id: "title", label: "Judul Buku", icon: "book" },
         { id: "sku", label: "SKU / ISBN", icon: "barcode" },
         { id: "author", label: "Pengarang", icon: "user" },
         { id: "publisher", label: "Penerbit", icon: "building" },
+        { id: "category", label: "Kategori", icon: "tags" },
       ];
 
       // State Management
@@ -530,9 +553,6 @@
       // DOM Element references
       const searchInput = document.getElementById("searchInput");
       const clearSearchBtn = document.getElementById("clearSearchBtn");
-      const autocompleteDropdown = document.getElementById(
-        "autocompleteDropdown",
-      );
       const booksTableBody = document.getElementById("booksTableBody");
       const emptyState = document.getElementById("emptyState");
       const emptyStateTitle = document.getElementById("emptyStateTitle");
@@ -553,11 +573,45 @@
       const detailCover = document.getElementById("detailCover");
       const detailTitle = document.getElementById("detailTitle");
       const detailAuthor = document.getElementById("detailAuthor");
+      const detailPriceBadge = document.getElementById("detailPriceBadge");
       const detailStockBadge = document.getElementById("detailStockBadge");
+      const detailPrice = document.getElementById("detailPrice");
+      const detailBookNonBook = document.getElementById("detailBookNonBook");
+      const detailCategoryCode = document.getElementById("detailCategoryCode");
+      const detailCategory1 = document.getElementById("detailCategory1");
+      const detailCategory2 = document.getElementById("detailCategory2");
+      const detailAuthorSpec = document.getElementById("detailAuthorSpec");
       const detailPublisher = document.getElementById("detailPublisher");
       const detailSku = document.getElementById("detailSku");
       const detailProductCode = document.getElementById("detailProductCode");
       const detailSynopsis = document.getElementById("detailSynopsis");
+
+      // Helper Format Rupiah
+      function formatRupiah(val) {
+        if (val === null || val === undefined || val === "") return "Rp 0";
+        const num =
+          typeof val === "number"
+            ? val
+            : parseInt(String(val).replace(/[^0-9]/g, ""));
+        if (isNaN(num)) return "Rp 0";
+        return "Rp " + num.toLocaleString("id-ID");
+      }
+
+      // Helper Format Lantai ("Lantai " + isi data)
+      function formatFloor(floorVal) {
+        if (
+          !floorVal ||
+          String(floorVal).trim() === "-" ||
+          String(floorVal).trim() === ""
+        ) {
+          return "Lantai 1";
+        }
+        const clean = String(floorVal).trim();
+        if (clean.toLowerCase().startsWith("lantai")) {
+          return clean;
+        }
+        return `Lantai ${clean}`;
+      }
 
       // State Management Kiosk
       let lastActivityTimestamp = Date.now();
@@ -675,10 +729,19 @@
               sku: rowObj.sku || "-",
               productCode: rowObj.product_code || "-",
               title: rowObj.title || "Tanpa Judul",
-              author: rowObj.author || "Tidak Diketahui",
+              author:
+                rowObj.author && rowObj.author.trim()
+                  ? rowObj.author.trim()
+                  : "Tidak Diketahui",
               publisher: rowObj.publisher || "-",
+              categoryCode: rowObj.category_code || "-",
+              category1: rowObj.category_1 || "Umum",
+              category2: rowObj.category_2 || "",
+              bookNonBook:
+                rowObj["book-nonbook"] || rowObj.book_nonbook || "BOOK",
+              price: rowObj.price || "0",
               shelfCode: rowObj.shelf || "RAK -",
-              floor: rowObj.floor || "Lantai 1",
+              floor: rowObj.floor || "1",
               stock: parseInt(rowObj.stock) || 0,
               synopsis: rowObj.synopsis || "Tidak ada sinopsis tersedia.",
               cover:
@@ -837,7 +900,7 @@
         }
       }
 
-      // INPUT EVENT HANDLER WITH 1-SECOND DEBOUNCE
+      // INPUT EVENT HANDLER WITH 800MS DEBOUNCE (HASIL LANGSUNG MUNCUL DI TABEL)
       function onInputChanged() {
         const query = searchInput.value.trim();
 
@@ -845,14 +908,12 @@
           clearSearchBtn.classList.remove("hidden");
         } else {
           clearSearchBtn.classList.add("hidden");
-          autocompleteDropdown.classList.add("hidden");
         }
 
         clearTimeout(debounceTimer);
 
         if (query.length < 3) {
           loadingState.classList.add("hidden");
-          autocompleteDropdown.classList.add("hidden");
           currentResults = [];
           renderTable([]);
 
@@ -861,7 +922,7 @@
             emptyStateDesc.innerHTML = `Anda baru mengetik <strong>${query.length} karakter</strong>. Tambahkan minimal <strong>${3 - query.length} karakter lagi</strong>.`;
           } else {
             emptyStateTitle.textContent = "Mulai Pencarian Buku";
-            emptyStateDesc.innerHTML = `Ketik minimal <strong>3 karakter</strong> pada kolom di atas. Hasil pencarian akan otomatis diproses setelah jeda 1 detik.`;
+            emptyStateDesc.innerHTML = `Ketik minimal <strong>3 karakter</strong> pada kolom di atas. Hasil pencarian akan otomatis diproses setelah jeda debounce.`;
           }
           return;
         }
@@ -869,12 +930,11 @@
         loadingState.classList.remove("hidden");
 
         debounceTimer = setTimeout(() => {
-          handleAutocomplete(query);
           executeSearchNow();
-        }, 1000);
+        }, 800);
       }
 
-      // FILTER SEARCH LOGIC ACCORDING TO ACTIVE PILLS
+      // FILTER SEARCH LOGIC SESUAI PILLS AKTIF (TERMASUK KATEGORI)
       function getFilteredBooks(query) {
         if (!query || query.length < 3) return [];
         query = query.toLowerCase();
@@ -888,6 +948,7 @@
             book.title.toLowerCase().includes(query)
           )
             matches = true;
+
           if (
             activeFilters.has("sku") &&
             ((book.sku && book.sku.toLowerCase().includes(query)) ||
@@ -895,16 +956,27 @@
                 book.productCode.toLowerCase().includes(query)))
           )
             matches = true;
+
           if (
             activeFilters.has("author") &&
             book.author &&
             book.author.toLowerCase().includes(query)
           )
             matches = true;
+
           if (
             activeFilters.has("publisher") &&
             book.publisher &&
             book.publisher.toLowerCase().includes(query)
+          )
+            matches = true;
+
+          if (
+            activeFilters.has("category") &&
+            ((book.category1 && book.category1.toLowerCase().includes(query)) ||
+              (book.category2 && book.category2.toLowerCase().includes(query)) ||
+              (book.categoryCode &&
+                book.categoryCode.toLowerCase().includes(query)))
           )
             matches = true;
 
@@ -930,59 +1002,6 @@
         loadingState.classList.add("hidden");
       }
 
-      // AUTOCOMPLETE DROPDOWN
-      function handleAutocomplete(query) {
-        if (query.length < 3) {
-          autocompleteDropdown.classList.add("hidden");
-          return;
-        }
-
-        const matches = getFilteredBooks(query).slice(0, 4);
-
-        if (matches.length === 0) {
-          autocompleteDropdown.classList.add("hidden");
-          return;
-        }
-
-        autocompleteDropdown.innerHTML = matches
-          .map(
-            (book) => `
-                <div onclick="selectAutocomplete('${book.id}')" class="p-2.5 hover:bg-slate-50 cursor-pointer flex items-center justify-between transition">
-                    <div class="flex items-center gap-2.5">
-                        <i data-lucide="book" class="w-4 h-4 text-slate-400"></i>
-                        <div>
-                            <p class="text-xs font-semibold text-slate-800">${highlightMatch(book.title, query)}</p>
-                            <p class="text-[10px] text-slate-500">${book.author} • Kode: <span class="font-mono text-slate-700 font-semibold">${book.productCode}</span></p>
-                        </div>
-                    </div>
-                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">${book.shelfCode}</span>
-                </div>
-            `,
-          )
-          .join("");
-
-        autocompleteDropdown.classList.remove("hidden");
-        lucide.createIcons();
-      }
-
-      function selectAutocomplete(bookId) {
-        const book = BOOK_DATABASE.find((b) => b.id === bookId);
-        if (book) {
-          searchInput.value = book.title;
-          autocompleteDropdown.classList.add("hidden");
-          executeSearchNow();
-          selectBook(book.id);
-        }
-      }
-
-      function highlightMatch(text, query) {
-        const regex = new RegExp(`(${query})`, "gi");
-        return text.replace(
-          regex,
-          '<mark class="bg-amber-100 text-slate-900 rounded px-0.5">$1</mark>',
-        );
-      }
-
       function quickSearch(term) {
         searchInput.value = term;
         clearSearchBtn.classList.remove("hidden");
@@ -993,17 +1012,16 @@
         clearTimeout(debounceTimer);
         searchInput.value = "";
         clearSearchBtn.classList.add("hidden");
-        autocompleteDropdown.classList.add("hidden");
         loadingState.classList.add("hidden");
         currentResults = [];
         selectedBookId = null;
         emptyStateTitle.textContent = "Mulai Pencarian Buku";
-        emptyStateDesc.innerHTML = `Ketik minimal <strong>3 karakter</strong> pada kolom di atas. Hasil pencarian akan otomatis diproses setelah jeda 1 detik.`;
+        emptyStateDesc.innerHTML = `Ketik minimal <strong>3 karakter</strong> pada kolom di atas. Hasil pencarian akan otomatis diproses setelah jeda debounce.`;
         renderTable([]);
         resetDetailPanel();
       }
 
-      // RENDER RESULTS TABLE
+      // RENDER HASIL PENCARIAN (KOLOM HARGA & INFO KATEGORI MENGGANTIKAN AUTHOR)
       function renderTable(books) {
         resultCountBadge.textContent = `${books.length} Buku Ditemukan`;
 
@@ -1026,10 +1044,14 @@
                         class="cursor-pointer transition hover:bg-slate-50 ${isSelected ? "bg-amber-50/80 border-l-4 border-l-amber-500" : ""}">
                         <td class="py-3 px-4">
                             <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
-                            <div class="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
-                                <span>${book.author}</span>
-                                <span>•</span>
-                                <span>${book.publisher}</span>
+                            <!-- Info Kategori menggantikan Author -->
+                            <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+                                <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                                    ${book.category1 || "Umum"}
+                                </span>
+                                ${book.category2 ? `<span class="text-slate-300">•</span><span class="text-[11px] text-slate-500">${book.category2}</span>` : ""}
+                                <span class="text-slate-300">•</span>
+                                <span class="text-[11px] text-slate-400">${book.publisher}</span>
                             </div>
                         </td>
                         <td class="py-3 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
@@ -1047,6 +1069,10 @@
                                 ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
                                 : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock} Ada</span>`
                             }
+                        </td>
+                        <!-- Kolom Harga Produk -->
+                        <td class="py-3 px-3 text-right">
+                            <span class="font-bold text-slate-900 text-xs font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
                         </td>
                         <td class="py-3 px-3 text-right">
                             <button class="h-8 px-3 text-xs font-medium rounded-md ${isSelected ? "bg-slate-900 text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-700"} transition">
@@ -1077,12 +1103,19 @@
         bookDetailContent.classList.remove("hidden");
 
         detailShelfCode.textContent = book.shelfCode;
-        detailFloor.textContent = book.floor;
+        // Lokasi lantai berformat: "Lantai " + isi datanya
+        detailFloor.textContent = formatFloor(book.floor);
 
         detailCover.src = book.cover;
         detailTitle.textContent = book.title;
-        detailAuthor.textContent = `oleh ${book.author}`;
+        detailAuthor.textContent = `oleh ${book.author || "Tidak Diketahui"}`;
 
+        // Harga Produk
+        const formattedPrice = formatRupiah(book.price);
+        if (detailPriceBadge) detailPriceBadge.textContent = formattedPrice;
+        if (detailPrice) detailPrice.textContent = formattedPrice;
+
+        // Stok
         if (book.stock > 0) {
           detailStockBadge.className = "font-semibold text-emerald-600";
           detailStockBadge.textContent = `Tersedia (${book.stock} eksemplar)`;
@@ -1091,10 +1124,23 @@
           detailStockBadge.textContent = "Stok Habis (Pesan Kasir)";
         }
 
-        detailPublisher.textContent = book.publisher;
-        detailSku.textContent = book.sku;
-        detailProductCode.textContent = book.productCode;
-        detailSynopsis.textContent = book.synopsis;
+        // Informasi Lengkap Sidebar: Tipe, Kode Kategori, Kategori 1 & 2, Author
+        if (detailBookNonBook)
+          detailBookNonBook.textContent = book.bookNonBook || "BOOK";
+        if (detailCategoryCode)
+          detailCategoryCode.textContent = book.categoryCode || "-";
+        if (detailCategory1)
+          detailCategory1.textContent = book.category1 || "-";
+        if (detailCategory2)
+          detailCategory2.textContent = book.category2 || "-";
+        if (detailAuthorSpec)
+          detailAuthorSpec.textContent = book.author || "Tidak Diketahui";
+
+        detailPublisher.textContent = book.publisher || "-";
+        detailSku.textContent = book.sku || "-";
+        detailProductCode.textContent = book.productCode || "-";
+        detailSynopsis.textContent =
+          book.synopsis || "Tidak ada sinopsis tersedia.";
       }
 
       function resetDetailPanel() {
