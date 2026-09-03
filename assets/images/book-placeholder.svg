@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420" width="300" height="420">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <linearGradient id="spine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#cbd5e1" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0.1" />
+    </linearGradient>
+  </defs>
+  <!-- Background Card -->
+  <rect width="300" height="420" rx="8" fill="url(#grad)" stroke="#cbd5e1" stroke-width="2" />
+  <!-- Book Spine Effect -->
+  <rect x="0" y="0" width="24" height="420" fill="url(#spine)" />
+  <line x1="24" y1="0" x2="24" y2="420" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+  
+  <!-- Book Icon -->
+  <g transform="translate(110, 140)" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" transform="scale(3.5)" />
+    <path d="M6 6h10" transform="scale(3.5)" stroke-width="1.2" />
+    <path d="M6 10h7" transform="scale(3.5)" stroke-width="1.2" />
+  </g>
+  
+  <!-- Text Label -->
+  <text x="150" y="270" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#475569" text-anchor="middle">
+    Katalog Buku
+  </text>
+  <text x="150" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="500" fill="#94a3b8" text-anchor="middle">
+    Eureka Bookhouse
+  </text>
+</svg>
+

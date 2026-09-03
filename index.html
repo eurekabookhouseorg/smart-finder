@@ -4,54 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kios Pencarian Buku Mandiri - Toko Buku</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ["Inter", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
-    <style>
-      /* Touch Kiosk UX Tweaks */
-      html,
-      body {
-        user-select: none;
-        -webkit-user-select: none;
-        overscroll-behavior: none;
-        touch-action: manipulation;
-        -webkit-touch-callout: none;
-      }
-      /* Thin scrollbar style */
-      ::-webkit-scrollbar {
-        width: 5px;
-        height: 5px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 9999px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
-      }
-    </style>
+    <!-- PWA Web App Meta Tags -->
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="description" content="Kios Pencarian Lokasi Rak & Stok Buku Mandiri - Eureka Bookhouse" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/images/icon-192.png" />
+    <!-- Offline-First Local Stylesheet (Tailwind + Font + Kiosk UX) -->
+    <link rel="stylesheet" href="assets/css/style.min.css" />
+    <!-- Offline-First Local Lucide Icons -->
+    <script src="assets/js/lucide.min.js"></script>
+    <!-- Kiosk Application Logic -->
+    <script src="app.js?v=2.0.0" defer></script>
   </head>
   <body
     oncontextmenu="return false;"
@@ -67,28 +30,36 @@
           alt="Eureka Bookhouse"
           class="h-10 w-auto object-contain"
         />
-        <div class="border-l border-slate-200 pl-3">
+        <div>
           <h1
-            class="font-bold text-slate-900 text-base leading-tight flex items-center gap-2"
+            class="text-base font-black tracking-tight text-slate-900 leading-tight uppercase"
           >
-            EUREKA BOOKHOUSE
-            <span
-              class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded font-semibold border border-amber-200"
-              >SMART FINDER</span
-            >
+            Eureka Bookhouse
           </h1>
-          <p class="text-[11px] text-slate-500">
-            Pencarian Lokasi Rak & Stok Buku Mandiri
+          <p class="text-[11px] text-slate-500 font-medium">
+            Smart Finder Kiosk • Layanan Mandiri Pelanggan
           </p>
         </div>
       </div>
 
+      <!-- Right Header Actions: PWA Install, Live Status & Touch Keyboard Toggle -->
       <div class="flex items-center gap-3">
+        <!-- Install PWA Button (Tampil di Chrome jika belum di-install) -->
+        <button
+          id="pwaInstallBtn"
+          onclick="triggerPwaInstall()"
+          title="Install Smart Finder sebagai Aplikasi Komputer (PWA)"
+          class="hidden text-[11px] font-semibold px-2.5 py-1 rounded-md bg-slate-900 text-white hover:bg-slate-800 items-center gap-1.5 transition shadow-xs active:scale-95 cursor-pointer"
+        >
+          <i data-lucide="download" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Install Web App</span>
+        </button>
+
         <!-- Status Koneksi Sheet (Bisa diklik untuk sinkron ulang) -->
         <span
           id="sheetStatusBadge"
           onclick="loadDataFromGSheet()"
-          title="Klik untuk sinkronisasi data"
+          title="Status data katalog"
           class="text-[11px] font-medium px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 flex items-center gap-1.5 border border-slate-200 cursor-pointer select-none hover:bg-slate-200 transition active:scale-95"
         >
           <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
@@ -137,46 +108,118 @@
             <!-- Baris Filter: Pills di Kiri & Dropdowns di Kanan -->
             <div class="flex items-center justify-between gap-2.5 flex-wrap">
               <!-- Kiri: Pills Filter Keyword -->
-              <div class="flex flex-wrap gap-1.5 items-center" id="filterPillsContainer">
+              <div
+                class="flex flex-wrap gap-1.5 items-center"
+                id="filterPillsContainer"
+              >
                 <!-- Pills Button Toggles Injected via JS -->
               </div>
 
-              <!-- Kanan: Dropdowns (Penerbit, Kategori, Rak) di bawah teks X Kategori Aktif -->
+              <!-- Kanan: Searchable Dropdowns (Penerbit, Kategori, Rak) -->
               <div class="flex items-center gap-1.5 flex-wrap ml-auto">
-                <!-- Dropdown Penerbit -->
-                <div class="relative">
-                  <select
-                    id="filterPublisher"
-                    onchange="onDropdownFilterChanged()"
-                    class="h-8 text-xs font-semibold bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg pl-2.5 pr-7 appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-slate-900 transition shadow-2xs max-w-[145px] truncate"
+                <!-- Searchable Dropdown: Penerbit -->
+                <div class="relative custom-dropdown" id="dropdownPublisherWrapper">
+                  <button
+                    type="button"
+                    id="dropdownPublisherBtn"
+                    onclick="toggleCustomDropdown('publisher', event)"
+                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer"
                   >
-                    <option value="">Semua Penerbit</option>
-                  </select>
-                  <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 absolute right-2 top-2.5 pointer-events-none"></i>
+                    <span id="dropdownPublisherLabel" class="truncate">Semua Penerbit</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"></i>
+                  </button>
+
+                  <!-- Popup Dropdown Panel -->
+                  <div
+                    id="dropdownPublisherPanel"
+                    class="hidden absolute right-0 top-[calc(100%+4px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
+                  >
+                    <div class="p-2 border-b border-slate-100 bg-slate-50 relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"></i>
+                      <input
+                        id="dropdownPublisherSearch"
+                        type="text"
+                        placeholder="Ketik cari penerbit..."
+                        oninput="filterDropdownOptions('publisher', this.value)"
+                        class="w-full h-7 pl-7 pr-3 bg-white border border-slate-200 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                      />
+                    </div>
+                    <div
+                      id="dropdownPublisherList"
+                      class="max-h-56 overflow-y-auto divide-y divide-slate-100 text-xs text-slate-700 p-1"
+                    >
+                    </div>
+                  </div>
                 </div>
 
-                <!-- Dropdown Kategori -->
-                <div class="relative">
-                  <select
-                    id="filterCategory"
-                    onchange="onDropdownFilterChanged()"
-                    class="h-8 text-xs font-semibold bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg pl-2.5 pr-7 appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-slate-900 transition shadow-2xs max-w-[145px] truncate"
+                <!-- Searchable Dropdown: Kategori -->
+                <div class="relative custom-dropdown" id="dropdownCategoryWrapper">
+                  <button
+                    type="button"
+                    id="dropdownCategoryBtn"
+                    onclick="toggleCustomDropdown('category', event)"
+                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer"
                   >
-                    <option value="">Semua Kategori</option>
-                  </select>
-                  <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 absolute right-2 top-2.5 pointer-events-none"></i>
+                    <span id="dropdownCategoryLabel" class="truncate">Semua Kategori</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"></i>
+                  </button>
+
+                  <!-- Popup Dropdown Panel -->
+                  <div
+                    id="dropdownCategoryPanel"
+                    class="hidden absolute right-0 top-[calc(100%+4px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
+                  >
+                    <div class="p-2 border-b border-slate-100 bg-slate-50 relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"></i>
+                      <input
+                        id="dropdownCategorySearch"
+                        type="text"
+                        placeholder="Ketik cari kategori..."
+                        oninput="filterDropdownOptions('category', this.value)"
+                        class="w-full h-7 pl-7 pr-3 bg-white border border-slate-200 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                      />
+                    </div>
+                    <div
+                      id="dropdownCategoryList"
+                      class="max-h-56 overflow-y-auto divide-y divide-slate-100 text-xs text-slate-700 p-1"
+                    >
+                    </div>
+                  </div>
                 </div>
 
-                <!-- Dropdown Rak -->
-                <div class="relative">
-                  <select
-                    id="filterShelf"
-                    onchange="onDropdownFilterChanged()"
-                    class="h-8 text-xs font-semibold bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg pl-2.5 pr-7 appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-slate-900 transition shadow-2xs max-w-[115px] truncate"
+                <!-- Searchable Dropdown: Rak -->
+                <div class="relative custom-dropdown" id="dropdownShelfWrapper">
+                  <button
+                    type="button"
+                    id="dropdownShelfBtn"
+                    onclick="toggleCustomDropdown('shelf', event)"
+                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[130px] truncate active:scale-98 cursor-pointer"
                   >
-                    <option value="">Semua Rak</option>
-                  </select>
-                  <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 absolute right-2 top-2.5 pointer-events-none"></i>
+                    <span id="dropdownShelfLabel" class="truncate">Semua Rak</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"></i>
+                  </button>
+
+                  <!-- Popup Dropdown Panel -->
+                  <div
+                    id="dropdownShelfPanel"
+                    class="hidden absolute right-0 top-[calc(100%+4px)] w-56 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
+                  >
+                    <div class="p-2 border-b border-slate-100 bg-slate-50 relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"></i>
+                      <input
+                        id="dropdownShelfSearch"
+                        type="text"
+                        placeholder="Ketik cari rak..."
+                        oninput="filterDropdownOptions('shelf', this.value)"
+                        class="w-full h-7 pl-7 pr-3 bg-white border border-slate-200 rounded-md text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                      />
+                    </div>
+                    <div
+                      id="dropdownShelfList"
+                      class="max-h-56 overflow-y-auto divide-y divide-slate-100 text-xs text-slate-700 p-1"
+                    >
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Reset Dropdown Button -->
@@ -321,7 +364,9 @@
                 id="emptyStateDesc"
                 class="text-xs text-slate-500 max-w-sm mb-4 leading-relaxed"
               >
-                Pilih <strong>Filter Dropdown</strong> di atas untuk melihat buku berdasarkan Penerbit/Kategori/Rak, atau ketik kata kunci pencarian.
+                Pilih <strong>Filter Dropdown</strong> di atas untuk melihat
+                buku berdasarkan Penerbit/Kategori/Rak, atau ketik kata kunci
+                pencarian.
               </p>
 
               <!-- Tombol Tampilkan Semua Buku Tanpa Mengetik -->
@@ -454,7 +499,9 @@
             </div>
 
             <!-- DETAIL INFORMASI BUKU (CARD MODERN & ESTETIK) -->
-            <div class="flex gap-4 items-start bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70">
+            <div
+              class="flex gap-4 items-start bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/70"
+            >
               <!-- Cover Image -->
               <div
                 class="w-24 h-34 bg-white rounded-lg border border-slate-200 overflow-hidden shrink-0 shadow-sm relative flex items-center justify-center"
@@ -466,8 +513,7 @@
                   class="w-full h-full object-cover"
                   onerror="
                     this.onerror = null;
-                    this.src =
-                      'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=300';
+                    this.src = 'assets/images/book-placeholder.svg';
                   "
                 />
               </div>
@@ -489,7 +535,10 @@
 
                 <!-- Harga Display Menarik -->
                 <div class="mt-2.5">
-                  <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Harga</span>
+                  <span
+                    class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block"
+                    >Harga</span
+                  >
                   <div
                     id="detailPriceBadge"
                     class="text-lg font-black text-emerald-700 font-mono tracking-tight"
@@ -504,7 +553,9 @@
                     id="detailStockBadge"
                     class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs"
                   >
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span
+                      class="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                    ></span>
                     <span>Tersedia (8 eksemplar)</span>
                   </div>
                 </div>
@@ -619,846 +670,5 @@
         </div>
       </aside>
     </div>
-
-    <script>
-      // LINK GSHEET CSV PUBLIK ANDA
-      const GSHEET_CSV_URL =
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vToC4BgoIFyLTZ9CyT0rwc5RQ8pIgCTBgiAF0EUOk05UTzuVpCTxiKqdqG-rOp6vN6zsA1NhhsP0n5e/pub?gid=0&single=true&output=csv";
-
-      // Global Database Container (Dimuat dari GSheet)
-      let BOOK_DATABASE = [];
-
-      // Definisi Filter Pills (Multi-Select, Tanpa 'Semua Kategori')
-      // Definisi Filter Pills (Multi-Select)
-      const FILTER_OPTIONS = [
-        { id: "title", label: "Judul Buku", icon: "book" },
-        { id: "sku", label: "SKU / ISBN", icon: "barcode" },
-        { id: "author", label: "Pengarang", icon: "user" },
-        { id: "publisher", label: "Penerbit", icon: "building" },
-        { id: "category", label: "Kategori", icon: "tags" },
-      ];
-
-      // State Management
-      let activeFilters = new Set(["title"]); // Default selected 'title'
-      let currentResults = [];
-      let selectedBookId = null;
-      let debounceTimer = null;
-
-      // DOM Element references
-      const searchInput = document.getElementById("searchInput");
-      const clearSearchBtn = document.getElementById("clearSearchBtn");
-      const booksTableBody = document.getElementById("booksTableBody");
-      const emptyState = document.getElementById("emptyState");
-      const emptyStateTitle = document.getElementById("emptyStateTitle");
-      const emptyStateDesc = document.getElementById("emptyStateDesc");
-      const loadingState = document.getElementById("loadingState");
-      const resultCountBadge = document.getElementById("resultCountBadge");
-      const filterPillsContainer = document.getElementById(
-        "filterPillsContainer",
-      );
-      const activeFilterCount = document.getElementById("activeFilterCount");
-      const sheetStatusBadge = document.getElementById("sheetStatusBadge");
-
-      // Dropdown filter DOMs
-      const filterPublisherSelect = document.getElementById("filterPublisher");
-      const filterCategorySelect = document.getElementById("filterCategory");
-      const filterShelfSelect = document.getElementById("filterShelf");
-      const resetDropdownsBtn = document.getElementById("resetDropdownsBtn");
-      let isShowingAll = false;
-
-      // Detail panel DOMs
-      const noSelectionState = document.getElementById("noSelectionState");
-      const bookDetailContent = document.getElementById("bookDetailContent");
-      const detailShelfCode = document.getElementById("detailShelfCode");
-      const detailFloor = document.getElementById("detailFloor");
-      const detailCover = document.getElementById("detailCover");
-      const detailTitle = document.getElementById("detailTitle");
-      const detailAuthor = document.getElementById("detailAuthor");
-      const detailPriceBadge = document.getElementById("detailPriceBadge");
-      const detailStockBadge = document.getElementById("detailStockBadge");
-      const detailPrice = document.getElementById("detailPrice");
-      const detailBookNonBook = document.getElementById("detailBookNonBook");
-      const detailCategoryCode = document.getElementById("detailCategoryCode");
-      const detailCategory1 = document.getElementById("detailCategory1");
-      const detailCategory2 = document.getElementById("detailCategory2");
-      const detailAuthorSpec = document.getElementById("detailAuthorSpec");
-      const detailPublisher = document.getElementById("detailPublisher");
-      const detailSku = document.getElementById("detailSku");
-      const detailProductCode = document.getElementById("detailProductCode");
-      const detailSynopsis = document.getElementById("detailSynopsis");
-
-      // Helper Format Rupiah
-      function formatRupiah(val) {
-        if (val === null || val === undefined || val === "") return "Rp 0";
-        const num =
-          typeof val === "number"
-            ? val
-            : parseInt(String(val).replace(/[^0-9]/g, ""));
-        if (isNaN(num)) return "Rp 0";
-        return "Rp " + num.toLocaleString("id-ID");
-      }
-
-      // Helper Format Lantai ("Lantai " + isi data)
-      function formatFloor(floorVal) {
-        if (
-          !floorVal ||
-          String(floorVal).trim() === "-" ||
-          String(floorVal).trim() === ""
-        ) {
-          return "Lantai 1";
-        }
-        const clean = String(floorVal).trim();
-        if (clean.toLowerCase().startsWith("lantai")) {
-          return clean;
-        }
-        return `Lantai ${clean}`;
-      }
-
-      // State Management Kiosk
-      let lastActivityTimestamp = Date.now();
-      const IDLE_RESET_TIMEOUT_SEC = 60; // Reset ke halaman awal jika pengunjung diam 60 detik
-      const AUTO_SYNC_INTERVAL_MS = 10 * 60 * 1000; // Sinkronisasi otomatis dari sheet tiap 10 menit
-
-      window.addEventListener("DOMContentLoaded", () => {
-        renderFilterPills();
-        setupVirtualKeyboard();
-        lucide.createIcons();
-
-        // 1. Cek & Muat Cache Lokal Terlebih Dahulu (Start Instan 0-detik)
-        loadCachedDataIfExists();
-
-        // 2. Load data live dari Google Sheets di latar belakang
-        loadDataFromGSheet();
-
-        // 3. Pasang Sinkronisasi Berkala di Latar Belakang (setiap 10 menit)
-        setInterval(() => {
-          loadDataFromGSheet(true); // true = silent sync tanpa mengganggu user
-        }, AUTO_SYNC_INTERVAL_MS);
-
-        // 4. Pasang Deteksi Aktivitas untuk Kiosk Auto-Reset (Idle Timer)
-        setupKioskIdleReset();
-
-        // Setup input listener dengan 1000ms (1-second) Debounce
-        searchInput.addEventListener("input", onInputChanged);
-
-        // Initial state
-        renderTable([]);
-      });
-
-      // UPDATE TAMPILAN STATUS KONEKSI
-      function updateSheetStatusBadge(status, count = 0) {
-        if (status === "loading") {
-          sheetStatusBadge.className =
-            "text-[11px] font-medium px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 flex items-center gap-1.5 border border-slate-200 cursor-pointer select-none";
-          sheetStatusBadge.title =
-            "Sedang menyinkronkan data dengan Google Sheets...";
-          sheetStatusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Memuat Data...`;
-        } else if (status === "live") {
-          sheetStatusBadge.className =
-            "text-[11px] font-medium px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 flex items-center gap-1.5 border border-emerald-200 cursor-pointer select-none hover:bg-emerald-100 transition active:scale-95";
-          sheetStatusBadge.title =
-            "Data terhubung langsung ke Google Sheets. Klik untuk sinkronkan ulang.";
-          sheetStatusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${count.toLocaleString("id-ID")} Buku Terhubung`;
-        } else if (status === "cached") {
-          sheetStatusBadge.className =
-            "text-[11px] font-medium px-2.5 py-1 rounded-md bg-sky-50 text-sky-700 flex items-center gap-1.5 border border-sky-200 cursor-pointer select-none hover:bg-sky-100 transition active:scale-95";
-          sheetStatusBadge.title =
-            "Menggunakan data cache lokal. Klik untuk mencoba hubungkan ke live sheet.";
-          sheetStatusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-sky-500"></span> ${count.toLocaleString("id-ID")} Buku (Offline/Cache)`;
-        } else {
-          sheetStatusBadge.className =
-            "text-[11px] font-medium px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 flex items-center gap-1.5 border border-rose-200 cursor-pointer select-none hover:bg-rose-100 transition active:scale-95";
-          sheetStatusBadge.title =
-            "Gagal memuat data live. Klik untuk mencoba kembali.";
-          sheetStatusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> Gagal Koneksi (Klik Coba Lagi)`;
-        }
-      }
-
-      // LOAD DARI LOCALSTORAGE
-      function loadCachedDataIfExists() {
-        try {
-          const cachedCsv = localStorage.getItem("kiosk_book_csv");
-          if (cachedCsv && cachedCsv.length > 50) {
-            const parsed = parseCSV(cachedCsv);
-            if (parsed.length > 0) {
-              BOOK_DATABASE = parsed;
-              populateDropdownFilters();
-              updateSheetStatusBadge("cached", BOOK_DATABASE.length);
-              console.log(
-                `[Kiosk] Cache lokal dimuat seketika: ${BOOK_DATABASE.length} buku.`,
-              );
-            }
-          }
-        } catch (err) {
-          console.warn("[Kiosk] Tidak dapat membaca cache localStorage:", err);
-        }
-      }
-
-      // PARSER CSV KE JSON OBJECT (ROBUST & CRLF COMPLIANT)
-      function parseCSV(csvText) {
-        if (!csvText || typeof csvText !== "string") return [];
-        const lines = csvText.trim().split("\n");
-        if (lines.length < 2) return [];
-
-        const headers = lines[0]
-          .split(",")
-          .map((h) => h.trim().replace(/^"|"$/g, "").replace(/\r$/, ""));
-
-        return lines
-          .slice(1)
-          .map((rawLine, index) => {
-            const line = rawLine.replace(/\r$/, "");
-            // Regex parser untuk menangani nilai berkoma di dalam tanda petik
-            const regex = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
-            const matches = [];
-            let match;
-            while ((match = regex.exec(line)) !== null) {
-              if (match[1] !== undefined) {
-                matches.push(
-                  match[1].replace(/^"|"$/g, "").replace(/""/g, '"').trim(),
-                );
-              }
-            }
-
-            let rowObj = {};
-            headers.forEach((header, idx) => {
-              rowObj[header] = matches[idx] || "";
-            });
-
-            // Mapping ke struktur standar aplikasi
-            return {
-              id: `BK-${index + 1}`,
-              sku: rowObj.sku || "-",
-              productCode: rowObj.product_code || "-",
-              title: rowObj.title || "Tanpa Judul",
-              author:
-                rowObj.author && rowObj.author.trim()
-                  ? rowObj.author.trim()
-                  : "Tidak Diketahui",
-              publisher: rowObj.publisher || "-",
-              categoryCode: rowObj.category_code || "-",
-              category1: rowObj.category_1 || "Umum",
-              category2: rowObj.category_2 || "",
-              bookNonBook:
-                rowObj["book-nonbook"] || rowObj.book_nonbook || "BOOK",
-              price: rowObj.price || "0",
-              shelfCode: rowObj.shelf || "RAK -",
-              floor: rowObj.floor || "1",
-              stock: parseInt(rowObj.stock) || 0,
-              synopsis: rowObj.synopsis || "Tidak ada sinopsis tersedia.",
-              cover:
-                rowObj.cover_url ||
-                "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=300",
-            };
-          })
-          .filter((book) => book.title !== "Tanpa Judul" || book.sku !== "-");
-      }
-
-      // FETCH DATA DARI GOOGLE SHEETS
-      async function loadDataFromGSheet(silent = false) {
-        if (!silent && BOOK_DATABASE.length === 0) {
-          updateSheetStatusBadge("loading");
-        }
-
-        try {
-          const response = await fetch(GSHEET_CSV_URL, { cache: "no-cache" });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-          const csvData = await response.text();
-
-          // Cegah parsing jika respon berupa halaman error HTML
-          if (
-            csvData.trim().startsWith("<!DOCTYPE") ||
-            csvData.trim().startsWith("<html")
-          ) {
-            throw new Error(
-              "Respon dari Google Sheets bukan format CSV valid.",
-            );
-          }
-
-          const parsed = parseCSV(csvData);
-          if (parsed.length > 0) {
-            BOOK_DATABASE = parsed;
-            populateDropdownFilters();
-
-            // Simpan snapshot ke cache lokal
-            try {
-              localStorage.setItem("kiosk_book_csv", csvData);
-              localStorage.setItem(
-                "kiosk_book_synced_at",
-                new Date().toISOString(),
-              );
-            } catch (storageErr) {
-              console.warn(
-                "[Kiosk] LocalStorage kuota penuh atau diblokir:",
-                storageErr,
-              );
-            }
-
-            updateSheetStatusBadge("live", BOOK_DATABASE.length);
-            console.log(
-              `[Kiosk] Berhasil sinkronisasi Google Sheets live: ${BOOK_DATABASE.length} buku.`,
-            );
-
-            // Jika user sedang aktif melihat hasil pencarian, segarkan hasil
-            if (searchInput.value.trim().length >= 3) {
-              executeSearchNow();
-            }
-          } else {
-            throw new Error("Data CSV yang diterima kosong.");
-          }
-        } catch (error) {
-          console.error("[Kiosk] Gagal sinkronisasi data live:", error);
-
-          // Jika sebelumnya belum punya data di memori, coba ambil dari cache
-          if (BOOK_DATABASE.length === 0) {
-            loadCachedDataIfExists();
-          }
-
-          if (BOOK_DATABASE.length > 0) {
-            updateSheetStatusBadge("cached", BOOK_DATABASE.length);
-          } else {
-            updateSheetStatusBadge("error");
-          }
-        }
-      }
-
-      // KIOSK AUTO-RESET JIKA PENGUNJUNG IDLE / MENINGGALKAN LAYAR
-      function setupKioskIdleReset() {
-        const registerActivity = () => {
-          lastActivityTimestamp = Date.now();
-        };
-
-        // Deteksi sentuhan, gerakan mouse, tombol keyboard, scroll
-        [
-          "touchstart",
-          "touchmove",
-          "mousedown",
-          "mousemove",
-          "keydown",
-          "click",
-          "scroll",
-        ].forEach((evt) => {
-          window.addEventListener(evt, registerActivity, { passive: true });
-        });
-
-        // Periksa setiap 1 detik apakah idle melebihi batas waktu
-        setInterval(() => {
-          const elapsedSeconds = (Date.now() - lastActivityTimestamp) / 1000;
-          if (elapsedSeconds >= IDLE_RESET_TIMEOUT_SEC) {
-            const hasActiveQuery = searchInput.value.trim().length > 0;
-            const hasSelection = selectedBookId !== null;
-
-            if (hasActiveQuery || hasSelection) {
-              console.log(
-                "[Kiosk] Reset otomatis karena pengunjung tidak aktif.",
-              );
-              clearSearch();
-
-              // Tutup juga virtual keyboard jika sedang terbuka
-              const kbPanel = document.getElementById("virtualKbPanel");
-              if (kbPanel && !kbPanel.classList.contains("hidden")) {
-                kbPanel.classList.add("hidden");
-              }
-            }
-          }
-        }, 1000);
-      }
-
-      // RENDER FILTER PILLS BUTTONS (MULTI-SELECT TOGGLES)
-      function renderFilterPills() {
-        filterPillsContainer.innerHTML = FILTER_OPTIONS.map((filter) => {
-          const isActive = activeFilters.has(filter.id);
-          return `
-                    <button onclick="toggleFilterPill('${filter.id}')" type="button" 
-                        class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 border ${
-                          isActive
-                            ? "bg-slate-900 text-white border-slate-900 shadow-xs"
-                            : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
-                        }">
-                        <i data-lucide="${filter.icon}" class="w-3.5 h-3.5 ${isActive ? "text-amber-400" : "text-slate-400"}"></i>
-                        <span>${filter.label}</span>
-                        ${isActive ? '<i data-lucide="check" class="w-3 h-3 ml-0.5"></i>' : ""}
-                    </button>
-                `;
-        }).join("");
-
-        activeFilterCount.textContent = `${activeFilters.size} Kategori Aktif`;
-        lucide.createIcons();
-      }
-
-      function toggleFilterPill(filterId) {
-        if (activeFilters.has(filterId)) {
-          if (activeFilters.size > 1) {
-            activeFilters.delete(filterId);
-          }
-        } else {
-          activeFilters.add(filterId);
-        }
-
-        renderFilterPills();
-
-        if (searchInput.value.trim().length >= 3) {
-          onInputChanged();
-        }
-      }
-
-      // POPULATE DROPDOWN FILTERS DARI DATA GSHEET
-      function populateDropdownFilters() {
-        if (
-          !filterPublisherSelect ||
-          !filterCategorySelect ||
-          !filterShelfSelect
-        )
-          return;
-        if (BOOK_DATABASE.length === 0) return;
-
-        const currentP = filterPublisherSelect.value;
-        const currentC = filterCategorySelect.value;
-        const currentS = filterShelfSelect.value;
-
-        // Unique sorted publishers
-        const publishers = [
-          ...new Set(
-            BOOK_DATABASE.map((b) => b.publisher).filter(
-              (p) => p && p !== "-" && p.trim() !== "",
-            ),
-          ),
-        ].sort((a, b) => a.localeCompare("id"));
-
-        // Unique sorted categories
-        const categories = [
-          ...new Set(
-            BOOK_DATABASE.map((b) => b.category1).filter(
-              (c) => c && c !== "-" && c !== "Umum" && c.trim() !== "",
-            ),
-          ),
-        ].sort((a, b) => a.localeCompare("id"));
-
-        // Unique sorted shelves
-        const shelves = [
-          ...new Set(
-            BOOK_DATABASE.map((b) => b.shelfCode).filter(
-              (s) => s && s !== "RAK -" && s.trim() !== "",
-            ),
-          ),
-        ].sort((a, b) => a.localeCompare("id"));
-
-        filterPublisherSelect.innerHTML =
-          '<option value="">Semua Penerbit</option>' +
-          publishers
-            .map(
-              (p) =>
-                `<option value="${p.replace(/"/g, "&quot;")}" ${p === currentP ? "selected" : ""}>${p}</option>`,
-            )
-            .join("");
-
-        filterCategorySelect.innerHTML =
-          '<option value="">Semua Kategori</option>' +
-          categories
-            .map(
-              (c) =>
-                `<option value="${c.replace(/"/g, "&quot;")}" ${c === currentC ? "selected" : ""}>${c}</option>`,
-            )
-            .join("");
-
-        filterShelfSelect.innerHTML =
-          '<option value="">Semua Rak</option>' +
-          shelves
-            .map(
-              (s) =>
-                `<option value="${s.replace(/"/g, "&quot;")}" ${s === currentS ? "selected" : ""}>${s}</option>`,
-            )
-            .join("");
-
-        lucide.createIcons();
-      }
-
-      function onDropdownFilterChanged() {
-        isShowingAll = false;
-        const p = filterPublisherSelect ? filterPublisherSelect.value : "";
-        const c = filterCategorySelect ? filterCategorySelect.value : "";
-        const s = filterShelfSelect ? filterShelfSelect.value : "";
-
-        if (p || c || s) {
-          if (resetDropdownsBtn) {
-            resetDropdownsBtn.classList.remove("hidden");
-            resetDropdownsBtn.classList.add("flex");
-          }
-        } else {
-          if (resetDropdownsBtn) {
-            resetDropdownsBtn.classList.add("hidden");
-            resetDropdownsBtn.classList.remove("flex");
-          }
-        }
-
-        executeSearchNow();
-      }
-
-      function resetDropdownFilters() {
-        if (filterPublisherSelect) filterPublisherSelect.value = "";
-        if (filterCategorySelect) filterCategorySelect.value = "";
-        if (filterShelfSelect) filterShelfSelect.value = "";
-        if (resetDropdownsBtn) {
-          resetDropdownsBtn.classList.add("hidden");
-          resetDropdownsBtn.classList.remove("flex");
-        }
-        executeSearchNow();
-      }
-
-      function showAllBooks() {
-        isShowingAll = true;
-        executeSearchNow();
-      }
-
-      // INPUT EVENT HANDLER WITH 800MS DEBOUNCE (HASIL LANGSUNG MUNCUL DI TABEL)
-      function onInputChanged() {
-        const query = searchInput.value.trim();
-
-        if (query.length > 0) {
-          clearSearchBtn.classList.remove("hidden");
-        } else {
-          clearSearchBtn.classList.add("hidden");
-        }
-
-        clearTimeout(debounceTimer);
-
-        const selPublisher = filterPublisherSelect
-          ? filterPublisherSelect.value
-          : "";
-        const selCategory = filterCategorySelect
-          ? filterCategorySelect.value
-          : "";
-        const selShelf = filterShelfSelect ? filterShelfSelect.value : "";
-        const hasDropdown = Boolean(selPublisher || selCategory || selShelf);
-
-        if (query.length < 3 && !hasDropdown && !isShowingAll) {
-          loadingState.classList.add("hidden");
-          currentResults = [];
-          renderTable([]);
-
-          if (query.length > 0) {
-            emptyStateTitle.textContent = "Ketik Minimal 3 Karakter";
-            emptyStateDesc.innerHTML = `Anda baru mengetik <strong>${query.length} karakter</strong>. Tambahkan minimal <strong>${3 - query.length} karakter lagi</strong> atau gunakan filter dropdown di atas.`;
-          } else {
-            emptyStateTitle.textContent = "Mulai Pencarian Buku";
-            emptyStateDesc.innerHTML = `Pilih <strong>Filter Dropdown</strong> di atas untuk melihat buku berdasarkan Penerbit/Kategori/Rak, atau ketik kata kunci pencarian.`;
-          }
-          return;
-        }
-
-        loadingState.classList.remove("hidden");
-
-        debounceTimer = setTimeout(() => {
-          executeSearchNow();
-        }, 800);
-      }
-
-      // FILTER SEARCH LOGIC SESUAI PILLS AKTIF & DROPDOWNS
-      function getFilteredBooks(query) {
-        const selPublisher = filterPublisherSelect
-          ? filterPublisherSelect.value
-          : "";
-        const selCategory = filterCategorySelect
-          ? filterCategorySelect.value
-          : "";
-        const selShelf = filterShelfSelect ? filterShelfSelect.value : "";
-
-        const hasDropdown = Boolean(selPublisher || selCategory || selShelf);
-        const hasKeyword = Boolean(query && query.length >= 3);
-        const lowerQuery = query ? query.toLowerCase() : "";
-
-        if (!hasKeyword && !hasDropdown && !isShowingAll) return [];
-
-        return BOOK_DATABASE.filter((book) => {
-          // 1. Dropdown Filters
-          if (selPublisher && book.publisher !== selPublisher) return false;
-          if (selCategory && book.category1 !== selCategory) return false;
-          if (selShelf && book.shelfCode !== selShelf) return false;
-
-          // 2. Keyword Filter jika diketik
-          if (hasKeyword) {
-            let matches = false;
-
-            if (
-              activeFilters.has("title") &&
-              book.title &&
-              book.title.toLowerCase().includes(lowerQuery)
-            )
-              matches = true;
-
-            if (
-              activeFilters.has("sku") &&
-              ((book.sku && book.sku.toLowerCase().includes(lowerQuery)) ||
-                (book.productCode &&
-                  book.productCode.toLowerCase().includes(lowerQuery)))
-            )
-              matches = true;
-
-            if (
-              activeFilters.has("author") &&
-              book.author &&
-              book.author.toLowerCase().includes(lowerQuery)
-            )
-              matches = true;
-
-            if (
-              activeFilters.has("publisher") &&
-              book.publisher &&
-              book.publisher.toLowerCase().includes(lowerQuery)
-            )
-              matches = true;
-
-            if (
-              activeFilters.has("category") &&
-              ((book.category1 &&
-                book.category1.toLowerCase().includes(lowerQuery)) ||
-                (book.category2 &&
-                  book.category2.toLowerCase().includes(lowerQuery)) ||
-                (book.categoryCode &&
-                  book.categoryCode.toLowerCase().includes(lowerQuery)))
-            )
-              matches = true;
-
-            if (!matches) return false;
-          }
-
-          return true;
-        });
-      }
-
-      function executeSearchNow() {
-        const query = searchInput.value.trim();
-        clearTimeout(debounceTimer);
-
-        const selPublisher = filterPublisherSelect
-          ? filterPublisherSelect.value
-          : "";
-        const selCategory = filterCategorySelect
-          ? filterCategorySelect.value
-          : "";
-        const selShelf = filterShelfSelect ? filterShelfSelect.value : "";
-
-        const hasDropdown = Boolean(selPublisher || selCategory || selShelf);
-        const hasKeyword = query.length >= 3;
-
-        if (!hasKeyword && !hasDropdown && !isShowingAll) {
-          currentResults = [];
-          renderTable([]);
-          if (query.length > 0) {
-            emptyStateTitle.textContent = "Ketik Minimal 3 Karakter";
-            emptyStateDesc.innerHTML = `Anda baru mengetik <strong>${query.length} karakter</strong>. Tambahkan minimal <strong>${3 - query.length} karakter lagi</strong> atau gunakan filter dropdown di atas.`;
-          } else {
-            emptyStateTitle.textContent = "Mulai Pencarian Buku";
-            emptyStateDesc.innerHTML = `Pilih <strong>Filter Dropdown</strong> di atas untuk melihat buku berdasarkan Penerbit/Kategori/Rak, atau ketik kata kunci pencarian.`;
-          }
-          loadingState.classList.add("hidden");
-          return;
-        }
-
-        currentResults = getFilteredBooks(query);
-        renderTable(currentResults);
-        loadingState.classList.add("hidden");
-      }
-
-      function quickSearch(term) {
-        searchInput.value = term;
-        clearSearchBtn.classList.remove("hidden");
-        onInputChanged();
-      }
-
-      function clearSearch() {
-        clearTimeout(debounceTimer);
-        searchInput.value = "";
-        clearSearchBtn.classList.add("hidden");
-        loadingState.classList.add("hidden");
-        isShowingAll = false;
-
-        if (filterPublisherSelect) filterPublisherSelect.value = "";
-        if (filterCategorySelect) filterCategorySelect.value = "";
-        if (filterShelfSelect) filterShelfSelect.value = "";
-        if (resetDropdownsBtn) {
-          resetDropdownsBtn.classList.add("hidden");
-          resetDropdownsBtn.classList.remove("flex");
-        }
-
-        currentResults = [];
-        selectedBookId = null;
-        emptyStateTitle.textContent = "Mulai Pencarian Buku";
-        emptyStateDesc.innerHTML = `Pilih <strong>Filter Dropdown</strong> di atas untuk melihat buku berdasarkan Penerbit/Kategori/Rak, atau ketik kata kunci pencarian.`;
-        renderTable([]);
-        resetDetailPanel();
-      }
-
-      // RENDER HASIL PENCARIAN (KOLOM HARGA & INFO KATEGORI MENGGANTIKAN AUTHOR)
-      function renderTable(books) {
-        resultCountBadge.textContent = `${books.length} Buku Ditemukan`;
-
-        if (books.length === 0) {
-          booksTableBody.innerHTML = "";
-          emptyState.classList.remove("hidden");
-          resetDetailPanel();
-          return;
-        }
-
-        emptyState.classList.add("hidden");
-
-        booksTableBody.innerHTML = books
-          .map((book) => {
-            const isSelected = book.id === selectedBookId;
-            const isOutOfStock = book.stock === 0;
-
-            return `
-                    <tr onclick="selectBook('${book.id}')" 
-                        class="cursor-pointer transition hover:bg-slate-50 ${isSelected ? "bg-amber-50/80 border-l-4 border-l-amber-500" : ""}">
-                        <td class="py-3 px-4">
-                            <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
-                            <!-- Info Kategori menggantikan Author -->
-                            <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
-                                <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-                                    ${book.category1 || "Umum"}
-                                </span>
-                                ${book.category2 ? `<span class="text-slate-300">•</span><span class="text-[11px] text-slate-500">${book.category2}</span>` : ""}
-                                <span class="text-slate-300">•</span>
-                                <span class="text-[11px] text-slate-400">${book.publisher}</span>
-                            </div>
-                        </td>
-                        <td class="py-3 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
-                            <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${book.productCode}</span>
-                        </td>
-                        <td class="py-3 px-3">
-                            <span class="inline-flex items-center gap-1 text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 px-2.5 py-1 rounded-md">
-                                <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
-                                ${book.shelfCode}
-                            </span>
-                        </td>
-                        <td class="py-3 px-3 text-center">
-                            ${
-                              isOutOfStock
-                                ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
-                                : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock} Ada</span>`
-                            }
-                        </td>
-                        <!-- Kolom Harga Produk -->
-                        <td class="py-3 px-3 text-right">
-                            <span class="font-bold text-slate-900 text-xs font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
-                        </td>
-                        <td class="py-3 px-3 text-right">
-                            <button class="h-8 px-3 text-xs font-medium rounded-md ${isSelected ? "bg-slate-900 text-white" : "bg-slate-100 hover:bg-slate-200 text-slate-700"} transition">
-                                ${isSelected ? "Dipilih" : "Lihat Lokasi"}
-                            </button>
-                        </td>
-                    </tr>
-                `;
-          })
-          .join("");
-
-        lucide.createIcons();
-
-        if (books.length > 0 && !selectedBookId) {
-          selectBook(books[0].id);
-        }
-      }
-
-      // SELECT BOOK & UPDATE RIGHT SIDEBAR
-      function selectBook(bookId) {
-        selectedBookId = bookId;
-        const book = BOOK_DATABASE.find((b) => b.id === bookId);
-        if (!book) return;
-
-        renderTable(currentResults);
-
-        noSelectionState.classList.add("hidden");
-        bookDetailContent.classList.remove("hidden");
-
-        detailShelfCode.textContent = book.shelfCode;
-        // Lokasi lantai berformat: "Lantai " + isi datanya
-        detailFloor.textContent = formatFloor(book.floor);
-
-        detailCover.src = book.cover;
-        detailTitle.textContent = book.title;
-        detailAuthor.textContent = `oleh ${book.author || "Tidak Diketahui"}`;
-
-        // Harga Produk
-        const formattedPrice = formatRupiah(book.price);
-        if (detailPriceBadge) detailPriceBadge.textContent = formattedPrice;
-        if (detailPrice) detailPrice.textContent = formattedPrice;
-
-        // Stok Toko - Tampilan Pill Modern & Estetik
-        if (book.stock > 0) {
-          detailStockBadge.className =
-            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs";
-          detailStockBadge.innerHTML = `
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span>Tersedia (${book.stock} eksemplar)</span>
-          `;
-        } else {
-          detailStockBadge.className =
-            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 shadow-2xs";
-          detailStockBadge.innerHTML = `
-            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-            <span>Stok Habis (Pesan Kasir)</span>
-          `;
-        }
-
-        // Informasi Lengkap Sidebar: Tipe, Kode Kategori, Kategori 1 & 2, Author
-        if (detailBookNonBook)
-          detailBookNonBook.textContent = book.bookNonBook || "BOOK";
-        if (detailCategoryCode)
-          detailCategoryCode.textContent = book.categoryCode || "-";
-        if (detailCategory1)
-          detailCategory1.textContent = book.category1 || "-";
-        if (detailCategory2)
-          detailCategory2.textContent = book.category2 || "-";
-        if (detailAuthorSpec)
-          detailAuthorSpec.textContent = book.author || "Tidak Diketahui";
-
-        detailPublisher.textContent = book.publisher || "-";
-        detailSku.textContent = book.sku || "-";
-        detailProductCode.textContent = book.productCode || "-";
-        detailSynopsis.textContent =
-          book.synopsis || "Tidak ada sinopsis tersedia.";
-      }
-
-      function resetDetailPanel() {
-        noSelectionState.classList.remove("hidden");
-        bookDetailContent.classList.add("hidden");
-      }
-
-      // Virtual Keyboard Support
-      function setupVirtualKeyboard() {
-        const row1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
-        const row2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
-        const row3 = ["Z", "X", "C", "V", "B", "N", "M"];
-
-        const makeBtn = (char) =>
-          `<button onclick="kbInput('${char}')" class="h-9 w-8 sm:w-10 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-800 text-xs font-semibold active:bg-slate-200 shadow-xs">${char}</button>`;
-
-        document.getElementById("kbRow1").innerHTML = row1
-          .map(makeBtn)
-          .join("");
-        document.getElementById("kbRow2").innerHTML = row2
-          .map(makeBtn)
-          .join("");
-        document.getElementById("kbRow3").innerHTML = row3
-          .map(makeBtn)
-          .join("");
-      }
-
-      function toggleVirtualKeyboard() {
-        const kbPanel = document.getElementById("virtualKbPanel");
-        kbPanel.classList.toggle("hidden");
-      }
-
-      function kbInput(char) {
-        searchInput.value += char;
-        onInputChanged();
-      }
-
-      function kbBackspace() {
-        searchInput.value = searchInput.value.slice(0, -1);
-        onInputChanged();
-      }
-    </script>
   </body>
 </html>
