@@ -88,7 +88,6 @@
         >
           <!-- FILTER SECTION (KEYWORD PILLS & DROPDOWN FILTERS) -->
           <div class="mb-3">
-
             <!-- Baris Filter: Pills di Kiri & Dropdowns di Kanan -->
             <div class="flex items-center justify-between gap-2.5 flex-wrap">
               <!-- Kiri: Pills Filter Keyword -->
@@ -110,9 +109,9 @@
                     type="button"
                     id="dropdownPublisherBtn"
                     onclick="toggleCustomDropdown('publisher', event)"
-                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer"
+                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs w-[150px] shrink-0 active:scale-98 cursor-pointer"
                   >
-                    <span id="dropdownPublisherLabel" class="truncate"
+                    <span id="dropdownPublisherLabel" class="truncate flex-1 text-left"
                       >Semua Penerbit</span
                     >
                     <i
@@ -124,22 +123,22 @@
                   <!-- Popup Dropdown Panel -->
                   <div
                     id="dropdownPublisherPanel"
-                    class="hidden absolute right-0 top-[calc(100%+4px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
+                    class="hidden absolute right-0 top-[calc(100%+6px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
-                    <div
-                      class="p-2.5 border-b border-slate-100 bg-slate-50 relative flex items-center"
-                    >
-                      <i
-                        data-lucide="search"
-                        class="w-3.5 h-3.5 text-slate-400 absolute left-5 pointer-events-none"
-                      ></i>
-                      <input
-                        id="dropdownPublisherSearch"
-                        type="text"
-                        placeholder="Ketik cari penerbit..."
-                        oninput="filterDropdownOptions('publisher', this.value)"
-                        class="w-full h-8 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
-                      />
+                    <div class="p-2 border-b border-slate-100 bg-slate-50">
+                      <div class="relative flex items-center">
+                        <i
+                          data-lucide="search"
+                          class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none"
+                        ></i>
+                        <input
+                          id="dropdownPublisherSearch"
+                          type="text"
+                          placeholder="Cari penerbit..."
+                          oninput="filterDropdownOptions('publisher', this.value)"
+                          class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
+                        />
+                      </div>
                     </div>
                     <div
                       id="dropdownPublisherList"
@@ -157,9 +156,9 @@
                     type="button"
                     id="dropdownCategoryBtn"
                     onclick="toggleCustomDropdown('category', event)"
-                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer"
+                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs w-[145px] shrink-0 active:scale-98 cursor-pointer"
                   >
-                    <span id="dropdownCategoryLabel" class="truncate"
+                    <span id="dropdownCategoryLabel" class="truncate flex-1 text-left"
                       >Semua Kategori</span
                     >
                     <i
@@ -171,22 +170,22 @@
                   <!-- Popup Dropdown Panel -->
                   <div
                     id="dropdownCategoryPanel"
-                    class="hidden absolute right-0 top-[calc(100%+4px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
+                    class="hidden absolute right-0 top-[calc(100%+6px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
-                    <div
-                      class="p-2.5 border-b border-slate-100 bg-slate-50 relative flex items-center"
-                    >
-                      <i
-                        data-lucide="search"
-                        class="w-3.5 h-3.5 text-slate-400 absolute left-5 pointer-events-none"
-                      ></i>
-                      <input
-                        id="dropdownCategorySearch"
-                        type="text"
-                        placeholder="Ketik cari kategori..."
-                        oninput="filterDropdownOptions('category', this.value)"
-                        class="w-full h-8 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
-                      />
+                    <div class="p-2 border-b border-slate-100 bg-slate-50">
+                      <div class="relative flex items-center">
+                        <i
+                          data-lucide="search"
+                          class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none"
+                        ></i>
+                        <input
+                          id="dropdownCategorySearch"
+                          type="text"
+                          placeholder="Cari kategori..."
+                          oninput="filterDropdownOptions('category', this.value)"
+                          class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
+                        />
+                      </div>
                     </div>
                     <div
                       id="dropdownCategoryList"
@@ -201,9 +200,9 @@
                     type="button"
                     id="dropdownShelfBtn"
                     onclick="toggleCustomDropdown('shelf', event)"
-                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[130px] truncate active:scale-98 cursor-pointer"
+                    class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs w-[125px] shrink-0 active:scale-98 cursor-pointer"
                   >
-                    <span id="dropdownShelfLabel" class="truncate"
+                    <span id="dropdownShelfLabel" class="truncate flex-1 text-left"
                       >Semua Rak</span
                     >
                     <i
@@ -215,22 +214,22 @@
                   <!-- Popup Dropdown Panel -->
                   <div
                     id="dropdownShelfPanel"
-                    class="hidden absolute right-0 top-[calc(100%+4px)] w-56 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
+                    class="hidden absolute right-0 top-[calc(100%+6px)] w-56 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
-                    <div
-                      class="p-2.5 border-b border-slate-100 bg-slate-50 relative flex items-center"
-                    >
-                      <i
-                        data-lucide="search"
-                        class="w-3.5 h-3.5 text-slate-400 absolute left-5 pointer-events-none"
-                      ></i>
-                      <input
-                        id="dropdownShelfSearch"
-                        type="text"
-                        placeholder="Ketik cari rak..."
-                        oninput="filterDropdownOptions('shelf', this.value)"
-                        class="w-full h-8 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
-                      />
+                    <div class="p-2 border-b border-slate-100 bg-slate-50">
+                      <div class="relative flex items-center">
+                        <i
+                          data-lucide="search"
+                          class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none"
+                        ></i>
+                        <input
+                          id="dropdownShelfSearch"
+                          type="text"
+                          placeholder="Cari rak..."
+                          oninput="filterDropdownOptions('shelf', this.value)"
+                          class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs transition"
+                        />
+                      </div>
                     </div>
                     <div
                       id="dropdownShelfList"
@@ -345,12 +344,12 @@
                 class="bg-slate-100/90 sticky top-0 border-b border-slate-200 text-[11px] font-semibold text-slate-500 uppercase tracking-wider z-10 backdrop-blur-xs"
               >
                 <tr>
+                  <th class="py-3 px-3 text-center w-12">No</th>
                   <th class="py-3 px-4">Buku & Kategori</th>
                   <th class="py-3 px-3 hidden sm:table-cell">Kode Produk</th>
                   <th class="py-3 px-3">Kode Rak</th>
                   <th class="py-3 px-3 text-center">Stok</th>
                   <th class="py-3 px-3 text-right">Harga</th>
-                  <th class="py-3 px-3 text-center w-14">No</th>
                 </tr>
               </thead>
               <tbody
@@ -519,7 +518,7 @@
             <div
               class="bg-slate-50/80 p-4 rounded-xl border border-slate-200/70 space-y-3"
             >
-              <!-- Judul Buku Lebar Penuh (Tidak Terpotong) -->
+              <!-- Judul Buku Lebar Penuh & Nomor ISBN/SKU di Bawahnya -->
               <div>
                 <h4
                   id="detailTitle"
@@ -528,15 +527,17 @@
                   Judul Buku Lengkap
                 </h4>
                 <p
-                  id="detailAuthor"
-                  class="text-xs text-slate-500 mt-1 font-medium"
+                  id="detailIsbnUnderTitle"
+                  class="text-xs text-slate-500 font-mono mt-1 font-medium select-all"
                 >
-                  oleh Penulis Buku
+                  -
                 </p>
               </div>
 
-              <!-- Baris Gambar & Info (Stok, Harga, SKU) -->
-              <div class="flex gap-4 items-start pt-2.5 border-t border-slate-200/60">
+              <!-- Baris Gambar & Info (Stok & Harga) -->
+              <div
+                class="flex gap-4 items-start pt-2.5 border-t border-slate-200/60"
+              >
                 <!-- Cover Image -->
                 <div
                   class="w-24 h-34 bg-white rounded-lg border border-slate-200 overflow-hidden shrink-0 shadow-sm relative flex items-center justify-center"
@@ -553,8 +554,8 @@
                   />
                 </div>
 
-                <!-- Info di Samping Gambar: Stok, Harga, SKU -->
-                <div class="flex-1 min-w-0 space-y-2.5">
+                <!-- Info di Samping Gambar: Stok & Harga Saja -->
+                <div class="flex-1 min-w-0 space-y-3">
                   <!-- Status Stok Pill Estetik -->
                   <div>
                     <div
@@ -564,7 +565,7 @@
                       <span
                         class="w-1.5 h-1.5 rounded-full bg-emerald-500"
                       ></span>
-                      <span>Tersedia (8 eksemplar)</span>
+                      <span>Stok: 8 pcs</span>
                     </div>
                   </div>
 
@@ -576,22 +577,10 @@
                     >
                     <div
                       id="detailPriceBadge"
-                      class="text-lg font-black text-emerald-700 font-mono tracking-tight"
+                      class="text-lg font-black text-emerald-700 font-mono tracking-tight mt-0.5"
                     >
                       Rp 0
                     </div>
-                  </div>
-
-                  <!-- SKU / ISBN -->
-                  <div class="text-xs text-slate-600">
-                    <span
-                      class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block"
-                      >SKU / ISBN</span
-                    >
-                    <span
-                      id="detailSkuInline"
-                      class="font-mono text-slate-800 font-semibold bg-white px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5 text-[11px]"
-                    >-</span>
                   </div>
                 </div>
               </div>

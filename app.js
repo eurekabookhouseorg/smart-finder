@@ -73,7 +73,7 @@ const detailShelfCode = document.getElementById("detailShelfCode");
 const detailFloor = document.getElementById("detailFloor");
 const detailCover = document.getElementById("detailCover");
 const detailTitle = document.getElementById("detailTitle");
-const detailAuthor = document.getElementById("detailAuthor");
+const detailIsbnUnderTitle = document.getElementById("detailIsbnUnderTitle");
 const detailPriceBadge = document.getElementById("detailPriceBadge");
 const detailStockBadge = document.getElementById("detailStockBadge");
 const detailPrice = document.getElementById("detailPrice");
@@ -84,7 +84,6 @@ const detailCategory2 = document.getElementById("detailCategory2");
 const detailAuthorSpec = document.getElementById("detailAuthorSpec");
 const detailPublisher = document.getElementById("detailPublisher");
 const detailSku = document.getElementById("detailSku");
-const detailSkuInline = document.getElementById("detailSkuInline");
 const detailProductCode = document.getElementById("detailProductCode");
 const detailSynopsis = document.getElementById("detailSynopsis");
 
@@ -610,13 +609,20 @@ function selectDropdownOption(type, value) {
     labelEl.textContent = value || defaultLabel;
   }
 
+  const widthClass =
+    type === "publisher"
+      ? "w-[150px]"
+      : type === "category"
+        ? "w-[145px]"
+        : "w-[125px]";
+
   if (btnEl) {
     if (value) {
       btnEl.className =
-        "h-8 text-xs font-bold bg-amber-50 border border-amber-300 text-slate-900 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer";
+        `h-8 text-xs font-bold bg-amber-50 border border-amber-300 text-slate-900 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
     } else {
       btnEl.className =
-        "h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer";
+        `h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
     }
   }
 
@@ -661,9 +667,17 @@ function resetDropdownFilters() {
           : "Semua Rak";
 
     if (labelEl) labelEl.textContent = defaultLabel;
+
+    const widthClass =
+      type === "publisher"
+        ? "w-[150px]"
+        : type === "category"
+          ? "w-[145px]"
+          : "w-[125px]";
+
     if (btnEl) {
       btnEl.className =
-        "h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer";
+        `h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs ${widthClass} shrink-0 truncate active:scale-98 cursor-pointer`;
     }
     renderDropdownOptions(type, "");
   });
@@ -945,8 +959,14 @@ function renderNextBatch() {
         <tr onclick="selectBook('${book.id}')" 
             data-book-id="${book.id}"
             class="cursor-pointer transition duration-150 hover:bg-amber-50/70 select-none ${
-              isSelected ? "bg-amber-50/90 border-l-4 border-l-amber-500 font-medium" : ""
+              isSelected
+                ? "bg-amber-50/90 border-l-4 border-l-amber-500 font-medium"
+                : ""
             }">
+            <!-- Kolom Nomor Urut Baris (Paling Kiri) -->
+            <td class="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
+                ${rowNumber}
+            </td>
             <td class="py-3 px-4">
                 <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
                 <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
@@ -971,16 +991,12 @@ function renderNextBatch() {
                 ${
                   isOutOfStock
                     ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
-                    : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock} Ada</span>`
+                    : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock}</span>`
                 }
             </td>
             <!-- Kolom Harga Produk -->
             <td class="py-3 px-3 text-right">
                 <span class="font-bold text-slate-900 text-xs font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
-            </td>
-            <!-- Kolom Nomor Urut Baris (Paling Kanan) -->
-            <td class="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
-                ${rowNumber}
             </td>
         </tr>
       `;
@@ -1024,32 +1040,29 @@ function selectBook(bookId, updateTable = true) {
 
   detailCover.src = book.cover || DEFAULT_COVER_PLACEHOLDER;
   detailTitle.textContent = book.title;
-  detailAuthor.textContent = `oleh ${book.author || "Tidak Diketahui"}`;
+  if (detailIsbnUnderTitle) {
+    detailIsbnUnderTitle.textContent = book.sku || book.productCode || "-";
+  }
 
   // Harga Produk
   const formattedPrice = formatRupiah(book.price);
   if (detailPriceBadge) detailPriceBadge.textContent = formattedPrice;
   if (detailPrice) detailPrice.textContent = formattedPrice;
 
-  // SKU Inline di samping cover
-  if (detailSkuInline) {
-    detailSkuInline.textContent = book.sku || book.productCode || "-";
-  }
-
-  // Status Stok Toko - Tampilan Pill Modern & Estetik
+  // Status Stok Toko - Format "Stok: X pcs"
   if (book.stock > 0) {
     detailStockBadge.className =
       "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs";
     detailStockBadge.innerHTML = `
       <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-      <span>Tersedia (${book.stock} eksemplar)</span>
+      <span>Stok: ${book.stock} pcs</span>
     `;
   } else {
     detailStockBadge.className =
       "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 shadow-2xs";
     detailStockBadge.innerHTML = `
       <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-      <span>Stok Habis (Pesan Kasir)</span>
+      <span>Stok: Habis</span>
     `;
   }
 
