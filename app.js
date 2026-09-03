@@ -401,9 +401,9 @@ function setupKioskIdleReset() {
       const hasSelection = selectedBookId !== null;
       const hasDropdown = Boolean(
         selectedDropdownFilters.publisher ||
-          selectedDropdownFilters.category ||
-          selectedDropdownFilters.shelf ||
-          isShowingAll,
+        selectedDropdownFilters.category ||
+        selectedDropdownFilters.shelf ||
+        isShowingAll,
       );
 
       if (hasActiveQuery || hasSelection || hasDropdown) {
@@ -518,7 +518,9 @@ function renderDropdownOptions(type, filterText = "") {
   let html = `
     <div onclick="selectDropdownOption('${type}', '')" 
          class="px-2.5 py-1.5 hover:bg-slate-100 cursor-pointer rounded-lg flex items-center justify-between transition ${
-           !currentSelected ? "bg-slate-100 font-bold text-slate-900" : "text-slate-600 font-medium"
+           !currentSelected
+             ? "bg-slate-100 font-bold text-slate-900"
+             : "text-slate-600 font-medium"
          }">
       <span>${typeLabel}</span>
       ${!currentSelected ? '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>' : ""}
@@ -539,7 +541,9 @@ function renderDropdownOptions(type, filterText = "") {
         return `
         <div onclick="selectDropdownOption('${type}', '${escaped}')" 
              class="px-2.5 py-1.5 hover:bg-slate-100 cursor-pointer rounded-lg flex items-center justify-between transition ${
-               isSelected ? "bg-amber-50 font-bold text-slate-900" : "text-slate-700 font-medium"
+               isSelected
+                 ? "bg-amber-50 font-bold text-slate-900"
+                 : "text-slate-700 font-medium"
              }">
           <span class="truncate">${item}</span>
           ${isSelected ? '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 ml-1"></i>' : ""}
@@ -638,8 +642,8 @@ function selectDropdownOption(type, value) {
 function updateResetDropdownBtnState() {
   const hasActive = Boolean(
     selectedDropdownFilters.publisher ||
-      selectedDropdownFilters.category ||
-      selectedDropdownFilters.shelf,
+    selectedDropdownFilters.category ||
+    selectedDropdownFilters.shelf,
   );
 
   if (resetDropdownsBtn) {

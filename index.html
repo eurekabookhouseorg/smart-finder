@@ -6,7 +6,10 @@
     <title>Kios Pencarian Buku Mandiri - Toko Buku</title>
     <!-- PWA Web App Meta Tags -->
     <meta name="theme-color" content="#0f172a" />
-    <meta name="description" content="Kios Pencarian Lokasi Rak & Stok Buku Mandiri - Eureka Bookhouse" />
+    <meta
+      name="description"
+      content="Kios Pencarian Lokasi Rak & Stok Buku Mandiri - Eureka Bookhouse"
+    />
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="assets/images/icon-192.png" />
     <!-- Offline-First Local Stylesheet (Tailwind + Font + Kiosk UX) -->
@@ -118,15 +121,23 @@
               <!-- Kanan: Searchable Dropdowns (Penerbit, Kategori, Rak) -->
               <div class="flex items-center gap-1.5 flex-wrap ml-auto">
                 <!-- Searchable Dropdown: Penerbit -->
-                <div class="relative custom-dropdown" id="dropdownPublisherWrapper">
+                <div
+                  class="relative custom-dropdown"
+                  id="dropdownPublisherWrapper"
+                >
                   <button
                     type="button"
                     id="dropdownPublisherBtn"
                     onclick="toggleCustomDropdown('publisher', event)"
                     class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer"
                   >
-                    <span id="dropdownPublisherLabel" class="truncate">Semua Penerbit</span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"></i>
+                    <span id="dropdownPublisherLabel" class="truncate"
+                      >Semua Penerbit</span
+                    >
+                    <i
+                      data-lucide="chevron-down"
+                      class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"
+                    ></i>
                   </button>
 
                   <!-- Popup Dropdown Panel -->
@@ -134,8 +145,13 @@
                     id="dropdownPublisherPanel"
                     class="hidden absolute right-0 top-[calc(100%+4px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
-                    <div class="p-2 border-b border-slate-100 bg-slate-50 relative">
-                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"></i>
+                    <div
+                      class="p-2 border-b border-slate-100 bg-slate-50 relative"
+                    >
+                      <i
+                        data-lucide="search"
+                        class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"
+                      ></i>
                       <input
                         id="dropdownPublisherSearch"
                         type="text"
@@ -147,21 +163,28 @@
                     <div
                       id="dropdownPublisherList"
                       class="max-h-56 overflow-y-auto divide-y divide-slate-100 text-xs text-slate-700 p-1"
-                    >
-                    </div>
+                    ></div>
                   </div>
                 </div>
 
                 <!-- Searchable Dropdown: Kategori -->
-                <div class="relative custom-dropdown" id="dropdownCategoryWrapper">
+                <div
+                  class="relative custom-dropdown"
+                  id="dropdownCategoryWrapper"
+                >
                   <button
                     type="button"
                     id="dropdownCategoryBtn"
                     onclick="toggleCustomDropdown('category', event)"
                     class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[155px] truncate active:scale-98 cursor-pointer"
                   >
-                    <span id="dropdownCategoryLabel" class="truncate">Semua Kategori</span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"></i>
+                    <span id="dropdownCategoryLabel" class="truncate"
+                      >Semua Kategori</span
+                    >
+                    <i
+                      data-lucide="chevron-down"
+                      class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"
+                    ></i>
                   </button>
 
                   <!-- Popup Dropdown Panel -->
@@ -169,8 +192,13 @@
                     id="dropdownCategoryPanel"
                     class="hidden absolute right-0 top-[calc(100%+4px)] w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
-                    <div class="p-2 border-b border-slate-100 bg-slate-50 relative">
-                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"></i>
+                    <div
+                      class="p-2 border-b border-slate-100 bg-slate-50 relative"
+                    >
+                      <i
+                        data-lucide="search"
+                        class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"
+                      ></i>
                       <input
                         id="dropdownCategorySearch"
                         type="text"
@@ -182,8 +210,7 @@
                     <div
                       id="dropdownCategoryList"
                       class="max-h-56 overflow-y-auto divide-y divide-slate-100 text-xs text-slate-700 p-1"
-                    >
-                    </div>
+                    ></div>
                   </div>
                 </div>
 
@@ -195,8 +222,13 @@
                     onclick="toggleCustomDropdown('shelf', event)"
                     class="h-8 text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 rounded-lg px-2.5 flex items-center justify-between gap-1.5 transition shadow-2xs max-w-[130px] truncate active:scale-98 cursor-pointer"
                   >
-                    <span id="dropdownShelfLabel" class="truncate">Semua Rak</span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"></i>
+                    <span id="dropdownShelfLabel" class="truncate"
+                      >Semua Rak</span
+                    >
+                    <i
+                      data-lucide="chevron-down"
+                      class="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none"
+                    ></i>
                   </button>
 
                   <!-- Popup Dropdown Panel -->
@@ -204,8 +236,13 @@
                     id="dropdownShelfPanel"
                     class="hidden absolute right-0 top-[calc(100%+4px)] w-56 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden flex flex-col"
                   >
-                    <div class="p-2 border-b border-slate-100 bg-slate-50 relative">
-                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"></i>
+                    <div
+                      class="p-2 border-b border-slate-100 bg-slate-50 relative"
+                    >
+                      <i
+                        data-lucide="search"
+                        class="w-3.5 h-3.5 text-slate-400 absolute left-4 top-3.5 pointer-events-none"
+                      ></i>
                       <input
                         id="dropdownShelfSearch"
                         type="text"
@@ -217,8 +254,7 @@
                     <div
                       id="dropdownShelfList"
                       class="max-h-56 overflow-y-auto divide-y divide-slate-100 text-xs text-slate-700 p-1"
-                    >
-                    </div>
+                    ></div>
                   </div>
                 </div>
 
