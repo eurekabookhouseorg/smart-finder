@@ -68,6 +68,7 @@ let isShowingAll = false;
 // ==========================================
 const searchInput = document.getElementById("searchInput");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
+const booksTable = document.getElementById("booksTable");
 const booksTableBody = document.getElementById("booksTableBody");
 const emptyState = document.getElementById("emptyState");
 const emptyStateTitle = document.getElementById("emptyStateTitle");
@@ -908,6 +909,10 @@ function executeSearchNow() {
   }
 
   currentResults = getFilteredBooks(query);
+  if (currentResults.length === 0) {
+    emptyStateTitle.textContent = "Buku Tidak Ditemukan";
+    emptyStateDesc.innerHTML = `Tidak ada buku yang cocok dengan pencarian <strong>"${query || "filter terpilih"}"</strong>. Silakan coba kata kunci lain atau reset filter.`;
+  }
   renderTable(currentResults);
   loadingState.classList.add("hidden");
 }
@@ -931,6 +936,7 @@ function clearSearch() {
   selectedBookId = null;
   emptyStateTitle.textContent = "Mulai Pencarian Buku";
   emptyStateDesc.innerHTML = `Pilih <strong>Filter Dropdown</strong> di atas untuk melihat buku berdasarkan Penerbit/Kategori/Rak, atau ketik kata kunci pencarian.`;
+  if (booksTable) booksTable.classList.add("hidden");
   renderTable([]);
   resetDetailPanel();
   startPromoAutoSlide();
@@ -950,12 +956,14 @@ function renderTable(books) {
   resultCountBadge.textContent = `${books.length} Buku Ditemukan`;
 
   if (books.length === 0) {
+    if (booksTable) booksTable.classList.add("hidden");
     booksTableBody.innerHTML = "";
     emptyState.classList.remove("hidden");
     resetDetailPanel();
     return;
   }
 
+  if (booksTable) booksTable.classList.remove("hidden");
   emptyState.classList.add("hidden");
   booksTableBody.innerHTML = "";
   renderedBatchCount = 0;
@@ -1287,4 +1295,3 @@ function pausePromoAutoSlide() {
     promoAutoSlideTimer = null;
   }
 }
-
