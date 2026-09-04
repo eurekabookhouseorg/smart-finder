@@ -8,7 +8,7 @@
 // 1. KONFIGURASI & KONSTANTA
 // ==========================================
 const GSHEET_CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vToC4BgoIFyLTZ9CyT0rwc5RQ8pIgCTBgiAF0EUOk05UTzuVpCTxiKqdqG-rOp6vN6zsA1NhhsP0n5e/pub?gid=0&single=true&output=csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNVuHRuXDoBioSW3qvFeNn9DUDXN-M65b8U3zhOOubdvSTu5nTrlLWqfWJ0qOLctgFzjE4VW9Lo7gZ/pub?gid=1241656442&single=true&output=csv";
 
 const DEFAULT_COVER_PLACEHOLDER = "assets/images/book-placeholder.svg";
 const IDLE_RESET_TIMEOUT_SEC = 60; // Reset otomatis ke halaman awal jika user idle 60 detik
