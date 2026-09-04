@@ -24,6 +24,35 @@ const FILTER_OPTIONS = [
 ];
 
 // ==========================================
+// KONFIGURASI BANNER PROMOSI (CAROUSEL EMPTY STATE)
+// Format URL Direct Google Drive: https://lh3.googleusercontent.com/d/FILE_ID
+// ==========================================
+const PROMO_BANNERS = [
+  {
+    id: 1,
+    title: "Promo Diskon Buku Spesial",
+    image:
+      "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=1000",
+  },
+  {
+    id: 2,
+    title: "Pesta Buku Bestseller EBH",
+    image:
+      "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=1000",
+  },
+  {
+    id: 3,
+    title: "Rekomendasi Buku Minggu Ini",
+    image:
+      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1000",
+  },
+];
+
+const PROMO_AUTOSLIDE_INTERVAL_MS = 5000;
+let currentPromoSlide = 0;
+let promoAutoSlideTimer = null;
+
+// ==========================================
 // 2. STATE MANAGEMENT
 // ==========================================
 let BOOK_DATABASE = [];
@@ -120,6 +149,7 @@ function formatFloor(floorVal) {
 window.addEventListener("DOMContentLoaded", () => {
   renderFilterPills();
   setupVirtualKeyboard();
+  initPromoBannerCarousel();
   if (window.lucide) {
     lucide.createIcons();
   }
@@ -903,6 +933,7 @@ function clearSearch() {
   emptyStateDesc.innerHTML = `Pilih <strong>Filter Dropdown</strong> di atas untuk melihat buku berdasarkan Penerbit/Kategori/Rak, atau ketik kata kunci pencarian.`;
   renderTable([]);
   resetDetailPanel();
+  startPromoAutoSlide();
 
   setTimeout(() => {
     if (searchInput) searchInput.focus();
@@ -1114,3 +1145,141 @@ function kbBackspace() {
   searchInput.value = searchInput.value.slice(0, -1);
   onInputChanged();
 }
+
+// ==========================================
+// 16. PROMO BANNER CAROUSEL / SLIDER (EMPTY STATE)
+// ==========================================
+function initPromoBannerCarousel() {
+  const track = document.getElementById("promoSliderTrack");
+  const dotsContainer = document.getElementById("promoDotsContainer");
+  const carouselContainer = document.getElementById("promoCarouselContainer");
+
+  if (!track || !dotsContainer || !PROMO_BANNERS || PROMO_BANNERS.length === 0)
+    return;
+
+  // Render Slides
+  track.innerHTML = PROMO_BANNERS.map(
+    (banner, index) => `
+    <div class="promo-slide ${index === 0 ? "is-active" : ""}" data-index="${index}">
+      <img
+        src="${banner.image}"
+        alt="${banner.title}"
+        class="w-full h-full object-cover select-none"
+        loading="${index === 0 ? "eager" : "lazy"}"
+        onerror="this.src='${DEFAULT_COVER_PLACEHOLDER}'"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex items-end p-4 sm:p-5 pointer-events-none">
+        <div class="text-left">
+          <span class="inline-block px-2.5 py-0.5 mb-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-300 bg-black/40 rounded-full border border-amber-300/30 backdrop-blur-xs">
+            Promo Spesial
+          </span>
+          <h4 class="text-white font-extrabold text-sm sm:text-base drop-shadow-md tracking-tight leading-snug">
+            ${banner.title}
+          </h4>
+        </div>
+      </div>
+    </div>
+  `,
+  ).join("");
+
+  // Render Dot Indicators
+  dotsContainer.innerHTML = PROMO_BANNERS.map(
+    (_, index) => `
+    <button
+      type="button"
+      onclick="goToPromoSlide(${index})"
+      aria-label="Lihat Promo ${index + 1}"
+      class="promo-dot h-2 rounded-full cursor-pointer ${index === 0 ? "is-active" : ""}"
+    ></button>
+  `,
+  ).join("");
+
+  // Jalankan Auto-Slide setiap 5 detik
+  startPromoAutoSlide();
+
+  // Pause saat kursor hover / Resume saat kursor keluar
+  if (carouselContainer) {
+    carouselContainer.addEventListener("mouseenter", pausePromoAutoSlide);
+    carouselContainer.addEventListener("mouseleave", startPromoAutoSlide);
+
+    // Dukungan Touch Swipe untuk Layar Sentuh Kiosk
+    let touchStartX = 0;
+    let touchEndX = 0;
+    carouselContainer.addEventListener(
+      "touchstart",
+      (e) => {
+        if (e.changedTouches && e.changedTouches[0]) {
+          touchStartX = e.changedTouches[0].screenX;
+        }
+        pausePromoAutoSlide();
+      },
+      { passive: true },
+    );
+    carouselContainer.addEventListener(
+      "touchend",
+      (e) => {
+        if (e.changedTouches && e.changedTouches[0]) {
+          touchEndX = e.changedTouches[0].screenX;
+          const diff = touchStartX - touchEndX;
+          if (diff > 45) {
+            nextPromoSlide();
+          } else if (diff < -45) {
+            prevPromoSlide();
+          }
+        }
+        startPromoAutoSlide();
+      },
+      { passive: true },
+    );
+  }
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
+function goToPromoSlide(index) {
+  if (!PROMO_BANNERS || PROMO_BANNERS.length === 0) return;
+  currentPromoSlide = (index + PROMO_BANNERS.length) % PROMO_BANNERS.length;
+
+  const slides = document.querySelectorAll(".promo-slide");
+  slides.forEach((slide, idx) => {
+    if (idx === currentPromoSlide) {
+      slide.classList.add("is-active");
+    } else {
+      slide.classList.remove("is-active");
+    }
+  });
+
+  const dots = document.querySelectorAll(".promo-dot");
+  dots.forEach((dot, idx) => {
+    if (idx === currentPromoSlide) {
+      dot.classList.add("is-active");
+    } else {
+      dot.classList.remove("is-active");
+    }
+  });
+}
+
+function nextPromoSlide() {
+  goToPromoSlide(currentPromoSlide + 1);
+}
+
+function prevPromoSlide() {
+  goToPromoSlide(currentPromoSlide - 1);
+}
+
+function startPromoAutoSlide() {
+  pausePromoAutoSlide();
+  promoAutoSlideTimer = setInterval(() => {
+    nextPromoSlide();
+  }, PROMO_AUTOSLIDE_INTERVAL_MS);
+}
+
+function pausePromoAutoSlide() {
+  if (promoAutoSlideTimer) {
+    clearInterval(promoAutoSlideTimer);
+    promoAutoSlideTimer = null;
+  }
+}
+

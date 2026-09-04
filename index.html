@@ -17,7 +17,7 @@
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
     <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.0.3" defer></script>
+    <script src="app.js?v=2.0.4" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
@@ -38,6 +38,53 @@
       }
       .table-row-item.is-selected:hover {
         background-color: #fef3c7 !important;
+      }
+
+      /* Promo Banner Carousel Styles */
+      .promo-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transform: scale(0.98);
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+        z-index: 0;
+      }
+      .promo-slide.is-active {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+        z-index: 1;
+      }
+      .promo-glass-btn {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        transition: all 0.2s ease;
+      }
+      .promo-glass-btn:hover {
+        background: rgba(255, 255, 255, 0.95);
+        transform: translateY(-50%) scale(1.06);
+      }
+      .promo-glass-btn:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+      .promo-dot {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .promo-dot.is-active {
+        width: 1.5rem; /* 24px */
+        background-color: #ffffff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+      .promo-dot:not(.is-active) {
+        width: 0.5rem; /* 8px */
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+      .promo-dot:not(.is-active):hover {
+        background-color: rgba(255, 255, 255, 0.85);
       }
     </style>
   </head>
@@ -397,13 +444,52 @@
             <!-- EMPTY STATE INITIAL / LESS THAN 3 CHARS -->
             <div
               id="emptyState"
-              class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-white z-0"
+              class="absolute inset-0 flex flex-col items-center justify-start sm:justify-center p-4 sm:p-6 text-center bg-white z-0 overflow-y-auto"
             >
+              <!-- PROMO BANNER CAROUSEL / SLIDER -->
               <div
-                class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-3 border border-slate-200/60"
+                id="promoCarouselContainer"
+                class="w-full max-w-xl mx-auto mb-5 relative group select-none shrink-0"
               >
-                <i data-lucide="search" class="w-8 h-8 text-slate-400"></i>
+                <!-- Carousel Slides Track -->
+                <div
+                  id="promoSliderTrack"
+                  class="relative w-full h-48 sm:h-56 md:h-60 rounded-2xl overflow-hidden shadow-md border border-slate-200 bg-slate-100"
+                >
+                  <!-- Injected via JavaScript from PROMO_BANNERS -->
+                </div>
+
+                <!-- Nav Button Left (Glassmorphism) -->
+                <button
+                  id="promoPrevBtn"
+                  type="button"
+                  onclick="prevPromoSlide()"
+                  class="promo-glass-btn absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full text-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity z-10 cursor-pointer"
+                  aria-label="Slide Sebelumnya"
+                >
+                  <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Nav Button Right (Glassmorphism) -->
+                <button
+                  id="promoNextBtn"
+                  type="button"
+                  onclick="nextPromoSlide()"
+                  class="promo-glass-btn absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full text-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity z-10 cursor-pointer"
+                  aria-label="Slide Selanjutnya"
+                >
+                  <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Dot Indicators Container -->
+                <div
+                  id="promoDotsContainer"
+                  class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-xs"
+                >
+                  <!-- Injected via JavaScript -->
+                </div>
               </div>
+
               <h3
                 id="emptyStateTitle"
                 class="font-semibold text-slate-800 text-base mb-1"
