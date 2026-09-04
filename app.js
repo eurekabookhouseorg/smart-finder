@@ -30,21 +30,21 @@ const FILTER_OPTIONS = [
 const PROMO_BANNERS = [
   {
     id: 1,
-    title: "Promo Diskon Buku Spesial",
+    title: "",
     image:
-      "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80&w=1000",
+      "https://lh3.googleusercontent.com/d/1uXvfCis50X0aOW_F19T94VjxQmCmun6h",
   },
   {
     id: 2,
-    title: "Pesta Buku Bestseller EBH",
+    title: "",
     image:
-      "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=1000",
+      "https://lh3.googleusercontent.com/d/1Vgs196M_6HdzVCb2UaGhO2kGnZWqzefo",
   },
   {
     id: 3,
-    title: "Rekomendasi Buku Minggu Ini",
+    title: "",
     image:
-      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1000",
+      "https://lh3.googleusercontent.com/d/1RqXnzxHCRqzBGMCp6S6Mkx210_v0t76_",
   },
 ];
 
@@ -1163,11 +1163,14 @@ function initPromoBannerCarousel() {
     <div class="promo-slide ${index === 0 ? "is-active" : ""}" data-index="${index}">
       <img
         src="${banner.image}"
-        alt="${banner.title}"
+        alt="${banner.title || "Banner Promo " + (index + 1)}"
         class="w-full h-full object-cover select-none"
         loading="${index === 0 ? "eager" : "lazy"}"
         onerror="this.src='${DEFAULT_COVER_PLACEHOLDER}'"
       />
+      ${
+        banner.title
+          ? `
       <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex items-end p-4 sm:p-5 pointer-events-none">
         <div class="text-left">
           <span class="inline-block px-2.5 py-0.5 mb-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-300 bg-black/40 rounded-full border border-amber-300/30 backdrop-blur-xs">
@@ -1177,7 +1180,9 @@ function initPromoBannerCarousel() {
             ${banner.title}
           </h4>
         </div>
-      </div>
+      </div>`
+          : ""
+      }
     </div>
   `,
   ).join("");
