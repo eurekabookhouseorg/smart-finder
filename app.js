@@ -974,7 +974,7 @@ function renderNextBatch() {
                 </div>
             </td>
             <td class="py-3 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
-                <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${book.productCode}</span>
+                <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${book.sku || "-"}</span>
             </td>
             <td class="py-3 px-3">
                 <span class="inline-flex items-center gap-1 text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 px-2.5 py-1 rounded-md">
@@ -1069,7 +1069,7 @@ function selectBook(bookId, updateTable = true) {
     detailAuthorSpec.textContent = book.author || "Tidak Diketahui";
 
   detailPublisher.textContent = book.publisher || "-";
-  detailProductCode.textContent = book.productCode || "-";
+  detailProductCode.textContent = book.sku || book.productCode || "-";
   detailSynopsis.textContent = book.synopsis || "Tidak ada sinopsis tersedia.";
 }
 
