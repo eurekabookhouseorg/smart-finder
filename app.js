@@ -325,6 +325,24 @@ function parseCSV(csvText) {
         stock: parseInt(rowObj.stock) || 0,
         synopsis: rowObj.synopsis || "Tidak ada sinopsis tersedia.",
         cover: rowObj.cover_url || DEFAULT_COVER_PLACEHOLDER,
+        targetReader: (
+          rowObj.target_reader ||
+          rowObj["target-reader"] ||
+          rowObj.targetReader ||
+          ""
+        ).trim(),
+        targetType: (
+          rowObj.target_type ||
+          rowObj["target-type"] ||
+          rowObj.targetType ||
+          ""
+        ).trim(),
+        bookMood: (
+          rowObj.book_mood ||
+          rowObj["book-mood"] ||
+          rowObj.bookMood ||
+          ""
+        ).trim(),
       };
     })
     .filter((book) => book.title !== "Tanpa Judul" || book.sku !== "-");
@@ -633,6 +651,11 @@ function filterDropdownOptions(type, query) {
 function selectDropdownOption(type, value) {
   selectedDropdownFilters[type] = value;
   isShowingAll = false;
+  if (isQuizFilterActive) {
+    isQuizFilterActive = false;
+    const clearQuizBtn = document.getElementById("clearQuizFilterBtn");
+    if (clearQuizBtn) clearQuizBtn.classList.add("hidden");
+  }
 
   const labelEl = document.getElementById(`dropdown${capitalize(type)}Label`);
   const btnEl = document.getElementById(`dropdown${capitalize(type)}Btn`);
@@ -733,6 +756,12 @@ function showAllBooks() {
 // ==========================================
 function onInputChanged() {
   const query = searchInput.value.trim();
+
+  if (isQuizFilterActive) {
+    isQuizFilterActive = false;
+    const clearQuizBtn = document.getElementById("clearQuizFilterBtn");
+    if (clearQuizBtn) clearQuizBtn.classList.add("hidden");
+  }
 
   if (query.length > 0) {
     clearSearchBtn.classList.remove("hidden");
@@ -929,6 +958,10 @@ function clearSearch() {
   clearSearchBtn.classList.add("hidden");
   loadingState.classList.add("hidden");
   isShowingAll = false;
+  isQuizFilterActive = false;
+
+  const clearQuizBtn = document.getElementById("clearQuizFilterBtn");
+  if (clearQuizBtn) clearQuizBtn.classList.add("hidden");
 
   resetDropdownFilters();
 
@@ -953,7 +986,11 @@ const BATCH_SIZE = 30;
 let renderedBatchCount = 0;
 
 function renderTable(books) {
-  resultCountBadge.textContent = `${books.length} Buku Ditemukan`;
+  if (!isQuizFilterActive && resultCountBadge) {
+    resultCountBadge.textContent = `${books.length} Buku Ditemukan`;
+    resultCountBadge.className =
+      "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700";
+  }
 
   if (books.length === 0) {
     if (booksTable) booksTable.classList.add("hidden");
@@ -1295,3 +1332,214 @@ function pausePromoAutoSlide() {
     promoAutoSlideTimer = null;
   }
 }
+
+// ==========================================
+// 17. KUIS REKOMENDASI BUKU 15 DETIK (WIZARD MODAL)
+// ==========================================
+let currentQuizStep = 1;
+let quizAnswers = {
+  step1: null, // 'anak_remaja' | 'dewasa' | 'semua'
+  step2: null, // 'Fiksi' | 'Non-Fiksi' | 'Pelajaran' | 'Agama'
+  step3: null, // 'Santai' | 'Misteri' | 'Inspiratif' | 'Petualangan'
+};
+
+function openRecommendationQuiz() {
+  const modal = document.getElementById("quizModal");
+  if (!modal) return;
+
+  // Reset quiz state ke langkah 1
+  currentQuizStep = 1;
+  quizAnswers = { step1: null, step2: null, step3: null };
+  updateQuizModalUI();
+
+  modal.classList.add("is-open");
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
+function closeRecommendationQuiz() {
+  const modal = document.getElementById("quizModal");
+  if (!modal) return;
+  modal.classList.remove("is-open");
+}
+
+function handleQuizBackdropClick(event) {
+  if (event.target && event.target.id === "quizModal") {
+    closeRecommendationQuiz();
+  }
+}
+
+function updateQuizModalUI() {
+  const badge = document.getElementById("quizStepBadge");
+  const percent = document.getElementById("quizStepPercent");
+  const fill = document.getElementById("quizProgressFill");
+  const prevBtn = document.getElementById("quizPrevBtn");
+
+  const stepPercentMap = { 1: "33%", 2: "66%", 3: "100%" };
+  const stepWidthMap = { 1: "33.33%", 2: "66.66%", 3: "100%" };
+
+  if (badge) badge.textContent = `Langkah ${currentQuizStep} dari 3`;
+  if (percent) percent.textContent = stepPercentMap[currentQuizStep] || "33%";
+  if (fill) fill.style.width = stepWidthMap[currentQuizStep] || "33.33%";
+
+  if (prevBtn) {
+    if (currentQuizStep > 1) {
+      prevBtn.classList.remove("invisible");
+    } else {
+      prevBtn.classList.add("invisible");
+    }
+  }
+
+  for (let s = 1; s <= 3; s++) {
+    const pane = document.getElementById(`quizStep${s}`);
+    if (pane) {
+      if (s === currentQuizStep) {
+        pane.classList.remove("hidden");
+      } else {
+        pane.classList.add("hidden");
+      }
+    }
+  }
+
+  const currentVal =
+    currentQuizStep === 1
+      ? quizAnswers.step1
+      : currentQuizStep === 2
+        ? quizAnswers.step2
+        : quizAnswers.step3;
+
+  const currentPane = document.getElementById(`quizStep${currentQuizStep}`);
+  if (currentPane) {
+    const cards = currentPane.querySelectorAll(".quiz-option-card");
+    cards.forEach((card) => {
+      const val = card.getAttribute("data-value");
+      if (val && val === currentVal) {
+        card.classList.add("is-selected");
+      } else {
+        card.classList.remove("is-selected");
+      }
+    });
+  }
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
+function prevQuizStep() {
+  if (currentQuizStep > 1) {
+    currentQuizStep--;
+    updateQuizModalUI();
+  }
+}
+
+function selectQuizOption(step, value) {
+  if (step === 1) {
+    quizAnswers.step1 = value;
+    currentQuizStep = 2;
+    updateQuizModalUI();
+  } else if (step === 2) {
+    quizAnswers.step2 = value;
+    currentQuizStep = 3;
+    updateQuizModalUI();
+  } else if (step === 3) {
+    quizAnswers.step3 = value;
+    closeRecommendationQuiz();
+    applyQuizRecommendation();
+  }
+}
+
+function applyQuizRecommendation() {
+  if (!BOOK_DATABASE || BOOK_DATABASE.length === 0) return;
+
+  isQuizFilterActive = true;
+  isShowingAll = false;
+  if (searchInput) searchInput.value = "";
+  if (clearSearchBtn) clearSearchBtn.classList.add("hidden");
+  resetDropdownFilters();
+
+  const readerChoice = quizAnswers.step1;
+  const targetType = quizAnswers.step2;
+  const bookMood = quizAnswers.step3;
+
+  // 1. Helper mencocokkan Target Pembaca (target_reader)
+  const matchesReader = (book) => {
+    const r = (book.targetReader || "").toLowerCase();
+    if (readerChoice === "anak_remaja") {
+      return r === "anak" || r === "remaja" || r === "semua";
+    } else if (readerChoice === "dewasa") {
+      return r === "dewasa" || r === "semua";
+    } else {
+      return true;
+    }
+  };
+
+  // 2. Helper mencocokkan Jenis Buku (target_type)
+  const matchesType = (book) => {
+    const t = (book.targetType || "").toLowerCase();
+    return t === (targetType || "").toLowerCase();
+  };
+
+  // 3. Helper mencocokkan Mood Buku (book_mood)
+  const matchesMood = (book) => {
+    const m = (book.bookMood || "").toLowerCase();
+    return m === (bookMood || "").toLowerCase();
+  };
+
+  // A. Pencocokan 100% (Exact Match: Pembaca + Jenis + Mood)
+  let matchedBooks = BOOK_DATABASE.filter(
+    (b) => matchesReader(b) && matchesType(b) && matchesMood(b),
+  );
+
+  let isFallback = false;
+
+  // B. Fallback jika 100% match kosong:
+  // "Jika tidak ada buku yang cocok 100%, tampilkan rekomendasi terdekat berdasarkan target_type."
+  if (matchedBooks.length === 0) {
+    isFallback = true;
+    // Coba target_type + matchesReader terlebih dahulu
+    matchedBooks = BOOK_DATABASE.filter(
+      (b) => matchesType(b) && matchesReader(b),
+    );
+
+    // Jika masih kosong, ambil berdasarkan target_type saja
+    if (matchedBooks.length === 0) {
+      matchedBooks = BOOK_DATABASE.filter((b) => matchesType(b));
+    }
+  }
+
+  currentResults = matchedBooks;
+  renderTable(currentResults);
+
+  // Tampilkan Tombol Reset/Ulangi Kuis
+  const clearQuizBtn = document.getElementById("clearQuizFilterBtn");
+  if (clearQuizBtn) clearQuizBtn.classList.remove("hidden");
+
+  // Tampilkan Pesan Badge Spesifik
+  if (resultCountBadge) {
+    if (!isFallback) {
+      resultCountBadge.textContent = `Rekomendasi Spesifik Berdasarkan Kuis Anda (${matchedBooks.length} Buku Ditemukan)`;
+    } else {
+      resultCountBadge.textContent = `Rekomendasi Terdekat (${targetType}): ${matchedBooks.length} Buku Ditemukan`;
+    }
+    resultCountBadge.className =
+      "text-xs font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 select-none";
+  }
+}
+
+function resetQuizFilter() {
+  isQuizFilterActive = false;
+  quizAnswers = { step1: null, step2: null, step3: null };
+
+  const clearQuizBtn = document.getElementById("clearQuizFilterBtn");
+  if (clearQuizBtn) clearQuizBtn.classList.add("hidden");
+
+  if (resultCountBadge) {
+    resultCountBadge.className =
+      "text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700";
+  }
+
+  clearSearch();
+}
+
