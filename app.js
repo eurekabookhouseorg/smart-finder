@@ -8,7 +8,7 @@
 // 1. KONFIGURASI & KONSTANTA
 // ==========================================
 const GSHEET_CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNVuHRuXDoBioSW3qvFeNn9DUDXN-M65b8U3zhOOubdvSTu5nTrlLWqfWJ0qOLctgFzjE4VW9Lo7gZ/pub?gid=1241656442&single=true&output=csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBWrbVyFoA9HnDUmlfLIX_oCs1RgttGGTLDTW_tQPeN-HSy6ahb_84GTndjBdlb00X4mP_E5jZ5XsA/pub?gid=1241656442&single=true&output=csv";
 
 const DEFAULT_COVER_PLACEHOLDER = "assets/images/book-placeholder.svg";
 const IDLE_RESET_TIMEOUT_SEC = 60; // Reset otomatis ke halaman awal jika user idle 60 detik
@@ -1542,4 +1542,3 @@ function resetQuizFilter() {
 
   clearSearch();
 }
-
