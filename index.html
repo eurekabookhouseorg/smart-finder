@@ -17,16 +17,22 @@
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
     <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.1.0" defer></script>
+    <script src="app.js?v=2.1.1" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
         cursor: pointer;
         user-select: none;
         -webkit-user-select: none;
+        border-bottom: 1px solid #e2e8f0 !important;
         transition:
           background-color 0.15s ease,
           border-color 0.15s ease;
+      }
+      .table-row-item td {
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
+        vertical-align: middle;
       }
       .table-row-item:hover {
         background-color: #fffbeb !important; /* Soft Amber-50 */
@@ -214,19 +220,19 @@
         transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      /* Touchscreen Kiosk Docked Bottom Virtual Keyboard */
+      /* Touchscreen Kiosk Docked Bottom Virtual Keyboard (Compact 3-Row) */
       #virtualKbDock {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         z-index: 50;
-        background: rgba(15, 23, 42, 0.96);
+        background: rgba(15, 23, 42, 0.97);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
-        border-top: 1px solid rgba(51, 65, 85, 0.85);
-        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.45);
-        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease;
+        border-top: 1px solid rgba(51, 65, 85, 0.9);
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
         transform: translateY(100%);
         opacity: 0;
         pointer-events: none;
@@ -238,23 +244,22 @@
       }
       body.keyboard-open #tableContainer,
       body.keyboard-open #detailContainer {
-        padding-bottom: 320px !important;
+        padding-bottom: 220px !important;
       }
       .kb-key-btn {
-        height: 3rem; /* 48px */
+        height: 2.85rem; /* ~46px */
         flex: 1;
-        max-width: 4.5rem; /* 72px */
-        min-width: 2.25rem; /* 36px */
+        min-width: 0;
         background-color: #1e293b;
         color: #f8fafc;
         border: 1px solid #334155;
-        border-radius: 0.75rem;
+        border-radius: 0.625rem;
         font-weight: 700;
         font-size: 1.05rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         cursor: pointer;
         user-select: none;
         -webkit-user-select: none;
@@ -262,24 +267,70 @@
       }
       @media (min-width: 640px) {
         .kb-key-btn {
-          height: 3.35rem; /* ~54px */
+          height: 3.2rem; /* ~51px */
           font-size: 1.15rem;
+          border-radius: 0.75rem;
         }
       }
       .kb-key-btn:hover {
         background-color: #334155;
       }
       .kb-key-btn:active {
-        transform: scale(0.93);
+        transform: scale(0.94);
         background-color: #475569;
       }
       .kb-key-btn.action-btn {
-        background-color: #334155;
-        max-width: 5.5rem;
-        font-size: 0.875rem;
+        font-size: 0.825rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
       }
-      .kb-key-btn.action-btn:hover {
-        background-color: #475569;
+      .kb-key-btn.btn-space {
+        flex: 1.8;
+        background-color: #1e293b;
+        border-color: #475569;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        color: #cbd5e1;
+      }
+      .kb-key-btn.btn-space:hover {
+        background-color: #334155;
+        color: #fff;
+      }
+      .kb-key-btn.btn-mode {
+        flex: 1.25;
+        background-color: #0f172a;
+        border-color: #0284c7;
+        color: #38bdf8;
+        font-weight: 800;
+        font-size: 0.85rem;
+      }
+      .kb-key-btn.btn-mode:hover {
+        background-color: #0369a1;
+        color: #fff;
+      }
+      .kb-key-btn.btn-backspace {
+        flex: 1.35;
+        background-color: #1e293b;
+        color: #fcd34d;
+        border-color: #475569;
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+      .kb-key-btn.btn-backspace:hover {
+        background-color: #334155;
+        color: #fef08a;
+      }
+      .kb-key-btn.btn-submit {
+        flex: 1.45;
+        background-color: #059669;
+        color: #ffffff;
+        border-color: #10b981;
+        font-size: 0.825rem;
+        font-weight: 800;
+      }
+      .kb-key-btn.btn-submit:hover {
+        background-color: #047857;
       }
     </style>
   </head>
@@ -540,7 +591,7 @@
                 type="text"
                 autocomplete="off"
                 placeholder="Ketik kata kunci pencarian (Min. 3 Karakter)..."
-                class="w-full h-12 pl-11 pr-20 bg-white border border-slate-200 rounded-xl text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:border-transparent transition shadow-2xs"
+                class="w-full h-12 pl-11 pr-24 bg-white border border-slate-200 rounded-xl text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:border-transparent transition shadow-2xs"
               />
 
               <!-- Right Actions: Clear & Touch Keyboard Trigger -->
@@ -549,7 +600,7 @@
                   id="clearSearchBtn"
                   type="button"
                   onclick="clearSearch()"
-                  class="hidden text-slate-400 hover:text-slate-600 rounded-full p-1.5 transition active:scale-95"
+                  class="hidden text-slate-400 hover:text-slate-600 rounded-full p-1.5 transition active:scale-95 cursor-pointer"
                   title="Hapus Pencarian"
                 >
                   <i data-lucide="x" class="w-4 h-4"></i>
@@ -557,7 +608,7 @@
                 <button
                   type="button"
                   onclick="toggleVirtualKeyboard()"
-                  class="text-slate-400 hover:text-amber-600 rounded-lg p-1.5 transition active:scale-95 cursor-pointer"
+                  class="text-slate-400 hover:text-amber-600 rounded-lg p-1.5 transition active:scale-95 cursor-pointer flex items-center"
                   title="Buka Virtual Keyboard Touchscreen"
                 >
                   <i data-lucide="keyboard" class="w-5 h-5"></i>
@@ -1346,9 +1397,9 @@
       </div>
     </div>
 
-    <!-- DOCKED BOTTOM VIRTUAL KEYBOARD FOR TOUCHSCREEN KIOSK (24-inch vertical & touch devices) -->
-    <div id="virtualKbDock" class="p-3 sm:p-4">
-      <div class="max-w-4xl mx-auto flex flex-col gap-1.5 sm:gap-2">
+    <!-- DOCKED BOTTOM VIRTUAL KEYBOARD FOR TOUCHSCREEN KIOSK (Compact 3-Row Layout) -->
+    <div id="virtualKbDock" class="p-2.5 sm:p-3">
+      <div class="max-w-4xl mx-auto flex flex-col gap-1 sm:gap-1.5">
         <!-- Keyboard Control Header / Quick Helpers -->
         <div class="flex items-center justify-between px-1 pb-1 border-b border-slate-700/60 text-slate-400 text-xs">
           <div class="flex items-center gap-2">
@@ -1356,52 +1407,33 @@
               <i data-lucide="keyboard" class="w-3.5 h-3.5 text-amber-400"></i>
               Virtual Keyboard
             </span>
-            <span class="text-[11px] text-slate-500 hidden sm:inline">Sentuh tombol untuk mengetik</span>
+            <span class="text-[11px] text-slate-500 hidden sm:inline" id="kbModeHint">Mode: Huruf (ABC)</span>
           </div>
           <div class="flex items-center gap-2">
             <button
               type="button"
               onclick="kbClear()"
-              class="hover:text-red-400 px-2 py-1 rounded transition text-xs font-semibold cursor-pointer"
+              class="hover:text-red-400 px-2 py-0.5 rounded transition text-xs font-semibold cursor-pointer"
             >
               Reset Input
             </button>
             <button
               type="button"
               onclick="closeVirtualKeyboard()"
-              class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded-lg border border-slate-600 transition text-xs font-bold cursor-pointer flex items-center gap-1 shadow-xs"
+              class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-600 transition text-xs font-bold cursor-pointer flex items-center gap-1 shadow-xs"
             >
-              <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i> Selesai
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i> Tutup
             </button>
           </div>
         </div>
 
-        <!-- Row 0: Angka 0-9 & Minus -->
-        <div class="flex justify-center gap-1 sm:gap-1.5 w-full" id="kbRow0"></div>
-        <!-- Row 1: QWERTY -->
+        <!-- 3 Compact Keyboard Rows -->
+        <!-- Row 1: QWERTY (or 1 2 3 4 5 6 7 8 9 0) -->
         <div class="flex justify-center gap-1 sm:gap-1.5 w-full" id="kbRow1"></div>
-        <!-- Row 2: ASDFGHJKL -->
+        <!-- Row 2: ASDFGHJKL + SPASI (or Symbols + SPASI) -->
         <div class="flex justify-center gap-1 sm:gap-1.5 w-full" id="kbRow2"></div>
-        <!-- Row 3: ZXCVBNM + Backspace -->
+        <!-- Row 3: [?123 / ABC] + ZXCVBNM + [HAPUS] + [CARI] -->
         <div class="flex justify-center gap-1 sm:gap-1.5 w-full" id="kbRow3"></div>
-
-        <!-- Row 4: Spacebar & Actions -->
-        <div class="flex justify-center gap-1.5 sm:gap-2 w-full mt-0.5">
-          <button
-            type="button"
-            onclick="kbInput(' ')"
-            class="kb-key-btn flex-1 max-w-xl text-xs sm:text-sm font-bold tracking-wider uppercase bg-slate-800 border-slate-600 hover:bg-slate-700"
-          >
-            SPASI
-          </button>
-          <button
-            type="button"
-            onclick="closeVirtualKeyboard()"
-            class="kb-key-btn action-btn bg-emerald-700 hover:bg-emerald-600 text-white font-bold border-emerald-600 px-4 flex items-center justify-center gap-1"
-          >
-            <i data-lucide="check" class="w-4 h-4"></i> CARI
-          </button>
-        </div>
       </div>
     </div>
   </body>
