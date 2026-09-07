@@ -62,6 +62,7 @@ let selectedBookId = null;
 let debounceTimer = null;
 let lastActivityTimestamp = Date.now();
 let isShowingAll = false;
+let isQuizFilterActive = false;
 
 // ==========================================
 // 3. REFERENSI ELEMEN DOM
