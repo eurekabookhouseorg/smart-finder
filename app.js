@@ -309,7 +309,8 @@ function parseCSV(csvText) {
       return {
         id: `BK-${index + 1}`,
         sku: rowObj.sku || "-",
-        productCode: rowObj.product_code || "-",
+        productCode:
+          (rowObj.product_code || rowObj.productCode || "").trim() || "-",
         title: rowObj.title || "Tanpa Judul",
         author:
           rowObj.author && rowObj.author.trim()
@@ -1146,7 +1147,7 @@ function selectBook(bookId, updateTable = true) {
     detailAuthorSpec.textContent = book.author || "Tidak Diketahui";
 
   detailPublisher.textContent = book.publisher || "-";
-  detailProductCode.textContent = book.sku || book.productCode || "-";
+  detailProductCode.textContent = book.productCode || "-";
   detailSynopsis.textContent = book.synopsis || "Tidak ada sinopsis tersedia.";
 }
 
