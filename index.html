@@ -17,7 +17,7 @@
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
     <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.1.2" defer></script>
+    <script src="app.js?v=2.1.3" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
@@ -221,19 +221,21 @@
         transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      /* Touchscreen Kiosk Docked Bottom Virtual Keyboard (Android HP Style) */
+      /* Touchscreen Kiosk Docked Bottom Virtual Keyboard (Android Gboard Style) */
       #virtualKbDock {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         z-index: 50;
-        background: rgba(15, 23, 42, 0.97);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border-top: 1px solid rgba(51, 65, 85, 0.9);
-        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
-        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+        background: #e9eef6;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid #cbd5e1;
+        box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.14);
+        transition:
+          transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.25s ease;
         transform: translateY(100%);
         opacity: 0;
         pointer-events: none;
@@ -245,93 +247,131 @@
       }
       body.keyboard-open #tableContainer,
       body.keyboard-open #detailContainer {
-        padding-bottom: 230px !important;
+        padding-bottom: 280px !important;
       }
+
+      /* 20-Column CSS Grid for Exact Android Key Proportions & Stagger */
+      .kb-grid-row {
+        display: grid;
+        grid-template-columns: repeat(20, minmax(0, 1fr));
+        column-gap: 5px;
+        row-gap: 5px;
+        width: 100%;
+      }
+      @media (min-width: 640px) {
+        .kb-grid-row {
+          column-gap: 7px;
+          row-gap: 7px;
+        }
+      }
+
+      /* Grid Column Spans */
+      .kb-col-1 { grid-column: span 1; }
+      .kb-col-2 { grid-column: span 2; }
+      .kb-col-3 { grid-column: span 3; }
+      .kb-col-4 { grid-column: span 4; }
+      .kb-col-11 { grid-column: span 11; }
+
       .kb-key-btn {
-        height: 2.75rem; /* ~44px */
-        flex: 1;
+        position: relative;
+        height: 2.85rem; /* ~45px */
         min-width: 0;
-        background-color: #1e293b;
-        color: #f8fafc;
-        border: 1px solid #334155;
+        background-color: #ffffff;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
         border-radius: 0.5rem;
-        font-weight: 700;
-        font-size: 1.05rem;
+        font-weight: 600;
+        font-size: 1.15rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 1.5px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
         cursor: pointer;
         user-select: none;
         -webkit-user-select: none;
-        transition: transform 0.08s ease, background-color 0.15s ease;
+        transition:
+          transform 0.08s ease,
+          background-color 0.12s ease;
       }
       @media (min-width: 640px) {
         .kb-key-btn {
-          height: 3.15rem; /* ~50px */
-          font-size: 1.15rem;
+          height: 3.35rem; /* ~54px */
+          font-size: 1.3rem;
           border-radius: 0.625rem;
         }
       }
       .kb-key-btn:hover {
-        background-color: #334155;
+        background-color: #f8fafc;
       }
       .kb-key-btn:active {
-        transform: scale(0.93);
-        background-color: #475569;
+        transform: scale(0.94);
+        background-color: #e2e8f0 !important;
       }
+
+      /* Superscript Number Hints on Row 1 */
+      .kb-key-btn .kb-hint {
+        position: absolute;
+        top: 2px;
+        right: 4px;
+        font-size: 0.625rem;
+        font-weight: 700;
+        color: #94a3b8;
+        line-height: 1;
+        pointer-events: none;
+      }
+      @media (min-width: 640px) {
+        .kb-key-btn .kb-hint {
+          top: 3px;
+          right: 5px;
+          font-size: 0.6875rem;
+        }
+      }
+
+      /* Action / Function Buttons (Shift, Backspace, ?123, Comma) */
       .kb-key-btn.action-btn {
-        font-size: 0.825rem;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        background-color: #dbe2ef;
+        color: #1e293b;
+        border-color: #cbd5e1;
+        font-size: 0.9rem;
+        font-weight: 700;
       }
+      .kb-key-btn.action-btn:hover {
+        background-color: #d0d9e8;
+      }
+      .kb-key-btn.action-btn:active {
+        background-color: #bac7db !important;
+      }
+
+      /* Shift Active State */
+      .kb-key-btn.btn-shift.is-active {
+        background-color: #2563eb !important;
+        color: #ffffff !important;
+        border-color: #1d4ed8 !important;
+      }
+
+      /* Spacebar */
       .kb-key-btn.btn-space {
-        flex: 3;
-        background-color: #1e293b;
-        border-color: #475569;
+        background-color: #ffffff;
+        color: #475569;
         font-size: 0.85rem;
-        font-weight: 800;
+        font-weight: 700;
         letter-spacing: 0.05em;
-        color: #e2e8f0;
       }
-      .kb-key-btn.btn-space:hover {
-        background-color: #334155;
-        color: #fff;
-      }
-      .kb-key-btn.btn-mode {
-        flex: 1.2;
-        background-color: #0f172a;
-        border-color: #0284c7;
-        color: #38bdf8;
-        font-weight: 800;
-        font-size: 0.85rem;
-      }
-      .kb-key-btn.btn-mode:hover {
-        background-color: #0369a1;
-        color: #fff;
-      }
-      .kb-key-btn.btn-backspace {
-        flex: 1.5;
-        background-color: #1e293b;
-        color: #fcd34d;
-        border-color: #475569;
-        font-size: 0.8rem;
-        font-weight: 800;
-      }
-      .kb-key-btn.btn-backspace:hover {
-        background-color: #334155;
-        color: #fef08a;
-      }
+
+      /* Search Submit Action Button */
       .kb-key-btn.btn-submit {
-        flex: 1.3;
-        background-color: #059669;
+        background-color: #2563eb;
         color: #ffffff;
-        border-color: #10b981;
-        font-size: 0.825rem;
+        border-color: #1d4ed8;
+        font-size: 0.9rem;
         font-weight: 800;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.35);
       }
       .kb-key-btn.btn-submit:hover {
-        background-color: #047857;
+        background-color: #1d4ed8;
+      }
+      .kb-key-btn.btn-submit:active {
+        background-color: #1e40af !important;
       }
     </style>
   </head>
@@ -1388,47 +1428,57 @@
       </div>
     </div>
 
-    <!-- DOCKED BOTTOM VIRTUAL KEYBOARD (ANDROID HP STYLE) -->
+    <!-- DOCKED BOTTOM VIRTUAL KEYBOARD (ANDROID GBOARD STYLE) -->
     <div id="virtualKbDock" class="p-2 sm:p-3">
-      <div class="max-w-2xl sm:max-w-3xl mx-auto flex flex-col gap-1.5 sm:gap-2">
+      <div
+        class="max-w-3xl lg:max-w-4xl mx-auto flex flex-col gap-1.5 sm:gap-2"
+      >
         <!-- Keyboard Control Header -->
-        <div class="flex items-center justify-between px-1 pb-1 border-b border-slate-700/60 text-slate-400 text-xs">
+        <div
+          class="flex items-center justify-between px-1 pb-1.5 border-b border-slate-300/80 text-slate-600 text-xs"
+        >
           <div class="flex items-center gap-2">
-            <span class="inline-flex items-center gap-1 font-semibold text-slate-300">
-              <i data-lucide="keyboard" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span
+              class="inline-flex items-center gap-1.5 font-bold text-slate-800"
+            >
+              <i data-lucide="keyboard" class="w-4 h-4 text-blue-600"></i>
               Virtual Keyboard
             </span>
-            <span class="text-[11px] text-slate-500 hidden sm:inline" id="kbModeHint">Mode: Huruf (ABC)</span>
+            <span
+              class="text-[11px] text-slate-500 hidden sm:inline"
+              id="kbModeHint"
+              >Mode: Huruf (ABC)</span
+            >
           </div>
           <div class="flex items-center gap-2">
             <button
               type="button"
               onclick="kbClear()"
-              class="hover:text-red-400 px-2 py-0.5 rounded transition text-xs font-semibold cursor-pointer"
+              class="text-slate-600 hover:text-red-600 px-2.5 py-0.5 rounded transition text-xs font-semibold cursor-pointer border border-slate-300 hover:bg-red-50 bg-white"
             >
-              Reset Input
+              Hapus Input
             </button>
             <button
               type="button"
               onclick="closeVirtualKeyboard()"
-              class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-600 transition text-xs font-bold cursor-pointer flex items-center gap-1 shadow-xs"
+              class="bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-300 transition text-xs font-bold cursor-pointer flex items-center gap-1 shadow-xs"
             >
               <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i> Tutup
             </button>
           </div>
         </div>
 
-        <!-- Baris 1: 10 Tombol QWERTY (Lebar 100%) -->
-        <div class="flex justify-center gap-1 sm:gap-1.5 w-full" id="kbRow1"></div>
+        <!-- Baris 1: 10 Tombol QWERTY (20-Kolom Grid: Tiap Tombol Span 2) -->
+        <div class="kb-grid-row" id="kbRow1"></div>
 
-        <!-- Baris 2: 9 Tombol ASDFGHJKL (TIDAK FULL LEBARNYA - Indented ~90% persis HP Android) -->
-        <div class="flex justify-center gap-1 sm:gap-1.5 w-[90%] mx-auto" id="kbRow2"></div>
+        <!-- Baris 2: 9 Tombol ASDFGHJKL (Staggered 0.5 Key: Span 1 + 9x Span 2 + Span 1) -->
+        <div class="kb-grid-row" id="kbRow2"></div>
 
-        <!-- Baris 3: 7 Tombol ZXCVBNM + HAPUS (TIDAK FULL LEBARNYA - Indented ~85% persis HP Android) -->
-        <div class="flex justify-center gap-1 sm:gap-1.5 w-[85%] mx-auto" id="kbRow3"></div>
+        <!-- Baris 3: Shift (Span 3) + 7 Tombol (7x Span 2) + Backspace (Span 3) -->
+        <div class="kb-grid-row" id="kbRow3"></div>
 
-        <!-- Baris 4: [?123 / ABC] + SPASI LEBAR + [CARI] -->
-        <div class="flex justify-center gap-1.5 sm:gap-2 w-full mt-0.5" id="kbRow4"></div>
+        <!-- Baris 4: ?123 (Span 3) + Comma (Span 2) + Spasi (Span 11) + Cari (Span 4) -->
+        <div class="kb-grid-row" id="kbRow4"></div>
       </div>
     </div>
   </body>

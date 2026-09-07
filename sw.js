@@ -4,7 +4,7 @@
  * Versi: 2.0.0
  */
 
-const CACHE_NAME = "smart-finder-kiosk-v2.1.2";
+const CACHE_NAME = "smart-finder-kiosk-v2.1.3";
 
 const STATIC_ASSETS = [
   "./",

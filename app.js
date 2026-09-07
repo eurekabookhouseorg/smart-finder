@@ -1082,8 +1082,8 @@ function renderNextBatch() {
                   isOutOfStock
                     ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
                     : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock}</span>`
-                    ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">Habis</span>`
-                    : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">${book.stock}</span>`
+                      ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">Habis</span>`
+                      : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">${book.stock}</span>`
                 }
             </td>
             <!-- Kolom Harga Produk -->
@@ -1179,9 +1179,10 @@ function resetDetailPanel() {
 }
 
 // ==========================================
-// 15. VIRTUAL TOUCHSCREEN KEYBOARD (ANDROID HP STYLE)
+// 15. VIRTUAL TOUCHSCREEN KEYBOARD (ANDROID GBOARD STYLE - 20 COLS GRID)
 // ==========================================
 let currentKbMode = "abc"; // "abc" (huruf) atau "123" (angka & simbol)
+let isKbShiftActive = false; // status tombol shift
 
 function setupVirtualKeyboard() {
   const r1 = document.getElementById("kbRow1");
@@ -1192,79 +1193,149 @@ function setupVirtualKeyboard() {
 
   if (!r1 || !r2 || !r3 || !r4) return;
 
-  const makeKey = (char) => {
-    const encoded = encodeURIComponent(char);
-    return `<button type="button" onclick="kbInput(decodeURIComponent('${encoded}'))" class="kb-key-btn">${char}</button>`;
-  };
-
   if (currentKbMode === "abc") {
     if (hint) hint.textContent = "Mode: Huruf (ABC)";
 
-    const row1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
+    // Baris 1: 10 Tombol QWERTY dengan hint angka 1-0 (Tiap tombol span 2 dari 20 kolom)
+    const row1 = [
+      { key: "Q", hint: "1" },
+      { key: "W", hint: "2" },
+      { key: "E", hint: "3" },
+      { key: "R", hint: "4" },
+      { key: "T", hint: "5" },
+      { key: "Y", hint: "6" },
+      { key: "U", hint: "7" },
+      { key: "I", hint: "8" },
+      { key: "O", hint: "9" },
+      { key: "P", hint: "0" },
+    ];
+
+    // Baris 2: 9 Tombol ASDFGHJKL (Diapit Spacer 1 kolom di kiri & kanan = 20 kolom)
     const row2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
+
+    // Baris 3: Shift (Span 3) + 7 Tombol ZXCVBNM (Span 2) + Backspace (Span 3) = 20 kolom
     const row3 = ["Z", "X", "C", "V", "B", "N", "M"];
 
-    // Baris 1: 10 Tombol QWERTY (Lebar 100%)
-    r1.innerHTML = row1.map(makeKey).join("");
+    // Baris 1 Render:
+    r1.innerHTML = row1
+      .map((item) => {
+        const char = isKbShiftActive ? item.key.toUpperCase() : item.key.toLowerCase();
+        return `<button type="button" onclick="kbInput('${char}')" class="kb-key-btn kb-col-2">
+          <span>${item.key}</span>
+          <span class="kb-hint">${item.hint}</span>
+        </button>`;
+      })
+      .join("");
 
-    // Baris 2: 9 Tombol ASDFGHJKL (TIDAK FULL LEBARNYA - Indented ~90% persis HP Android)
-    r2.innerHTML = row2.map(makeKey).join("");
+    // Baris 2 Render: Indent 0.5 key di kiri & kanan persis Android
+    r2.innerHTML =
+      `<div class="kb-col-1 pointer-events-none select-none"></div>` +
+      row2
+        .map((char) => {
+          const charToType = isKbShiftActive ? char.toUpperCase() : char.toLowerCase();
+          return `<button type="button" onclick="kbInput('${charToType}')" class="kb-key-btn kb-col-2">
+            <span>${char}</span>
+          </button>`;
+        })
+        .join("") +
+      `<div class="kb-col-1 pointer-events-none select-none"></div>`;
 
-    // Baris 3: 7 Tombol ZXCVBNM + HAPUS (TIDAK FULL LEBARNYA - Indented ~85% persis HP Android)
+    // Baris 3 Render: Shift di kiri, 7 huruf, Backspace di kanan
+    const shiftClass = isKbShiftActive
+      ? "kb-key-btn action-btn btn-shift kb-col-3 is-active flex items-center justify-center"
+      : "kb-key-btn action-btn btn-shift kb-col-3 flex items-center justify-center";
+
     r3.innerHTML =
-      row3.map(makeKey).join("") +
-      `<button type="button" onclick="kbBackspace()" class="kb-key-btn action-btn btn-backspace flex items-center justify-center gap-1" title="Hapus Karakter">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
-        <span>HAPUS</span>
+      `<button type="button" onclick="toggleKbShift()" class="${shiftClass}" title="Shift">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4L4 14h5v6h6v-6h5L12 4z"/></svg>
+      </button>` +
+      row3
+        .map((char) => {
+          const charToType = isKbShiftActive ? char.toUpperCase() : char.toLowerCase();
+          return `<button type="button" onclick="kbInput('${charToType}')" class="kb-key-btn kb-col-2">
+            <span>${char}</span>
+          </button>`;
+        })
+        .join("") +
+      `<button type="button" onclick="kbBackspace()" class="kb-key-btn action-btn btn-backspace kb-col-3 flex items-center justify-center" title="Hapus Karakter">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
       </button>`;
 
-    // Baris 4: [?123] di kiri + SPASI LEBAR + [CARI] di kanan
+    // Baris 4 Render: [?123] (Span 3) + [,] (Span 2) + SPASI (Span 11) + [CARI] (Span 4) = 20 kolom
     r4.innerHTML =
-      `<button type="button" onclick="toggleKbMode()" class="kb-key-btn action-btn btn-mode" title="Angka & Simbol">
+      `<button type="button" onclick="toggleKbMode()" class="kb-key-btn action-btn kb-col-3" title="Angka & Simbol">
         <span>?123</span>
       </button>` +
-      `<button type="button" onclick="kbInput(' ')" class="kb-key-btn action-btn btn-space" title="Spasi">
+      `<button type="button" onclick="kbInput(',')" class="kb-key-btn action-btn kb-col-2" title="Koma">
+        <span>,</span>
+      </button>` +
+      `<button type="button" onclick="kbInput(' ')" class="kb-key-btn btn-space kb-col-11" title="Spasi">
         <span>SPASI</span>
       </button>` +
-      `<button type="button" onclick="kbSubmit()" class="kb-key-btn action-btn btn-submit flex items-center justify-center gap-1" title="Cari Buku">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      `<button type="button" onclick="kbSubmit()" class="kb-key-btn btn-submit kb-col-4 flex items-center justify-center gap-1.5" title="Cari Buku">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <span>CARI</span>
       </button>`;
   } else {
-    // Mode Angka & Simbol
+    // Mode Angka & Simbol (?123)
     if (hint) hint.textContent = "Mode: Angka & Simbol (?123)";
 
-    const row1 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-    const row2 = ["-", "/", ".", ",", "'", ":", "&", "(", ")"];
-    const row3 = ["@", "#", "!", "?", "*", "%", "+"];
+    const numbersRow = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+    const symbolsRow2 = ["@", "#", "$", "%", "&", "-", "+", "(", ")"];
+    const symbolsRow3 = ["*", "\"", "'", ":", ";", "!", "?"];
 
-    // Baris 1: Angka 1-0 (Lebar 100%)
-    r1.innerHTML = row1.map(makeKey).join("");
+    // Baris 1: Angka 1-0 (10 tombol, span 2 = 20 kolom)
+    r1.innerHTML = numbersRow
+      .map((num) => `<button type="button" onclick="kbInput('${num}')" class="kb-key-btn kb-col-2"><span>${num}</span></button>`)
+      .join("");
 
-    // Baris 2: Simbol Populer (TIDAK FULL LEBARNYA)
-    r2.innerHTML = row2.map(makeKey).join("");
+    // Baris 2: Spacer 1 + 9 Simbol (Span 2) + Spacer 1 = 20 kolom
+    r2.innerHTML =
+      `<div class="kb-col-1 pointer-events-none select-none"></div>` +
+      symbolsRow2
+        .map((sym) => {
+          const encoded = encodeURIComponent(sym);
+          return `<button type="button" onclick="kbInput(decodeURIComponent('${encoded}'))" class="kb-key-btn kb-col-2"><span>${sym}</span></button>`;
+        })
+        .join("") +
+      `<div class="kb-col-1 pointer-events-none select-none"></div>`;
 
-    // Baris 3: Simbol Tambahan + Hapus (TIDAK FULL LEBARNYA)
+    // Baris 3: Tombol Garis Miring (Span 3) + 7 Simbol (Span 2) + Backspace (Span 3) = 20 kolom
     r3.innerHTML =
-      row3.map(makeKey).join("") +
-      `<button type="button" onclick="kbBackspace()" class="kb-key-btn action-btn btn-backspace flex items-center justify-center gap-1" title="Hapus Karakter">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
-        <span>HAPUS</span>
+      `<button type="button" onclick="kbInput('/')" class="kb-key-btn action-btn kb-col-3" title="Garis Miring">
+        <span>/</span>
+      </button>` +
+      symbolsRow3
+        .map((sym) => {
+          const encoded = encodeURIComponent(sym);
+          return `<button type="button" onclick="kbInput(decodeURIComponent('${encoded}'))" class="kb-key-btn kb-col-2"><span>${sym}</span></button>`;
+        })
+        .join("") +
+      `<button type="button" onclick="kbBackspace()" class="kb-key-btn action-btn btn-backspace kb-col-3 flex items-center justify-center" title="Hapus Karakter">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
       </button>`;
 
-    // Baris 4: [ABC] di kiri + SPASI LEBAR + [CARI] di kanan
+    // Baris 4: [ABC] (Span 3) + [.] (Span 2) + SPASI (Span 11) + [CARI] (Span 4) = 20 kolom
     r4.innerHTML =
-      `<button type="button" onclick="toggleKbMode()" class="kb-key-btn action-btn btn-mode" title="Kembali ke Huruf">
+      `<button type="button" onclick="toggleKbMode()" class="kb-key-btn action-btn kb-col-3" title="Kembali ke Huruf">
         <span>ABC</span>
       </button>` +
-      `<button type="button" onclick="kbInput(' ')" class="kb-key-btn action-btn btn-space" title="Spasi">
+      `<button type="button" onclick="kbInput('.')" class="kb-key-btn action-btn kb-col-2" title="Titik">
+        <span>.</span>
+      </button>` +
+      `<button type="button" onclick="kbInput(' ')" class="kb-key-btn btn-space kb-col-11" title="Spasi">
         <span>SPASI</span>
       </button>` +
-      `<button type="button" onclick="kbSubmit()" class="kb-key-btn action-btn btn-submit flex items-center justify-center gap-1" title="Cari Buku">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      `<button type="button" onclick="kbSubmit()" class="kb-key-btn btn-submit kb-col-4 flex items-center justify-center gap-1.5" title="Cari Buku">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <span>CARI</span>
       </button>`;
   }
+}
+
+function toggleKbShift() {
+  isKbShiftActive = !isKbShiftActive;
+  setupVirtualKeyboard();
 }
 
 function toggleKbMode() {
@@ -1308,6 +1379,10 @@ function kbInput(char) {
   if (!searchInput) return;
   searchInput.value += char;
   onInputChanged();
+  if (isKbShiftActive && /[a-zA-Z]/.test(char)) {
+    isKbShiftActive = false;
+    setupVirtualKeyboard();
+  }
 }
 
 function kbBackspace() {
