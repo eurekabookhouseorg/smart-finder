@@ -450,11 +450,7 @@ function setupKioskIdleReset() {
       if (hasActiveQuery || hasSelection || hasDropdown) {
         console.log("[Kiosk] Reset otomatis karena pengunjung tidak aktif.");
         clearSearch();
-
-        const kbPanel = document.getElementById("virtualKbPanel");
-        if (kbPanel && !kbPanel.classList.contains("hidden")) {
-          kbPanel.classList.add("hidden");
-        }
+        closeVirtualKeyboard();
 
         setTimeout(() => {
           if (searchInput) searchInput.focus();
@@ -1037,11 +1033,11 @@ function renderNextBatch() {
             data-book-id="${book.id}"
             class="table-row-item ${isSelected ? "is-selected" : ""}">
             <!-- Kolom Nomor Urut Baris (Paling Kiri) -->
-            <td class="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
+            <td class="py-3.5 sm:py-4 px-3 text-center font-mono text-xs font-semibold text-slate-500">
                 ${rowNumber}
             </td>
-            <td class="py-3 px-4">
-                <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
+            <td class="py-3.5 sm:py-4 px-4">
+                <div class="font-semibold text-slate-900 text-sm sm:text-base leading-snug">${book.title}</div>
                 <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
                     <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                         ${book.category1 || "Umum"}
@@ -1051,16 +1047,16 @@ function renderNextBatch() {
                     <span class="text-[11px] text-slate-400">${book.publisher}</span>
                 </div>
             </td>
-            <td class="py-3 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
+            <td class="py-3.5 sm:py-4 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
                 <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${book.sku || "-"}</span>
             </td>
-            <td class="py-3 px-3">
+            <td class="py-3.5 sm:py-4 px-3">
                 <span class="inline-flex items-center gap-1 text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 px-2.5 py-1 rounded-md">
                     <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
                     ${book.shelfCode}
                 </span>
             </td>
-            <td class="py-3 px-3 text-center">
+            <td class="py-3.5 sm:py-4 px-3 text-center">
                 ${
                   isOutOfStock
                     ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
@@ -1068,7 +1064,7 @@ function renderNextBatch() {
                 }
             </td>
             <!-- Kolom Harga Produk -->
-            <td class="py-3 px-3 text-right">
+            <td class="py-3.5 sm:py-4 px-3 text-right">
                 <span class="font-bold text-slate-900 text-xs font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
             </td>
         </tr>
@@ -1160,37 +1156,78 @@ function resetDetailPanel() {
 // 15. VIRTUAL TOUCHSCREEN KEYBOARD
 // ==========================================
 function setupVirtualKeyboard() {
+  const row0 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-"];
   const row1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
   const row2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
   const row3 = ["Z", "X", "C", "V", "B", "N", "M"];
 
   const makeBtn = (char) =>
-    `<button onclick="kbInput('${char}')" class="h-9 w-8 sm:w-10 bg-white hover:bg-slate-100 border border-slate-200 rounded text-slate-800 text-xs font-semibold active:bg-slate-200 shadow-xs">${char}</button>`;
+    `<button type="button" onclick="kbInput('${char}')" class="kb-key-btn">${char}</button>`;
 
+  const r0 = document.getElementById("kbRow0");
   const r1 = document.getElementById("kbRow1");
   const r2 = document.getElementById("kbRow2");
   const r3 = document.getElementById("kbRow3");
 
+  if (r0) r0.innerHTML = row0.map(makeBtn).join("");
   if (r1) r1.innerHTML = row1.map(makeBtn).join("");
   if (r2) r2.innerHTML = row2.map(makeBtn).join("");
-  if (r3) r3.innerHTML = row3.map(makeBtn).join("");
+  if (r3) {
+    const letters = row3.map(makeBtn).join("");
+    const backspaceBtn = `
+      <button type="button" onclick="kbBackspace()" class="kb-key-btn action-btn text-amber-300 hover:text-amber-200" title="Hapus Karakter">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+        <span>HAPUS</span>
+      </button>
+    `;
+    r3.innerHTML = letters + backspaceBtn;
+  }
+}
+
+function openVirtualKeyboard() {
+  const kbDock = document.getElementById("virtualKbDock");
+  if (kbDock) {
+    kbDock.classList.add("is-open");
+    document.body.classList.add("keyboard-open");
+  }
+}
+
+function closeVirtualKeyboard() {
+  const kbDock = document.getElementById("virtualKbDock");
+  if (kbDock) {
+    kbDock.classList.remove("is-open");
+    document.body.classList.remove("keyboard-open");
+  }
 }
 
 function toggleVirtualKeyboard() {
-  const kbPanel = document.getElementById("virtualKbPanel");
-  if (kbPanel) {
-    kbPanel.classList.toggle("hidden");
+  const kbDock = document.getElementById("virtualKbDock");
+  if (kbDock) {
+    if (kbDock.classList.contains("is-open")) {
+      closeVirtualKeyboard();
+    } else {
+      openVirtualKeyboard();
+    }
   }
 }
 
 function kbInput(char) {
+  if (!searchInput) return;
   searchInput.value += char;
   onInputChanged();
 }
 
 function kbBackspace() {
+  if (!searchInput) return;
   searchInput.value = searchInput.value.slice(0, -1);
   onInputChanged();
+}
+
+function kbClear() {
+  if (!searchInput) return;
+  searchInput.value = "";
+  onInputChanged();
+  searchInput.focus();
 }
 
 // ==========================================
