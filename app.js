@@ -1116,6 +1116,9 @@ function selectBook(bookId, updateTable = true) {
 
   noSelectionState.classList.add("hidden");
   bookDetailContent.classList.remove("hidden");
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 
   detailShelfCode.textContent = book.shelfCode;
   detailFloor.textContent = formatFloor(book.floor);
@@ -1855,6 +1858,43 @@ const SHELF_TO_MAP_ID = {
   "AK1-006": "bag_2",
 };
 
+function fitMapToContainer() {
+  const container = document.getElementById("mapViewportContainer");
+  const svg = document.getElementById("svgBlueprint");
+  if (!container || !svg) return;
+
+  const rect = container.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return;
+
+  // Safe padding
+  const padH = 16;
+  const padW = 24;
+  const availW = Math.max(rect.width - padW, 50);
+  const availH = Math.max(rect.height - padH, 50);
+
+  // SVG viewBox aspect ratio: width 830 / height 1060 = ~0.783
+  const svgRatio = 830 / 1060;
+  const availRatio = availW / availH;
+
+  let targetW, targetH;
+  if (availRatio > svgRatio) {
+    // Container is wider than denah (Landscape/Desktop) -> FIT 100% TO HEIGHT!
+    targetH = availH;
+    targetW = availH * svgRatio;
+  } else {
+    // Container is narrower -> FIT TO WIDTH
+    targetW = availW;
+    targetH = availW / svgRatio;
+  }
+
+  svg.style.width = `${Math.round(targetW)}px`;
+  svg.style.height = `${Math.round(targetH)}px`;
+  svg.style.maxWidth = "100%";
+  svg.style.maxHeight = "100%";
+  svg.style.display = "block";
+  svg.style.margin = "auto";
+}
+
 function updateMapTransform() {
   const viewportGroup = document.getElementById("viewportGroup");
   if (viewportGroup) {
@@ -1869,6 +1909,7 @@ function zoomMap() {
 function resetMapZoom() {
   // Statis: Denah selalu tampil utuh dalam 1 layar
   updateMapTransform();
+  fitMapToContainer();
 }
 
 function centerMapOn(cx, cy) {
@@ -2186,6 +2227,12 @@ function openFloorPlanModal(targetBook = null) {
     lucide.createIcons();
   }
 
+  // Ensure SVG is scaled to fit container height
+  fitMapToContainer();
+  setTimeout(() => {
+    fitMapToContainer();
+  }, 50);
+
   const banner = document.getElementById("mapBookTargetBanner");
   const bookContextCard = document.getElementById("mapBookContextCard");
   const pinLayer = document.getElementById("mapPinMarkerLayer");
@@ -2361,4 +2408,12 @@ function initFloorPlan() {
       }
     }
   });
+
+  // 4. Responsive Scaling (Fit SVG to Container Height)
+  window.addEventListener("resize", fitMapToContainer);
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => {
+      fitMapToContainer();
+    }).observe(container);
+  }
 }

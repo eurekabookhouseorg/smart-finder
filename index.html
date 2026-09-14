@@ -17,7 +17,7 @@
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
     <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.1.8" defer></script>
+    <script src="app.js?v=2.1.9" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
@@ -394,14 +394,31 @@
           linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
         background-size: 24px 24px;
       }
+      #openShelfOnMapBtn {
+        background-color: #059669 !important;
+        color: #ffffff !important;
+      }
+      #openShelfOnMapBtn:hover {
+        background-color: #047857 !important;
+      }
+      #openShelfOnMapBtn:active {
+        background-color: #065f46 !important;
+      }
+      #mapViewportContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
       #svgBlueprint {
-        height: 100% !important;
-        max-height: 100% !important;
-        width: auto !important;
-        max-width: 100% !important;
-        aspect-ratio: 830 / 1060;
         display: block;
-        margin: 0 auto;
+        margin: auto;
+        max-height: 100% !important;
+        max-width: 100% !important;
+        object-fit: contain;
       }
       .shelf-item {
         cursor: pointer;
@@ -1028,10 +1045,14 @@
               type="button"
               id="openShelfOnMapBtn"
               onclick="openFloorPlanForCurrentBook()"
-              class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-[0.99] cursor-pointer"
+              class="w-full text-white font-bold py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-[0.99] cursor-pointer"
+              style="background-color: #059669 !important; color: #ffffff !important;"
               title="Lihat posisi rak buku di denah toko"
             >
-              <i data-lucide="map-pin" class="w-4 h-4 text-emerald-100 shrink-0"></i>
+              <i
+                data-lucide="map-pin"
+                class="w-4 h-4 text-emerald-100 shrink-0"
+              ></i>
               <span>Buka Denah Lokasi Buku Ini</span>
             </button>
 
@@ -1664,12 +1685,12 @@
               </span>
             </div>
 
-            <!-- SVG Floor Plan Render (Constrained to container height: full 1-screen visible) -->
+            <!-- SVG Floor Plan Render (Scaled via fitMapToContainer to fit full container height) -->
             <svg
               id="svgBlueprint"
               viewBox="10 0 830 1060"
               preserveAspectRatio="xMidYMid meet"
-              class="h-full w-auto max-h-full max-w-full block mx-auto drop-shadow-xs"
+              class="block mx-auto drop-shadow-xs"
             >
               <defs>
                 <marker
