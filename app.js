@@ -1043,24 +1043,14 @@ function renderNextBatch() {
         <tr onclick="selectBook('${book.id}')" 
             data-book-id="${book.id}"
             class="table-row-item ${isSelected ? "is-selected" : ""}">
-            <!-- Kolom Nomor Urut Baris (Paling Kiri) -->
-            <td class="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
-            <td class="py-3.5 sm:py-4 px-3 text-center font-mono text-xs font-semibold text-slate-500">
-            <td class="text-center font-mono text-xs font-semibold text-slate-500">
             <!-- 1. Nomor Urut Baris -->
             <td class="py-3.5 px-3 text-center font-mono text-xs font-semibold text-slate-500 w-12">
                 ${rowNumber}
             </td>
-            <td class="py-3 px-4">
-                <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
-            <td class="py-3.5 sm:py-4 px-4">
-                <div class="font-semibold text-slate-900 text-sm sm:text-base leading-snug">${book.title}</div>
-            <td>
             <!-- 2. Judul & Kategori Buku -->
             <td class="py-3.5 px-4">
                 <div class="font-bold text-slate-900 text-sm sm:text-base leading-snug">${book.title}</div>
                 <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
-                    <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                     <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                         ${book.category1 || "Umum"}
                     </span>
@@ -1069,48 +1059,25 @@ function renderNextBatch() {
                     <span class="text-[11px] text-slate-400">${book.publisher}</span>
                 </div>
             </td>
-            <td class="py-3 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
-            <td class="py-3.5 sm:py-4 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
-                <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${book.sku || "-"}</span>
-            <td class="font-mono text-xs text-slate-700 hidden sm:table-cell">
-                <span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">${book.sku || "-"}</span>
             <!-- 3. Kode Produk -->
             <td class="py-3.5 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell w-36 whitespace-nowrap">
                 <span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">${displayProductCode}</span>
             </td>
-            <td class="py-3 px-3">
-            <td class="py-3.5 sm:py-4 px-3">
-            <td>
             <!-- 4. Kode Rak Lokasi -->
             <td class="py-3.5 px-3 w-32 whitespace-nowrap">
                 <span class="inline-flex items-center gap-1 text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 px-2.5 py-1 rounded-md">
-                    <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
-                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i>
                     <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
                     ${book.shelfCode}
                 </span>
             </td>
-            <td class="py-3 px-3 text-center">
-            <td class="py-3.5 sm:py-4 px-3 text-center">
-            <td class="text-center">
             <!-- 5. Stok -->
             <td class="py-3.5 px-3 text-center w-20 whitespace-nowrap">
                 ${
                   isOutOfStock
-                    ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
-                    : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock}</span>`
-                      ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">Habis</span>`
-                      : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">${book.stock}</span>`
                     ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">Habis</span>`
                     : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">${book.stock}</span>`
                 }
             </td>
-            <!-- Kolom Harga Produk -->
-            <td class="py-3 px-3 text-right">
-            <td class="py-3.5 sm:py-4 px-3 text-right">
-                <span class="font-bold text-slate-900 text-xs font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
-            <td class="text-right">
-                <span class="font-bold text-slate-900 text-xs sm:text-sm font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
             <!-- 6. Harga Produk -->
             <td class="py-3.5 px-4 text-right w-32 whitespace-nowrap">
                 <span class="font-bold text-slate-900 text-xs sm:text-sm font-mono">${formatRupiah(book.price)}</span>
@@ -1891,48 +1858,21 @@ const SHELF_TO_MAP_ID = {
 function updateMapTransform() {
   const viewportGroup = document.getElementById("viewportGroup");
   if (viewportGroup) {
-    viewportGroup.setAttribute(
-      "transform",
-      `translate(${mapPointX}, ${mapPointY}) scale(${mapScale})`,
-    );
+    viewportGroup.removeAttribute("transform");
   }
 }
 
-function zoomMap(deltaScale, getCenter = false) {
-  const container = document.getElementById("mapViewportContainer");
-  if (!container) return;
-
-  const oldScale = mapScale;
-  mapScale += deltaScale;
-  mapScale = Math.min(Math.max(0.6, mapScale), 4);
-
-  if (getCenter) {
-    const rect = container.getBoundingClientRect();
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
-    mapPointX -= (cx - mapPointX) * (mapScale / oldScale - 1);
-    mapPointY -= (cy - mapPointY) * (mapScale / oldScale - 1);
-  }
-
-  updateMapTransform();
+function zoomMap() {
+  // Statis: Zoom dinonaktifkan sesuai kebutuhan tampilan 1 layar
 }
 
 function resetMapZoom() {
-  mapScale = 1;
-  mapPointX = 0;
-  mapPointY = 0;
+  // Statis: Denah selalu tampil utuh dalam 1 layar
   updateMapTransform();
 }
 
-function centerMapOn(cx, cy, targetScale = 1.6) {
-  const container = document.getElementById("mapViewportContainer");
-  if (!container) return;
-
-  mapScale = targetScale;
-  // SVG natural viewBox is 850 x 1100.
-  // Center (cx, cy) to (425, 550)
-  mapPointX = 425 - cx * mapScale;
-  mapPointY = 550 - cy * mapScale;
+function centerMapOn(cx, cy) {
+  // Statis: Denah selalu tampil utuh dalam 1 layar
   updateMapTransform();
 }
 
@@ -2157,26 +2097,26 @@ function renderBookPinOnMap(cx, cy, shelfCode, bookTitle) {
   pinLayer.innerHTML = `
     <g id="currentBookPin" transform="translate(${cx}, ${cy})">
       <!-- Outer Radar Pulse Rings -->
-      <circle r="16" fill="none" stroke="#ef4444" stroke-width="2.5" class="pin-radar-ring" />
-      <circle r="30" fill="none" stroke="#ef4444" stroke-width="2" class="pin-radar-ring" style="animation-delay: 0.6s;" />
-      <circle r="44" fill="none" stroke="#f59e0b" stroke-width="1.5" class="pin-radar-ring" style="animation-delay: 1.2s;" />
+      <circle r="14" fill="none" stroke="#ef4444" stroke-width="2.5" class="pin-radar-ring" />
+      <circle r="26" fill="none" stroke="#ef4444" stroke-width="2" class="pin-radar-ring" style="animation-delay: 0.6s;" />
+      <circle r="38" fill="none" stroke="#f59e0b" stroke-width="1.5" class="pin-radar-ring" style="animation-delay: 1.2s;" />
 
-      <!-- Center Glow Drop Shadow Base -->
-      <ellipse cx="0" cy="2" rx="8" ry="4" fill="rgba(0,0,0,0.5)" />
+      <!-- Center Drop Shadow Base -->
+      <ellipse cx="0" cy="2" rx="7" ry="3.5" fill="rgba(0,0,0,0.25)" />
 
       <!-- Bouncing Pin Icon -->
       <g class="pin-bounce-icon">
-        <path d="M 0 0 C -12 -18 -12 -38 0 -38 C 12 -38 12 -18 0 0 Z" 
-              fill="#ef4444" stroke="#ffffff" stroke-width="2.5" 
-              style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));" />
-        <circle cx="0" cy="-24" r="5" fill="#ffffff" />
-        <circle cx="0" cy="-24" r="2.5" fill="#ef4444" />
+        <path d="M 0 0 C -11 -16 -11 -34 0 -34 C 11 -34 11 -16 0 0 Z" 
+              fill="#ef4444" stroke="#ffffff" stroke-width="2" 
+              style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));" />
+        <circle cx="0" cy="-22" r="4.5" fill="#ffffff" />
+        <circle cx="0" cy="-22" r="2" fill="#ef4444" />
       </g>
 
-      <!-- Floating Label Badge -->
-      <g transform="translate(0, -48)">
-        <rect x="-70" y="-18" width="140" height="24" rx="12" fill="#0f172a" stroke="#fbbf24" stroke-width="1.5" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));" />
-        <text x="0" y="-2" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#f8fafc" text-anchor="middle">
+      <!-- Floating Label Badge (Clean Light Mode) -->
+      <g transform="translate(0, -42)">
+        <rect x="-65" y="-16" width="130" height="22" rx="6" fill="#ffffff" stroke="#ef4444" stroke-width="1.5" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.15));" />
+        <text x="0" y="-1" font-family="Inter, sans-serif" font-size="10.5" font-weight="700" fill="#0f172a" text-anchor="middle">
           📍 ${shelfCode || "LOKASI RAK"}
         </text>
       </g>
@@ -2220,7 +2160,7 @@ function selectShelfOnMap(groupElement) {
       items.forEach((item) => {
         const tag = document.createElement("span");
         tag.className =
-          "px-2.5 py-1 text-xs bg-slate-800 text-slate-200 border border-slate-700 rounded-md shadow-2xs";
+          "px-2.5 py-1 text-xs bg-slate-100 text-slate-700 border border-slate-200 rounded-md font-medium";
         tag.textContent = item;
         mapItemList.appendChild(tag);
       });
@@ -2279,7 +2219,7 @@ function openFloorPlanModal(targetBook = null) {
             : "Stok: Habis";
     }
 
-    // Highlight target shelf and center with pin
+    // Highlight target shelf and render static pin directly on 1-screen map
     const targetElement = findShelfElementForBook(targetBook);
     if (targetElement) {
       selectShelfOnMap(targetElement);
@@ -2290,12 +2230,6 @@ function openFloorPlanModal(targetBook = null) {
         targetBook.shelfCode,
         targetBook.title,
       );
-      // Center and Zoom
-      setTimeout(() => {
-        centerMapOn(center.cx, center.cy, 1.6);
-      }, 50);
-    } else {
-      resetMapZoom();
     }
   } else {
     // Exploration mode without specific book
@@ -2313,8 +2247,6 @@ function openFloorPlanModal(targetBook = null) {
     const mapSelectedState = document.getElementById("mapSelectedState");
     if (mapDefaultState) mapDefaultState.classList.remove("hidden");
     if (mapSelectedState) mapSelectedState.classList.add("hidden");
-
-    resetMapZoom();
   }
 }
 
@@ -2374,95 +2306,7 @@ function initFloorPlan() {
     totalRacksCount.textContent = shelfGroups.length;
   }
 
-  // 1. Mouse Drag to Pan
-  container.addEventListener("mousedown", (e) => {
-    if (e.target.closest(".shelf-group")) return;
-    isMapDragging = true;
-    mapStartX = e.clientX - mapPointX;
-    mapStartY = e.clientY - mapPointY;
-  });
-
-  window.addEventListener("mousemove", (e) => {
-    if (!isMapDragging) return;
-    mapPointX = e.clientX - mapStartX;
-    mapPointY = e.clientY - mapStartY;
-    updateMapTransform();
-  });
-
-  window.addEventListener("mouseup", () => {
-    isMapDragging = false;
-  });
-
-  // 2. Mouse Wheel to Zoom
-  container.addEventListener(
-    "wheel",
-    (e) => {
-      e.preventDefault();
-      const xs = (e.clientX - mapPointX) / mapScale;
-      const ys = (e.clientY - mapPointY) / mapScale;
-      const delta = -e.deltaY;
-
-      if (delta > 0) {
-        mapScale *= 1.12;
-      } else {
-        mapScale /= 1.12;
-      }
-      mapScale = Math.min(Math.max(0.6, mapScale), 4);
-
-      mapPointX = e.clientX - xs * mapScale;
-      mapPointY = e.clientY - ys * mapScale;
-      updateMapTransform();
-    },
-    { passive: false },
-  );
-
-  // 3. Touch Support (1-finger Pan & 2-finger Pinch Zoom)
-  container.addEventListener(
-    "touchstart",
-    (e) => {
-      if (e.touches.length === 2) {
-        isMapDragging = false;
-        mapTouchDistStart = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY,
-        );
-        mapInitialScale = mapScale;
-      } else if (e.touches.length === 1) {
-        if (e.target.closest(".shelf-group")) return;
-        isMapDragging = true;
-        mapStartX = e.touches[0].clientX - mapPointX;
-        mapStartY = e.touches[0].clientY - mapPointY;
-      }
-    },
-    { passive: true },
-  );
-
-  container.addEventListener(
-    "touchmove",
-    (e) => {
-      if (e.touches.length === 2 && mapTouchDistStart > 0) {
-        const dist = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY,
-        );
-        const factor = dist / mapTouchDistStart;
-        mapScale = Math.min(Math.max(0.6, mapInitialScale * factor), 4);
-        updateMapTransform();
-      } else if (isMapDragging && e.touches.length === 1) {
-        mapPointX = e.touches[0].clientX - mapStartX;
-        mapPointY = e.touches[0].clientY - mapStartY;
-        updateMapTransform();
-      }
-    },
-    { passive: true },
-  );
-
-  container.addEventListener("touchend", () => {
-    isMapDragging = false;
-    mapTouchDistStart = 0;
-  });
-
-  // 4. Shelf Click Handler
+  // 1. Shelf Click Handler
   shelfGroups.forEach((group) => {
     group.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -2470,7 +2314,7 @@ function initFloorPlan() {
     });
   });
 
-  // 5. Search Bar Filter & Highlight
+  // 2. Search Bar Filter & Real-Time Highlight
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       const query = e.target.value.toLowerCase().trim();
@@ -2506,7 +2350,7 @@ function initFloorPlan() {
     });
   }
 
-  // 6. Close modal on ESC key
+  // 3. Close modal on ESC key
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       const modal = document.getElementById("floorPlanModal");

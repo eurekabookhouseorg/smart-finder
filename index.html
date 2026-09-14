@@ -16,8 +16,7 @@
     <link rel="stylesheet" href="assets/css/style.min.css" />
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
-    <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.1.5" defer></script>
+    <script src="app.js?v=2.1.6" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
@@ -386,60 +385,58 @@
         background-color: #1e40af !important;
       }
 
-      /* Interactive Blueprint Map Styles */
+      /* Interactive Floor Plan Map Styles (Clean Light Mode - Smart Finder) */
       .blueprint-bg {
-        background-color: #0f172a;
+        background-color: #f8fafc;
         background-image:
-          linear-gradient(rgba(56, 189, 248, 0.07) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(56, 189, 248, 0.07) 1px, transparent 1px),
-          linear-gradient(rgba(56, 189, 248, 0.03) 5px, transparent 5px),
-          linear-gradient(90deg, rgba(56, 189, 248, 0.03) 5px, transparent 5px);
-        background-size: 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+          linear-gradient(#e2e8f0 1px, transparent 1px),
+          linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+        background-size: 24px 24px;
       }
       .shelf-item {
         cursor: pointer;
         transition: all 0.2s ease-in-out;
-        fill: #1e293b;
-        stroke: #38bdf8;
-        stroke-width: 1.5;
+        fill: #ffffff;
+        stroke: #94a3b8;
+        stroke-width: 1.2;
       }
       .shelf-item:hover {
-        fill: #0369a1;
-        stroke: #38bdf8;
-        stroke-width: 2.5;
-        filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+        fill: #e0f2fe;
+        stroke: #0284c7;
+        stroke-width: 2;
+        filter: drop-shadow(0 2px 6px rgba(2, 132, 199, 0.25));
       }
       .shelf-item.highlighted {
-        fill: #b45309 !important;
-        stroke: #fbbf24 !important;
-        stroke-width: 3 !important;
+        fill: #fef3c7 !important;
+        stroke: #d97706 !important;
+        stroke-width: 2.5 !important;
         animation: shelfPulseAnim 1.5s infinite alternate;
       }
       .shelf-text {
         font-family: inherit;
         font-size: 11px;
         font-weight: 600;
-        fill: #e2e8f0;
+        fill: #334155;
         pointer-events: none;
         user-select: none;
       }
       .wall-line {
-        stroke: #f8fafc;
-        stroke-width: 4;
+        stroke: #1e293b;
+        stroke-width: 3.5;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
       .pillar {
-        fill: #f8fafc;
+        fill: #334155;
       }
       @keyframes shelfPulseAnim {
-        0% { filter: drop-shadow(0 0 2px #fbbf24); }
-        100% { filter: drop-shadow(0 0 12px #fbbf24); }
+        0% { filter: drop-shadow(0 0 2px rgba(217, 119, 6, 0.4)); }
+        100% { filter: drop-shadow(0 0 10px rgba(217, 119, 6, 0.8)); }
       }
       @keyframes pinRadarPulse {
-        0% { r: 12px; opacity: 0.9; stroke-width: 3px; }
-        50% { r: 26px; opacity: 0.4; stroke-width: 2px; }
-        100% { r: 42px; opacity: 0; stroke-width: 1px; }
+        0% { r: 12px; opacity: 0.9; stroke-width: 2.5px; }
+        50% { r: 24px; opacity: 0.4; stroke-width: 1.8px; }
+        100% { r: 38px; opacity: 0; stroke-width: 1px; }
       }
       .pin-radar-ring {
         animation: pinRadarPulse 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
@@ -447,7 +444,7 @@
       }
       @keyframes pinBounceAnim {
         0% { transform: translateY(0); }
-        100% { transform: translateY(-8px); }
+        100% { transform: translateY(-6px); }
       }
       .pin-bounce-icon {
         animation: pinBounceAnim 0.8s ease-in-out infinite alternate;
@@ -783,10 +780,6 @@
                 <tr>
                   <th class="py-3 px-3 text-center w-12">No</th>
                   <th class="py-3 px-4">Buku & Kategori</th>
-                  <th class="py-3 px-3 hidden sm:table-cell">Kode Produk</th>
-                  <th class="py-3 px-3">Kode Rak</th>
-                  <th class="py-3 px-3 text-center">Stok</th>
-                  <th class="py-3 px-3 text-right">Harga</th>
                   <th class="py-3 px-3 hidden sm:table-cell w-36 whitespace-nowrap">Kode Produk</th>
                   <th class="py-3 px-3 w-32 whitespace-nowrap">Kode Rak</th>
                   <th class="py-3 px-3 text-center w-20 whitespace-nowrap">Stok</th>
@@ -972,6 +965,7 @@
             <div
               class="bg-emerald-50 border border-emerald-500/30 rounded-xl p-4 relative overflow-hidden shadow-xs"
             >
+              <div class="flex items-start justify-between relative z-10">
               <div class="flex items-start justify-between relative z-10 gap-2">
                 <div>
                   <span
@@ -1536,28 +1530,28 @@
     <!-- POPUP MODAL DENAH INTERAKTIF TOKO (BLUEPRINT SVG) -->
     <div
       id="floorPlanModal"
-      class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4"
+      class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
     >
       <div
-        class="w-full max-w-6xl h-[92vh] max-h-[960px] bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-200"
+        class="w-full max-w-6xl h-[92vh] max-h-[960px] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-800"
       >
         <!-- Modal Header -->
         <div
-          class="h-14 sm:h-16 bg-slate-900/95 border-b border-slate-800 px-3 sm:px-5 flex items-center justify-between gap-3 shrink-0 z-10"
+          class="h-14 sm:h-16 bg-white border-b border-slate-200 px-3 sm:px-5 flex items-center justify-between gap-3 shrink-0 z-10"
         >
           <!-- Left: Title & Icon -->
           <div class="flex items-center gap-2.5 shrink-0">
             <div
-              class="p-2 bg-sky-500/10 border border-sky-500/30 rounded-lg text-sky-400"
+              class="p-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-600"
             >
               <i data-lucide="map" class="w-5 h-5"></i>
             </div>
             <div>
-              <h3 class="text-sm sm:text-base font-bold text-slate-100 leading-tight">
-                Denah Interaktif Toko
+              <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+                Denah Toko Eureka Bookhouse
               </h3>
-              <p class="text-[11px] text-slate-400 hidden sm:block">
-                Eureka Bookhouse • Tata Letak & Lokasi Rak Inventaris
+              <p class="text-[11px] text-slate-500 hidden sm:block">
+                Tata Letak Fisik & Lokasi Rak Buku
               </p>
             </div>
           </div>
@@ -1568,8 +1562,8 @@
               <input
                 type="text"
                 id="mapSearchInput"
-                placeholder="Cari area/barang (Novel, Kasir, Bag, ATK)..."
-                class="w-full pl-9 pr-8 py-1.5 bg-slate-800/80 border border-slate-700 rounded-lg text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition"
+                placeholder="Cari area/rak (Novel, Kasir, Anak, ATK)..."
+                class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:bg-white transition"
               />
               <div
                 class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400"
@@ -1580,29 +1574,19 @@
                 id="clearMapSearchBtn"
                 type="button"
                 onclick="clearMapSearch()"
-                class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-200 cursor-pointer"
+                class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
 
-          <!-- Right: Action Buttons -->
+          <!-- Right: Close Button -->
           <div class="flex items-center gap-2 shrink-0">
             <button
               type="button"
-              id="mapResetZoomBtn"
-              onclick="resetMapZoom()"
-              title="Reset Zoom"
-              class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 text-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
-            >
-              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-              <span class="hidden md:inline">Reset Zoom</span>
-            </button>
-            <button
-              type="button"
               onclick="closeFloorPlanModal()"
-              class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
             >
               <i data-lucide="x" class="w-4 h-4"></i>
               <span>Tutup</span>
@@ -1610,70 +1594,36 @@
           </div>
         </div>
 
-        <!-- Modal Body (Split: Blueprint SVG on Left/Center, Info Sidebar on Right) -->
+        <!-- Modal Body (Static Floor Plan SVG on Left/Center, Info Sidebar on Right) -->
         <div class="flex-1 flex min-h-0 overflow-hidden relative">
-          <!-- Interactive Blueprint Viewport -->
+          <!-- Static Floor Plan Viewport -->
           <main
-            class="flex-1 relative blueprint-bg overflow-hidden cursor-grab active:cursor-grabbing select-none"
+            class="flex-1 relative blueprint-bg overflow-hidden flex items-center justify-center p-2 sm:p-4 select-none"
             id="mapViewportContainer"
           >
-            <!-- Zoom Controls Overlay -->
-            <div
-              class="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 flex flex-col gap-1.5 z-20 bg-slate-900/85 p-1 rounded-xl border border-slate-700/80 shadow-2xl backdrop-blur-md"
-            >
-              <button
-                type="button"
-                id="mapZoomInBtn"
-                onclick="zoomMap(0.25, true)"
-                class="p-2 hover:bg-slate-800 text-slate-300 hover:text-sky-400 rounded-lg transition active:scale-90 cursor-pointer"
-                title="Perbesar (Zoom In)"
-              >
-                <i data-lucide="plus" class="w-4 h-4"></i>
-              </button>
-              <hr class="border-slate-800" />
-              <button
-                type="button"
-                id="mapZoomOutBtn"
-                onclick="zoomMap(-0.25, true)"
-                class="p-2 hover:bg-slate-800 text-slate-300 hover:text-sky-400 rounded-lg transition active:scale-90 cursor-pointer"
-                title="Perkecil (Zoom Out)"
-              >
-                <i data-lucide="minus" class="w-4 h-4"></i>
-              </button>
-              <hr class="border-slate-800" />
-              <button
-                type="button"
-                onclick="resetMapZoom()"
-                class="p-2 hover:bg-slate-800 text-slate-300 hover:text-amber-400 rounded-lg transition active:scale-90 cursor-pointer"
-                title="Pusatkan Ulang"
-              >
-                <i data-lucide="maximize-2" class="w-4 h-4"></i>
-              </button>
-            </div>
-
             <!-- Active Book Location Alert Strip (Shown if modal opened for a book) -->
             <div
               id="mapBookTargetBanner"
-              class="hidden absolute top-3 left-3 right-3 sm:left-6 sm:right-auto sm:max-w-md z-20 bg-emerald-950/90 border border-emerald-500/50 text-emerald-200 px-3.5 py-2 rounded-xl shadow-xl backdrop-blur-md flex items-center justify-between gap-3 text-xs"
+              class="hidden absolute top-3 left-3 right-3 sm:left-6 sm:right-auto sm:max-w-md z-20 bg-emerald-50 border border-emerald-300 text-emerald-900 px-3.5 py-2 rounded-xl shadow-md flex items-center justify-between gap-3 text-xs"
             >
               <div class="flex items-center gap-2 truncate">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping shrink-0"></span>
                 <span class="truncate">
-                  Lokasi Buku: <strong id="mapTargetBookTitle" class="text-white font-bold">-</strong>
+                  Lokasi Buku: <strong id="mapTargetBookTitle" class="text-emerald-950 font-bold">-</strong>
                 </span>
               </div>
               <span
                 id="mapTargetShelfBadge"
-                class="px-2 py-0.5 rounded bg-emerald-500 text-emerald-950 font-black shrink-0 font-mono text-[11px]"
+                class="px-2.5 py-0.5 rounded bg-emerald-600 text-white font-black shrink-0 font-mono text-[11px]"
               >
                 BR1-055
               </span>
             </div>
 
-            <!-- SVG Blueprint Render -->
+            <!-- SVG Floor Plan Render (Static 1-Screen) -->
             <svg
               id="svgBlueprint"
-              class="w-full h-full"
+              class="w-full h-full max-h-[82vh] object-contain mx-auto"
               viewBox="0 0 850 1100"
               preserveAspectRatio="xMidYMid meet"
             >
@@ -1687,7 +1637,7 @@
                   markerHeight="6"
                   orient="auto-start-reverse"
                 >
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8" />
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
                 </marker>
               </defs>
 
@@ -1734,7 +1684,7 @@
                 </g>
 
                 <!-- Door Arcs -->
-                <g id="doors" stroke="#38bdf8" stroke-width="1.5" fill="none">
+                <g id="doors" stroke="#0284c7" stroke-width="1.5" fill="none">
                   <path d="M 120 270 A 30 30 0 0 1 150 240" />
                   <line x1="120" y1="270" x2="150" y2="240" stroke-dasharray="2,2"/>
                   
@@ -1932,8 +1882,8 @@
                   <!-- Middle Right Children Section -->
                   <g class="shelf-group" data-id="meja_anak_grid" data-title="meja anak" data-category="Area Bermain/Baca" data-items="Kursi Anak, Meja Mewarnai">
                     <rect x="515" y="360" width="60" height="50" class="shelf-item" />
-                    <line x1="545" y1="360" x2="545" y2="410" stroke="#38bdf8" />
-                    <line x1="515" y1="385" x2="575" y2="385" stroke="#38bdf8" />
+                    <line x1="545" y1="360" x2="545" y2="410" stroke="#94a3b8" />
+                    <line x1="515" y1="385" x2="575" y2="385" stroke="#94a3b8" />
                     <text x="510" y="390" class="shelf-text" text-anchor="middle" transform="rotate(-90, 510, 390)">meja anak</text>
                   </g>
                   <g class="shelf-group" data-id="buku_import" data-title="buku import" data-category="Buku Impor" data-items="English Books, Import Fiction, Best Sellers International">
@@ -2077,14 +2027,14 @@
                   <!-- Bottom Entrance Area Items -->
                   <!-- Staircase Area (Bottom Left) -->
                   <g id="staircase">
-                    <rect x="45" y="740" width="130" height="180" fill="none" stroke="#38bdf8" stroke-width="1.5" />
-                    <line x1="45" y1="760" x2="175" y2="760" stroke="#38bdf8" />
-                    <line x1="45" y1="780" x2="175" y2="780" stroke="#38bdf8" />
-                    <line x1="45" y1="800" x2="175" y2="800" stroke="#38bdf8" />
-                    <line x1="45" y1="820" x2="175" y2="820" stroke="#38bdf8" />
-                    <line x1="45" y1="840" x2="175" y2="840" stroke="#38bdf8" />
-                    <line x1="45" y1="860" x2="175" y2="860" stroke="#38bdf8" />
-                    <line x1="110" y1="910" x2="110" y2="750" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrow)" />
+                    <rect x="45" y="740" width="130" height="180" fill="none" stroke="#94a3b8" stroke-width="1.5" />
+                    <line x1="45" y1="760" x2="175" y2="760" stroke="#94a3b8" />
+                    <line x1="45" y1="780" x2="175" y2="780" stroke="#94a3b8" />
+                    <line x1="45" y1="800" x2="175" y2="800" stroke="#94a3b8" />
+                    <line x1="45" y1="820" x2="175" y2="820" stroke="#94a3b8" />
+                    <line x1="45" y1="840" x2="175" y2="840" stroke="#94a3b8" />
+                    <line x1="45" y1="860" x2="175" y2="860" stroke="#94a3b8" />
+                    <line x1="110" y1="910" x2="110" y2="750" stroke="#0284c7" stroke-width="1.5" marker-end="url(#arrow)" />
                   </g>
 
                   <g class="shelf-group" data-id="new_arifal_1" data-title="New Arifal" data-category="Produk Baru" data-items="Buku Kedatangan Baru">
@@ -2112,30 +2062,30 @@
             </svg>
           </main>
 
-          <!-- Right Sidebar: Informasi Rak / Detail -->
+          <!-- Right Sidebar: Informasi Rak / Detail (Light Mode) -->
           <aside
             id="mapDetailSidebar"
-            class="w-72 sm:w-80 bg-slate-900 border-l border-slate-800 flex flex-col justify-between shrink-0 z-10 transition-all duration-300"
+            class="w-72 sm:w-80 bg-white border-l border-slate-200 flex flex-col justify-between shrink-0 z-10 transition-all duration-300"
           >
             <div class="p-4 sm:p-5 overflow-y-auto">
-              <div class="flex items-center justify-between pb-3.5 border-b border-slate-800">
-                <span class="text-xs font-mono tracking-wider text-sky-400 uppercase font-bold">
+              <div class="flex items-center justify-between pb-3.5 border-b border-slate-200">
+                <span class="text-xs font-mono tracking-wider text-slate-500 uppercase font-bold">
                   Informasi Rak / Lokasi
                 </span>
                 <span
                   id="mapCategoryBadge"
-                  class="px-2 py-0.5 text-xs bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded font-semibold"
+                  class="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded font-semibold"
                 >
                   Pilih Rak
                 </span>
               </div>
 
               <!-- Default Unselected State -->
-              <div id="mapDefaultState" class="py-10 text-center text-slate-500">
-                <div class="w-12 h-12 mx-auto mb-3 text-slate-600 opacity-60 flex items-center justify-center">
-                  <i data-lucide="map-pin" class="w-8 h-8"></i>
+              <div id="mapDefaultState" class="py-10 text-center text-slate-400">
+                <div class="w-12 h-12 mx-auto mb-3 text-slate-300 flex items-center justify-center">
+                  <i data-lucide="map-pin" class="w-8 h-8 text-slate-300"></i>
                 </div>
-                <p class="text-xs sm:text-sm font-medium">
+                <p class="text-xs sm:text-sm font-medium text-slate-500">
                   Klik pada area atau rak di denah untuk melihat detail koleksi & lokasi rak.
                 </p>
               </div>
@@ -2145,31 +2095,31 @@
                 <!-- Book Info Box (When opened for a book) -->
                 <div
                   id="mapBookContextCard"
-                  class="hidden p-3.5 bg-emerald-950/70 border border-emerald-500/40 rounded-xl space-y-2 shadow-sm"
+                  class="hidden p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 shadow-xs"
                 >
                   <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black tracking-wider uppercase text-emerald-300 bg-emerald-900/60 px-2 py-0.5 rounded border border-emerald-700/50">
+                    <span class="text-[10px] font-black tracking-wider uppercase text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200">
                       Buku Yang Anda Cari
                     </span>
-                    <span id="mapBookContextFloor" class="text-[11px] font-bold text-emerald-400">
+                    <span id="mapBookContextFloor" class="text-[11px] font-bold text-emerald-700">
                       Lantai 1
                     </span>
                   </div>
-                  <h4 id="mapBookContextTitle" class="font-bold text-slate-100 text-xs sm:text-sm leading-snug">
+                  <h4 id="mapBookContextTitle" class="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                     -
                   </h4>
-                  <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                    <span>Kode Rak: <strong id="mapBookContextShelf" class="text-emerald-300">-</strong></span>
-                    <span id="mapBookContextStock" class="text-emerald-400 font-semibold">-</span>
+                  <div class="flex items-center justify-between text-[11px] text-slate-600 font-mono">
+                    <span>Kode Rak: <strong id="mapBookContextShelf" class="text-emerald-700 font-bold">-</strong></span>
+                    <span id="mapBookContextStock" class="text-emerald-700 font-semibold">-</span>
                   </div>
                 </div>
 
                 <!-- Shelf Info -->
                 <div>
-                  <h3 id="mapShelfTitle" class="text-lg font-bold text-slate-100">
+                  <h3 id="mapShelfTitle" class="text-lg font-bold text-slate-900">
                     Alat Tulis Kantor
                   </h3>
-                  <p id="mapShelfID" class="text-xs font-mono text-slate-400 mt-0.5">
+                  <p id="mapShelfID" class="text-xs font-mono text-slate-500 mt-0.5">
                     ID: atk_1
                   </p>
                 </div>
@@ -2183,9 +2133,9 @@
                   </div>
                 </div>
 
-                <div class="p-3 bg-slate-800/60 border border-slate-700/60 rounded-lg">
-                  <div class="flex items-center space-x-2 text-slate-300 text-xs">
-                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <div class="flex items-center space-x-2 text-slate-700 text-xs">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
                     <span>Status: Area Aktif / Terisi</span>
                   </div>
                 </div>
@@ -2194,10 +2144,10 @@
 
             <!-- Sidebar Footer -->
             <div
-              class="p-3.5 border-t border-slate-800 bg-slate-900/70 text-xs text-slate-500 flex justify-between items-center shrink-0"
+              class="p-3.5 border-t border-slate-200 bg-slate-50/80 text-xs text-slate-500 flex justify-between items-center shrink-0"
             >
-              <span>Total Area: <strong id="mapTotalRacksCount" class="text-slate-300">0</strong></span>
-              <span class="font-mono text-[10px] text-sky-400/80">SVG Blueprint Vektor</span>
+              <span>Total Area: <strong id="mapTotalRacksCount" class="text-slate-700">0</strong></span>
+              <span class="font-mono text-[10px] text-slate-400">Denah Toko Fisik</span>
             </div>
           </aside>
         </div>
