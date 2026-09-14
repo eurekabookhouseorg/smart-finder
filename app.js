@@ -1863,7 +1863,7 @@ function updateMapTransform() {
 }
 
 function zoomMap() {
-  // Statis: Zoom dinonaktifkan sesuai kebutuhan tampilan 1 layar
+  // Statis: Denah selalu tampil utuh dalam 1 layar
 }
 
 function resetMapZoom() {
@@ -2097,20 +2097,20 @@ function renderBookPinOnMap(cx, cy, shelfCode, bookTitle) {
   pinLayer.innerHTML = `
     <g id="currentBookPin" transform="translate(${cx}, ${cy})">
       <!-- Outer Radar Pulse Rings -->
-      <circle r="14" fill="none" stroke="#ef4444" stroke-width="2.5" class="pin-radar-ring" />
-      <circle r="26" fill="none" stroke="#ef4444" stroke-width="2" class="pin-radar-ring" style="animation-delay: 0.6s;" />
-      <circle r="38" fill="none" stroke="#f59e0b" stroke-width="1.5" class="pin-radar-ring" style="animation-delay: 1.2s;" />
+      <circle r="16" fill="none" stroke="#ef4444" stroke-width="2.5" class="pin-radar-ring" />
+      <circle r="30" fill="none" stroke="#ef4444" stroke-width="2" class="pin-radar-ring" style="animation-delay: 0.6s;" />
+      <circle r="44" fill="none" stroke="#f59e0b" stroke-width="1.5" class="pin-radar-ring" style="animation-delay: 1.2s;" />
 
-      <!-- Center Drop Shadow Base -->
-      <ellipse cx="0" cy="2" rx="7" ry="3.5" fill="rgba(0,0,0,0.25)" />
+      <!-- Center Glow Drop Shadow Base -->
+      <ellipse cx="0" cy="2" rx="8" ry="4" fill="rgba(0,0,0,0.5)" />
 
       <!-- Bouncing Pin Icon -->
       <g class="pin-bounce-icon">
-        <path d="M 0 0 C -11 -16 -11 -34 0 -34 C 11 -34 11 -16 0 0 Z" 
-              fill="#ef4444" stroke="#ffffff" stroke-width="2" 
-              style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));" />
-        <circle cx="0" cy="-22" r="4.5" fill="#ffffff" />
-        <circle cx="0" cy="-22" r="2" fill="#ef4444" />
+        <path d="M 0 0 C -12 -18 -12 -38 0 -38 C 12 -38 12 -18 0 0 Z" 
+              fill="#ef4444" stroke="#ffffff" stroke-width="2.5" 
+              style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));" />
+        <circle cx="0" cy="-24" r="5" fill="#ffffff" />
+        <circle cx="0" cy="-24" r="2.5" fill="#ef4444" />
       </g>
 
       <!-- Floating Label Badge (Clean Light Mode) -->
@@ -2219,7 +2219,7 @@ function openFloorPlanModal(targetBook = null) {
             : "Stok: Habis";
     }
 
-    // Highlight target shelf and render static pin directly on 1-screen map
+    // Highlight target shelf and render static pin
     const targetElement = findShelfElementForBook(targetBook);
     if (targetElement) {
       selectShelfOnMap(targetElement);
@@ -2247,6 +2247,8 @@ function openFloorPlanModal(targetBook = null) {
     const mapSelectedState = document.getElementById("mapSelectedState");
     if (mapDefaultState) mapDefaultState.classList.remove("hidden");
     if (mapSelectedState) mapSelectedState.classList.add("hidden");
+
+    resetMapZoom();
   }
 }
 
@@ -2314,7 +2316,7 @@ function initFloorPlan() {
     });
   });
 
-  // 2. Search Bar Filter & Real-Time Highlight
+  // 2. Search Bar Filter & Highlight
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       const query = e.target.value.toLowerCase().trim();

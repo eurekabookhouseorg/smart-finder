@@ -16,7 +16,8 @@
     <link rel="stylesheet" href="assets/css/style.min.css" />
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
-    <script src="app.js?v=2.1.6" defer></script>
+    <!-- Kiosk Application Logic -->
+    <script src="app.js?v=2.1.7" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
@@ -385,13 +386,21 @@
         background-color: #1e40af !important;
       }
 
-      /* Interactive Floor Plan Map Styles (Clean Light Mode - Smart Finder) */
+      /* Interactive Floor Plan Map Styles (Light Mode - Match Smart Finder) */
       .blueprint-bg {
         background-color: #f8fafc;
         background-image:
           linear-gradient(#e2e8f0 1px, transparent 1px),
           linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
         background-size: 24px 24px;
+      }
+      #svgBlueprint {
+        height: 100% !important;
+        max-height: 100% !important;
+        width: auto !important;
+        max-width: 100% !important;
+        display: block;
+        margin: 0 auto;
       }
       .shelf-item {
         cursor: pointer;
@@ -965,7 +974,6 @@
             <div
               class="bg-emerald-50 border border-emerald-500/30 rounded-xl p-4 relative overflow-hidden shadow-xs"
             >
-              <div class="flex items-start justify-between relative z-10">
               <div class="flex items-start justify-between relative z-10 gap-2">
                 <div>
                   <span
@@ -1527,7 +1535,7 @@
       </div>
     </div>
 
-    <!-- POPUP MODAL DENAH INTERAKTIF TOKO (BLUEPRINT SVG) -->
+    <!-- POPUP MODAL DENAH TOKO (STATIS 1 LAYAR & LIGHT MODE) -->
     <div
       id="floorPlanModal"
       class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
@@ -1594,11 +1602,11 @@
           </div>
         </div>
 
-        <!-- Modal Body (Static Floor Plan SVG on Left/Center, Info Sidebar on Right) -->
-        <div class="flex-1 flex min-h-0 overflow-hidden relative">
-          <!-- Static Floor Plan Viewport -->
+        <!-- Modal Body: Split into Left (Floor Plan) and Right (Sidebar) -->
+        <div class="flex-1 flex min-h-0 min-w-0 overflow-hidden relative">
+          <!-- Static Floor Plan Viewport: Fits 100% to Height -->
           <main
-            class="flex-1 relative blueprint-bg overflow-hidden flex items-center justify-center p-2 sm:p-4 select-none"
+            class="flex-1 min-w-0 min-h-0 h-full relative blueprint-bg overflow-hidden flex items-center justify-center p-2 sm:p-4 select-none"
             id="mapViewportContainer"
           >
             <!-- Active Book Location Alert Strip (Shown if modal opened for a book) -->
@@ -1620,12 +1628,12 @@
               </span>
             </div>
 
-            <!-- SVG Floor Plan Render (Static 1-Screen) -->
+            <!-- SVG Floor Plan Render (Constrained to container height: full 1-screen visible) -->
             <svg
               id="svgBlueprint"
-              class="w-full h-full max-h-[82vh] object-contain mx-auto"
               viewBox="0 0 850 1100"
               preserveAspectRatio="xMidYMid meet"
+              class="h-full w-auto max-h-full max-w-full block mx-auto drop-shadow-xs"
             >
               <defs>
                 <marker
@@ -2062,19 +2070,20 @@
             </svg>
           </main>
 
-          <!-- Right Sidebar: Informasi Rak / Detail (Light Mode) -->
+          <!-- Right Sidebar: Informasi Rak / Detail (Light Mode & Fixed Stable Width) -->
           <aside
             id="mapDetailSidebar"
-            class="w-72 sm:w-80 bg-white border-l border-slate-200 flex flex-col justify-between shrink-0 z-10 transition-all duration-300"
+            class="w-[340px] sm:w-[360px] flex-none shrink-0 grow-0 bg-white border-l border-slate-200 flex flex-col justify-between overflow-hidden z-10"
+            style="width: 350px; min-width: 350px; max-width: 350px;"
           >
-            <div class="p-4 sm:p-5 overflow-y-auto">
+            <div class="p-4 sm:p-5 overflow-y-auto flex-1 min-w-0" style="scrollbar-gutter: stable;">
               <div class="flex items-center justify-between pb-3.5 border-b border-slate-200">
                 <span class="text-xs font-mono tracking-wider text-slate-500 uppercase font-bold">
                   Informasi Rak / Lokasi
                 </span>
                 <span
                   id="mapCategoryBadge"
-                  class="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded font-semibold"
+                  class="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded font-semibold shrink-0"
                 >
                   Pilih Rak
                 </span>
@@ -2091,11 +2100,11 @@
               </div>
 
               <!-- Selected State -->
-              <div id="mapSelectedState" class="hidden mt-4 space-y-4">
+              <div id="mapSelectedState" class="hidden mt-4 space-y-4 min-w-0">
                 <!-- Book Info Box (When opened for a book) -->
                 <div
                   id="mapBookContextCard"
-                  class="hidden p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 shadow-xs"
+                  class="hidden p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 shadow-xs min-w-0"
                 >
                   <div class="flex items-center justify-between">
                     <span class="text-[10px] font-black tracking-wider uppercase text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200">
@@ -2105,7 +2114,7 @@
                       Lantai 1
                     </span>
                   </div>
-                  <h4 id="mapBookContextTitle" class="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                  <h4 id="mapBookContextTitle" class="font-bold text-slate-900 text-xs sm:text-sm leading-snug break-words">
                     -
                   </h4>
                   <div class="flex items-center justify-between text-[11px] text-slate-600 font-mono">
@@ -2115,20 +2124,20 @@
                 </div>
 
                 <!-- Shelf Info -->
-                <div>
-                  <h3 id="mapShelfTitle" class="text-lg font-bold text-slate-900">
+                <div class="min-w-0">
+                  <h3 id="mapShelfTitle" class="text-lg font-bold text-slate-900 break-words leading-tight">
                     Alat Tulis Kantor
                   </h3>
-                  <p id="mapShelfID" class="text-xs font-mono text-slate-500 mt-0.5">
+                  <p id="mapShelfID" class="text-xs font-mono text-slate-500 mt-0.5 truncate">
                     ID: atk_1
                   </p>
                 </div>
 
-                <div>
+                <div class="min-w-0">
                   <h4 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
                     Item & Koleksi Tersedia
                   </h4>
-                  <div id="mapItemList" class="flex flex-wrap gap-1.5">
+                  <div id="mapItemList" class="flex flex-wrap gap-1.5 min-w-0">
                     <!-- Populated via JS -->
                   </div>
                 </div>
