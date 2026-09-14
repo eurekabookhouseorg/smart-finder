@@ -152,6 +152,7 @@ window.addEventListener("DOMContentLoaded", () => {
   renderFilterPills();
   setupVirtualKeyboard();
   initPromoBannerCarousel();
+  initFloorPlan();
   if (window.lucide) {
     lucide.createIcons();
   }
@@ -1042,14 +1043,24 @@ function renderNextBatch() {
         <tr onclick="selectBook('${book.id}')" 
             data-book-id="${book.id}"
             class="table-row-item ${isSelected ? "is-selected" : ""}">
+            <!-- Kolom Nomor Urut Baris (Paling Kiri) -->
+            <td class="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
+            <td class="py-3.5 sm:py-4 px-3 text-center font-mono text-xs font-semibold text-slate-500">
+            <td class="text-center font-mono text-xs font-semibold text-slate-500">
             <!-- 1. Nomor Urut Baris -->
             <td class="py-3.5 px-3 text-center font-mono text-xs font-semibold text-slate-500 w-12">
                 ${rowNumber}
             </td>
+            <td class="py-3 px-4">
+                <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
+            <td class="py-3.5 sm:py-4 px-4">
+                <div class="font-semibold text-slate-900 text-sm sm:text-base leading-snug">${book.title}</div>
+            <td>
             <!-- 2. Judul & Kategori Buku -->
             <td class="py-3.5 px-4">
                 <div class="font-bold text-slate-900 text-sm sm:text-base leading-snug">${book.title}</div>
                 <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+                    <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                     <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                         ${book.category1 || "Umum"}
                     </span>
@@ -1058,25 +1069,48 @@ function renderNextBatch() {
                     <span class="text-[11px] text-slate-400">${book.publisher}</span>
                 </div>
             </td>
+            <td class="py-3 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
+            <td class="py-3.5 sm:py-4 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
+                <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${book.sku || "-"}</span>
+            <td class="font-mono text-xs text-slate-700 hidden sm:table-cell">
+                <span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">${book.sku || "-"}</span>
             <!-- 3. Kode Produk -->
             <td class="py-3.5 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell w-36 whitespace-nowrap">
                 <span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">${displayProductCode}</span>
             </td>
+            <td class="py-3 px-3">
+            <td class="py-3.5 sm:py-4 px-3">
+            <td>
             <!-- 4. Kode Rak Lokasi -->
             <td class="py-3.5 px-3 w-32 whitespace-nowrap">
                 <span class="inline-flex items-center gap-1 text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 px-2.5 py-1 rounded-md">
+                    <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i>
                     <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
                     ${book.shelfCode}
                 </span>
             </td>
+            <td class="py-3 px-3 text-center">
+            <td class="py-3.5 sm:py-4 px-3 text-center">
+            <td class="text-center">
             <!-- 5. Stok -->
             <td class="py-3.5 px-3 text-center w-20 whitespace-nowrap">
                 ${
                   isOutOfStock
+                    ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
+                    : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock}</span>`
+                      ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">Habis</span>`
+                      : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">${book.stock}</span>`
                     ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">Habis</span>`
                     : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">${book.stock}</span>`
                 }
             </td>
+            <!-- Kolom Harga Produk -->
+            <td class="py-3 px-3 text-right">
+            <td class="py-3.5 sm:py-4 px-3 text-right">
+                <span class="font-bold text-slate-900 text-xs font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
+            <td class="text-right">
+                <span class="font-bold text-slate-900 text-xs sm:text-sm font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
             <!-- 6. Harga Produk -->
             <td class="py-3.5 px-4 text-right w-32 whitespace-nowrap">
                 <span class="font-bold text-slate-900 text-xs sm:text-sm font-mono">${formatRupiah(book.price)}</span>
@@ -1750,4 +1784,735 @@ function resetQuizFilter() {
   }
 
   clearSearch();
+}
+
+// ==========================================
+// 19. DENAH INTERAKTIF TOKO & HIGHLIGHT PIN LOKASI RAK
+// ==========================================
+let mapScale = 1;
+let mapPointX = 0;
+let mapPointY = 0;
+let mapStartX = 0;
+let mapStartY = 0;
+let isMapDragging = false;
+let activeMapBook = null;
+let mapTouchDistStart = 0;
+let mapInitialScale = 1;
+
+// Pemetaan Kode Rak / Kategori ke ID Elemen SVG
+const SHELF_TO_MAP_ID = {
+  // Novel & Sastra
+  "BR1-040": "novel_1",
+  "BR1-041": "novel_1",
+  "BR1-042": "novel_2",
+  "BR1-043": "novel_2",
+  "BR1-044": "novel_3",
+  "BR1-045": "novel_3",
+  "BR1-046": "novel_4",
+  "BR1-047": "novel_4",
+  "BR1-048": "best_novel",
+  "BR1-049": "best_novel",
+  "BR1-050": "best_novel",
+
+  // Rohani & Agama
+  "BR1-013": "rohani",
+  "BR1-014": "rohani",
+  "BR1-015": "rohani",
+  "BR1-016": "bismah",
+  "BR1-017": "bismah",
+  "BR1-018": "bismah",
+  "BR1-019": "rohani",
+  AGAMA: "rohani",
+
+  // Buku Anak & Cerita
+  "BR1-001": "anak_1",
+  "BR1-002": "anak_1",
+  "BR1-003": "anak_2",
+  "BR1-004": "anak_2",
+  "BR1-005": "anak_3",
+  "BR1-006": "anak_3",
+  "BR1-007": "cerita_1",
+  "BR1-008": "cerita_anak",
+  "BR1-009": "cerita_anak",
+  "BR1-010": "anak_wall_1",
+  "BR1-011": "anak_wall_2",
+  "BR1-012": "anak_wall_3",
+  "BR1-020": "anak_wall_4",
+  "BR1-030": "anak_wall_5",
+  "BR1-031": "anak_promosi",
+  "BR1-032": "anak_promosi",
+  "BR1-033": "meja_anak_grid",
+  "BR1-055": "cerita_anak",
+
+  // Best Seller & New Arrival
+  "BR1-051": "best_seller_1",
+  "BR1-052": "best_seller_2",
+  "BR1-053": "new_arifal_1",
+  "BR1-054": "new_arifal_2",
+
+  // Hobi, Musik, Masakan, Desain
+  "BW1-001": "desain_majalah",
+  "BW1-002": "desain_majalah",
+  "BW1-003": "rak_kaca",
+  "BW1-004": "rak_kaca",
+  "BW1-005": "hobby_musik",
+  "BW1-006": "hobby_musik",
+  "BW1-007": "peta",
+  "BW1-008": "atlas",
+  "BW1-009": "buku_import",
+  "BW1-010": "buku_tulis_top",
+
+  // ATK & Stationeries
+  "AR1-001": "atk_1",
+  "AR1-002": "atk_1",
+  "AR1-003": "atk_2",
+  "AR1-004": "atk_2",
+  "AR1-005": "penggaris",
+  "AR1-006": "crayola",
+  "AR1-007": "staedtler_1",
+  "AR1-008": "staedtler_2",
+  "AR1-009": "amos_1",
+  "AR1-010": "amos_2",
+  "AR1-011": "parker",
+  "AR1-012": "meja_amos",
+  "AR1-013": "rak_amplop",
+  "AR1-014": "cart",
+  "AR1-015": "cyclone",
+
+  // Komputer & Tas
+  "AK1-001": "flash_disk",
+  "AK1-002": "mouse_1",
+  "AK1-003": "mouse_2",
+  "AK1-004": "tas_mid",
+  "AK1-005": "bag_1",
+  "AK1-006": "bag_2",
+};
+
+function updateMapTransform() {
+  const viewportGroup = document.getElementById("viewportGroup");
+  if (viewportGroup) {
+    viewportGroup.setAttribute(
+      "transform",
+      `translate(${mapPointX}, ${mapPointY}) scale(${mapScale})`,
+    );
+  }
+}
+
+function zoomMap(deltaScale, getCenter = false) {
+  const container = document.getElementById("mapViewportContainer");
+  if (!container) return;
+
+  const oldScale = mapScale;
+  mapScale += deltaScale;
+  mapScale = Math.min(Math.max(0.6, mapScale), 4);
+
+  if (getCenter) {
+    const rect = container.getBoundingClientRect();
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+    mapPointX -= (cx - mapPointX) * (mapScale / oldScale - 1);
+    mapPointY -= (cy - mapPointY) * (mapScale / oldScale - 1);
+  }
+
+  updateMapTransform();
+}
+
+function resetMapZoom() {
+  mapScale = 1;
+  mapPointX = 0;
+  mapPointY = 0;
+  updateMapTransform();
+}
+
+function centerMapOn(cx, cy, targetScale = 1.6) {
+  const container = document.getElementById("mapViewportContainer");
+  if (!container) return;
+
+  mapScale = targetScale;
+  // SVG natural viewBox is 850 x 1100.
+  // Center (cx, cy) to (425, 550)
+  mapPointX = 425 - cx * mapScale;
+  mapPointY = 550 - cy * mapScale;
+  updateMapTransform();
+}
+
+function getElementCenter(element) {
+  if (!element) return { cx: 425, cy: 550 };
+
+  const rect = element.querySelector("rect");
+  if (rect) {
+    const x = parseFloat(rect.getAttribute("x")) || 0;
+    const y = parseFloat(rect.getAttribute("y")) || 0;
+    const w = parseFloat(rect.getAttribute("width")) || 0;
+    const h = parseFloat(rect.getAttribute("height")) || 0;
+    return { cx: x + w / 2, cy: y + h / 2 };
+  }
+
+  const poly = element.querySelector("polygon");
+  if (poly && poly.points && poly.points.length > 0) {
+    let sumX = 0,
+      sumY = 0;
+    for (let i = 0; i < poly.points.length; i++) {
+      sumX += poly.points[i].x;
+      sumY += poly.points[i].y;
+    }
+    return { cx: sumX / poly.points.length, cy: sumY / poly.points.length };
+  }
+
+  const path = element.querySelector("path");
+  if (path && typeof path.getBBox === "function") {
+    try {
+      const bbox = path.getBBox();
+      return { cx: bbox.x + bbox.width / 2, cy: bbox.y + bbox.height / 2 };
+    } catch (e) {}
+  }
+
+  if (typeof element.getBBox === "function") {
+    try {
+      const bbox = element.getBBox();
+      return { cx: bbox.x + bbox.width / 2, cy: bbox.y + bbox.height / 2 };
+    } catch (e) {}
+  }
+
+  return { cx: 425, cy: 550 };
+}
+
+function findShelfElementForBook(book) {
+  if (!book) return null;
+  const shelfCode = (book.shelfCode || "").toUpperCase().trim();
+  const cat1 = (book.category1 || "").toUpperCase();
+  const cat2 = (book.category2 || "").toUpperCase();
+  const title = (book.title || "").toUpperCase();
+
+  // 1. Direct ID match
+  let target = document.querySelector(
+    `.shelf-group[data-id="${shelfCode.toLowerCase()}"]`,
+  );
+  if (target) return target;
+
+  // 2. Direct map table
+  const mappedId = SHELF_TO_MAP_ID[shelfCode];
+  if (mappedId) {
+    target = document.querySelector(`.shelf-group[data-id="${mappedId}"]`);
+    if (target) return target;
+  }
+
+  // 3. Prefix & Number Range Mapping
+  if (shelfCode.startsWith("BR1-") || shelfCode.startsWith("BR-")) {
+    const num = parseInt(shelfCode.replace(/[^0-9]/g, ""), 10);
+    if (!isNaN(num)) {
+      if (num >= 1 && num <= 10)
+        return (
+          document.querySelector('.shelf-group[data-id="anak_1"]') ||
+          document.querySelector('.shelf-group[data-id="cerita_1"]')
+        );
+      if (num >= 11 && num <= 20)
+        return (
+          document.querySelector('.shelf-group[data-id="rohani"]') ||
+          document.querySelector('.shelf-group[data-id="bismah"]')
+        );
+      if (num >= 21 && num <= 35)
+        return (
+          document.querySelector('.shelf-group[data-id="cerita_anak"]') ||
+          document.querySelector('.shelf-group[data-id="anak_wall_1"]')
+        );
+      if (num >= 36 && num <= 45)
+        return (
+          document.querySelector('.shelf-group[data-id="novel_1"]') ||
+          document.querySelector('.shelf-group[data-id="novel_2"]')
+        );
+      if (num >= 46 && num <= 55)
+        return (
+          document.querySelector('.shelf-group[data-id="novel_3"]') ||
+          document.querySelector('.shelf-group[data-id="novel_4"]')
+        );
+      if (num >= 56 && num <= 70)
+        return (
+          document.querySelector('.shelf-group[data-id="best_novel"]') ||
+          document.querySelector('.shelf-group[data-id="best_seller_1"]')
+        );
+    }
+  } else if (shelfCode.startsWith("BW1-") || shelfCode.startsWith("BW-")) {
+    const num = parseInt(shelfCode.replace(/[^0-9]/g, ""), 10);
+    if (!isNaN(num)) {
+      if (num <= 5)
+        return (
+          document.querySelector('.shelf-group[data-id="hobby_musik"]') ||
+          document.querySelector('.shelf-group[data-id="rak_kaca"]')
+        );
+      if (num <= 10)
+        return (
+          document.querySelector('.shelf-group[data-id="desain_majalah"]') ||
+          document.querySelector('.shelf-group[data-id="peta"]')
+        );
+      return (
+        document.querySelector('.shelf-group[data-id="buku_tulis_top"]') ||
+        document.querySelector('.shelf-group[data-id="buku_import"]')
+      );
+    }
+  } else if (shelfCode.startsWith("AR1-") || shelfCode.startsWith("AR-")) {
+    const num = parseInt(shelfCode.replace(/[^0-9]/g, ""), 10);
+    if (!isNaN(num) && num > 15)
+      return document.querySelector('.shelf-group[data-id="atk_2"]');
+    return document.querySelector('.shelf-group[data-id="atk_1"]');
+  } else if (shelfCode.startsWith("AK1-") || shelfCode.startsWith("AK-")) {
+    return (
+      document.querySelector('.shelf-group[data-id="rak_kaca"]') ||
+      document.querySelector('.shelf-group[data-id="flash_disk"]')
+    );
+  }
+
+  // 4. Category & Content Heuristics
+  const allCat = `${cat1} ${cat2} ${title}`;
+  if (
+    allCat.includes("ANAK") ||
+    allCat.includes("TK") ||
+    allCat.includes("PAUD") ||
+    allCat.includes("DONGENG")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="cerita_anak"]') ||
+      document.querySelector('.shelf-group[data-id="anak_1"]')
+    );
+  }
+  if (
+    allCat.includes("NOVEL") ||
+    allCat.includes("FIKSI") ||
+    allCat.includes("SASTRA") ||
+    allCat.includes("ROMAN")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="novel_1"]') ||
+      document.querySelector('.shelf-group[data-id="best_novel"]')
+    );
+  }
+  if (
+    allCat.includes("AGAMA") ||
+    allCat.includes("ISLAM") ||
+    allCat.includes("QURAN") ||
+    allCat.includes("ROHANI") ||
+    allCat.includes("DOA")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="rohani"]') ||
+      document.querySelector('.shelf-group[data-id="bismah"]')
+    );
+  }
+  if (
+    allCat.includes("HOBI") ||
+    allCat.includes("MUSIK") ||
+    allCat.includes("SENI") ||
+    allCat.includes("GAMBAR")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="hobby_musik"]') ||
+      document.querySelector('.shelf-group[data-id="meja_gambar"]')
+    );
+  }
+  if (
+    allCat.includes("ATK") ||
+    allCat.includes("ALAT TULIS") ||
+    allCat.includes("PENSIL") ||
+    allCat.includes("PULPEN")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="atk_1"]') ||
+      document.querySelector('.shelf-group[data-id="atk_2"]')
+    );
+  }
+  if (
+    allCat.includes("PETA") ||
+    allCat.includes("ATLAS") ||
+    allCat.includes("KAMUS") ||
+    allCat.includes("REFERENSI")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="atlas"]') ||
+      document.querySelector('.shelf-group[data-id="peta"]')
+    );
+  }
+  if (allCat.includes("KOMIK")) {
+    return (
+      document.querySelector('.shelf-group[data-id="cerita_anak"]') ||
+      document.querySelector('.shelf-group[data-id="anak_3"]')
+    );
+  }
+  if (allCat.includes("IMPOR") || allCat.includes("ENGLISH")) {
+    return document.querySelector('.shelf-group[data-id="buku_import"]');
+  }
+  if (allCat.includes("MAJALAH") || allCat.includes("DESAIN")) {
+    return document.querySelector('.shelf-group[data-id="desain_majalah"]');
+  }
+
+  return (
+    document.querySelector('.shelf-group[data-id="best_seller_1"]') ||
+    document.querySelector('.shelf-group[data-id="divider_rack"]')
+  );
+}
+
+function renderBookPinOnMap(cx, cy, shelfCode, bookTitle) {
+  const pinLayer = document.getElementById("mapPinMarkerLayer");
+  if (!pinLayer) return;
+
+  pinLayer.innerHTML = `
+    <g id="currentBookPin" transform="translate(${cx}, ${cy})">
+      <!-- Outer Radar Pulse Rings -->
+      <circle r="16" fill="none" stroke="#ef4444" stroke-width="2.5" class="pin-radar-ring" />
+      <circle r="30" fill="none" stroke="#ef4444" stroke-width="2" class="pin-radar-ring" style="animation-delay: 0.6s;" />
+      <circle r="44" fill="none" stroke="#f59e0b" stroke-width="1.5" class="pin-radar-ring" style="animation-delay: 1.2s;" />
+
+      <!-- Center Glow Drop Shadow Base -->
+      <ellipse cx="0" cy="2" rx="8" ry="4" fill="rgba(0,0,0,0.5)" />
+
+      <!-- Bouncing Pin Icon -->
+      <g class="pin-bounce-icon">
+        <path d="M 0 0 C -12 -18 -12 -38 0 -38 C 12 -38 12 -18 0 0 Z" 
+              fill="#ef4444" stroke="#ffffff" stroke-width="2.5" 
+              style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));" />
+        <circle cx="0" cy="-24" r="5" fill="#ffffff" />
+        <circle cx="0" cy="-24" r="2.5" fill="#ef4444" />
+      </g>
+
+      <!-- Floating Label Badge -->
+      <g transform="translate(0, -48)">
+        <rect x="-70" y="-18" width="140" height="24" rx="12" fill="#0f172a" stroke="#fbbf24" stroke-width="1.5" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));" />
+        <text x="0" y="-2" font-family="Inter, sans-serif" font-size="11" font-weight="bold" fill="#f8fafc" text-anchor="middle">
+          📍 ${shelfCode || "LOKASI RAK"}
+        </text>
+      </g>
+    </g>
+  `;
+}
+
+function selectShelfOnMap(groupElement) {
+  if (!groupElement) return;
+
+  // Clear previous shelf highlights
+  document.querySelectorAll(".shelf-item.highlighted").forEach((el) => {
+    el.classList.remove("highlighted");
+  });
+
+  const rectItem = groupElement.querySelector(".shelf-item");
+  if (rectItem) {
+    rectItem.classList.add("highlighted");
+  }
+
+  const title = groupElement.getAttribute("data-title") || "Area Toko";
+  const id = groupElement.getAttribute("data-id") || "-";
+  const category = groupElement.getAttribute("data-category") || "Umum";
+  const itemsStr = groupElement.getAttribute("data-items") || "";
+
+  const mapShelfTitle = document.getElementById("mapShelfTitle");
+  const mapShelfID = document.getElementById("mapShelfID");
+  const mapCategoryBadge = document.getElementById("mapCategoryBadge");
+  const mapItemList = document.getElementById("mapItemList");
+  const mapDefaultState = document.getElementById("mapDefaultState");
+  const mapSelectedState = document.getElementById("mapSelectedState");
+
+  if (mapShelfTitle) mapShelfTitle.textContent = title;
+  if (mapShelfID) mapShelfID.textContent = `ID Area: ${id}`;
+  if (mapCategoryBadge) mapCategoryBadge.textContent = category;
+
+  if (mapItemList) {
+    mapItemList.innerHTML = "";
+    if (itemsStr) {
+      const items = itemsStr.split(",").map((i) => i.trim());
+      items.forEach((item) => {
+        const tag = document.createElement("span");
+        tag.className =
+          "px-2.5 py-1 text-xs bg-slate-800 text-slate-200 border border-slate-700 rounded-md shadow-2xs";
+        tag.textContent = item;
+        mapItemList.appendChild(tag);
+      });
+    } else {
+      mapItemList.innerHTML =
+        '<span class="text-xs text-slate-500">Tidak ada detail item khusus.</span>';
+    }
+  }
+
+  if (mapDefaultState) mapDefaultState.classList.add("hidden");
+  if (mapSelectedState) mapSelectedState.classList.remove("hidden");
+}
+
+function openFloorPlanModal(targetBook = null) {
+  const modal = document.getElementById("floorPlanModal");
+  if (!modal) return;
+
+  modal.classList.remove("hidden");
+  document.body.classList.add("overflow-hidden");
+
+  // Re-create lucide icons inside modal
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+
+  const banner = document.getElementById("mapBookTargetBanner");
+  const bookContextCard = document.getElementById("mapBookContextCard");
+  const pinLayer = document.getElementById("mapPinMarkerLayer");
+
+  if (targetBook) {
+    activeMapBook = targetBook;
+
+    // Show Book Banner
+    if (banner) {
+      banner.classList.remove("hidden");
+      const titleEl = document.getElementById("mapTargetBookTitle");
+      const shelfEl = document.getElementById("mapTargetShelfBadge");
+      if (titleEl) titleEl.textContent = targetBook.title;
+      if (shelfEl) shelfEl.textContent = targetBook.shelfCode;
+    }
+
+    // Show Book Context Card in Sidebar
+    if (bookContextCard) {
+      bookContextCard.classList.remove("hidden");
+      const bTitle = document.getElementById("mapBookContextTitle");
+      const bShelf = document.getElementById("mapBookContextShelf");
+      const bFloor = document.getElementById("mapBookContextFloor");
+      const bStock = document.getElementById("mapBookContextStock");
+      if (bTitle) bTitle.textContent = targetBook.title;
+      if (bShelf) bShelf.textContent = targetBook.shelfCode;
+      if (bFloor) bFloor.textContent = formatFloor(targetBook.floor);
+      if (bStock)
+        bStock.textContent =
+          targetBook.stock > 0
+            ? `Stok: ${targetBook.stock} pcs`
+            : "Stok: Habis";
+    }
+
+    // Highlight target shelf and center with pin
+    const targetElement = findShelfElementForBook(targetBook);
+    if (targetElement) {
+      selectShelfOnMap(targetElement);
+      const center = getElementCenter(targetElement);
+      renderBookPinOnMap(
+        center.cx,
+        center.cy,
+        targetBook.shelfCode,
+        targetBook.title,
+      );
+      // Center and Zoom
+      setTimeout(() => {
+        centerMapOn(center.cx, center.cy, 1.6);
+      }, 50);
+    } else {
+      resetMapZoom();
+    }
+  } else {
+    // Exploration mode without specific book
+    activeMapBook = null;
+    if (banner) banner.classList.add("hidden");
+    if (bookContextCard) bookContextCard.classList.add("hidden");
+    if (pinLayer) pinLayer.innerHTML = "";
+
+    // Clear highlights
+    document.querySelectorAll(".shelf-item.highlighted").forEach((el) => {
+      el.classList.remove("highlighted");
+    });
+
+    const mapDefaultState = document.getElementById("mapDefaultState");
+    const mapSelectedState = document.getElementById("mapSelectedState");
+    if (mapDefaultState) mapDefaultState.classList.remove("hidden");
+    if (mapSelectedState) mapSelectedState.classList.add("hidden");
+
+    resetMapZoom();
+  }
+}
+
+function closeFloorPlanModal() {
+  const modal = document.getElementById("floorPlanModal");
+  if (!modal) return;
+
+  modal.classList.add("hidden");
+  document.body.classList.remove("overflow-hidden");
+
+  activeMapBook = null;
+  const pinLayer = document.getElementById("mapPinMarkerLayer");
+  if (pinLayer) pinLayer.innerHTML = "";
+  document.querySelectorAll(".shelf-item.highlighted").forEach((el) => {
+    el.classList.remove("highlighted");
+  });
+}
+
+function openFloorPlanForCurrentBook() {
+  const book = BOOK_DATABASE.find((b) => b.id === selectedBookId);
+  if (book) {
+    openFloorPlanModal(book);
+  } else {
+    openFloorPlanModal();
+  }
+}
+
+function clearMapSearch() {
+  const input = document.getElementById("mapSearchInput");
+  const clearBtn = document.getElementById("clearMapSearchBtn");
+  if (input) input.value = "";
+  if (clearBtn) clearBtn.classList.add("hidden");
+
+  document.querySelectorAll(".shelf-item.highlighted").forEach((el) => {
+    el.classList.remove("highlighted");
+  });
+
+  if (activeMapBook) {
+    const targetElement = findShelfElementForBook(activeMapBook);
+    if (targetElement) {
+      const rectItem = targetElement.querySelector(".shelf-item");
+      if (rectItem) rectItem.classList.add("highlighted");
+    }
+  }
+}
+
+function initFloorPlan() {
+  const container = document.getElementById("mapViewportContainer");
+  const searchInput = document.getElementById("mapSearchInput");
+  const clearSearchBtn = document.getElementById("clearMapSearchBtn");
+  const totalRacksCount = document.getElementById("mapTotalRacksCount");
+
+  if (!container) return;
+
+  const shelfGroups = document.querySelectorAll(".shelf-group");
+  if (totalRacksCount) {
+    totalRacksCount.textContent = shelfGroups.length;
+  }
+
+  // 1. Mouse Drag to Pan
+  container.addEventListener("mousedown", (e) => {
+    if (e.target.closest(".shelf-group")) return;
+    isMapDragging = true;
+    mapStartX = e.clientX - mapPointX;
+    mapStartY = e.clientY - mapPointY;
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    if (!isMapDragging) return;
+    mapPointX = e.clientX - mapStartX;
+    mapPointY = e.clientY - mapStartY;
+    updateMapTransform();
+  });
+
+  window.addEventListener("mouseup", () => {
+    isMapDragging = false;
+  });
+
+  // 2. Mouse Wheel to Zoom
+  container.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      const xs = (e.clientX - mapPointX) / mapScale;
+      const ys = (e.clientY - mapPointY) / mapScale;
+      const delta = -e.deltaY;
+
+      if (delta > 0) {
+        mapScale *= 1.12;
+      } else {
+        mapScale /= 1.12;
+      }
+      mapScale = Math.min(Math.max(0.6, mapScale), 4);
+
+      mapPointX = e.clientX - xs * mapScale;
+      mapPointY = e.clientY - ys * mapScale;
+      updateMapTransform();
+    },
+    { passive: false },
+  );
+
+  // 3. Touch Support (1-finger Pan & 2-finger Pinch Zoom)
+  container.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length === 2) {
+        isMapDragging = false;
+        mapTouchDistStart = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY,
+        );
+        mapInitialScale = mapScale;
+      } else if (e.touches.length === 1) {
+        if (e.target.closest(".shelf-group")) return;
+        isMapDragging = true;
+        mapStartX = e.touches[0].clientX - mapPointX;
+        mapStartY = e.touches[0].clientY - mapPointY;
+      }
+    },
+    { passive: true },
+  );
+
+  container.addEventListener(
+    "touchmove",
+    (e) => {
+      if (e.touches.length === 2 && mapTouchDistStart > 0) {
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY,
+        );
+        const factor = dist / mapTouchDistStart;
+        mapScale = Math.min(Math.max(0.6, mapInitialScale * factor), 4);
+        updateMapTransform();
+      } else if (isMapDragging && e.touches.length === 1) {
+        mapPointX = e.touches[0].clientX - mapStartX;
+        mapPointY = e.touches[0].clientY - mapStartY;
+        updateMapTransform();
+      }
+    },
+    { passive: true },
+  );
+
+  container.addEventListener("touchend", () => {
+    isMapDragging = false;
+    mapTouchDistStart = 0;
+  });
+
+  // 4. Shelf Click Handler
+  shelfGroups.forEach((group) => {
+    group.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectShelfOnMap(group);
+    });
+  });
+
+  // 5. Search Bar Filter & Highlight
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      if (clearSearchBtn) {
+        if (query.length > 0) {
+          clearSearchBtn.classList.remove("hidden");
+        } else {
+          clearSearchBtn.classList.add("hidden");
+        }
+      }
+
+      shelfGroups.forEach((group) => {
+        const title = (group.getAttribute("data-title") || "").toLowerCase();
+        const category = (
+          group.getAttribute("data-category") || ""
+        ).toLowerCase();
+        const items = (group.getAttribute("data-items") || "").toLowerCase();
+        const id = (group.getAttribute("data-id") || "").toLowerCase();
+        const rectItem = group.querySelector(".shelf-item");
+
+        if (
+          query &&
+          (title.includes(query) ||
+            category.includes(query) ||
+            items.includes(query) ||
+            id.includes(query))
+        ) {
+          if (rectItem) rectItem.classList.add("highlighted");
+        } else {
+          if (rectItem) rectItem.classList.remove("highlighted");
+        }
+      });
+    });
+  }
+
+  // 6. Close modal on ESC key
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const modal = document.getElementById("floorPlanModal");
+      if (modal && !modal.classList.contains("hidden")) {
+        closeFloorPlanModal();
+      }
+    }
+  });
 }
