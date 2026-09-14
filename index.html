@@ -17,7 +17,7 @@
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
     <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.2.1" defer></script>
+    <script src="app.js?v=2.2.2" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
@@ -483,6 +483,27 @@
       }
       .pin-radar-ring {
         animation: pinRadarPulse 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+        pointer-events: none;
+      }
+      @keyframes youAreHerePulse {
+        0% {
+          r: 12px;
+          opacity: 0.95;
+          stroke-width: 2.5px;
+        }
+        50% {
+          r: 26px;
+          opacity: 0.45;
+          stroke-width: 1.8px;
+        }
+        100% {
+          r: 40px;
+          opacity: 0;
+          stroke-width: 1px;
+        }
+      }
+      .you-are-here-ring {
+        animation: youAreHerePulse 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
         pointer-events: none;
       }
       @keyframes pinBounceAnim {
@@ -3629,6 +3650,60 @@
                     >
                       pintu masuk
                     </text>
+                  </g>
+
+                  <!-- Static "YOU ARE HERE" (Anda Di Sini) Kiosk Location Pin -->
+                  <g id="youAreHereMarker" transform="translate(488, 760)" style="pointer-events: none; user-select: none;">
+                    <!-- Outer Radar Pulse Rings (Blue) -->
+                    <circle r="14" fill="none" stroke="#0284c7" stroke-width="2.5" class="you-are-here-ring" />
+                    <circle r="26" fill="none" stroke="#38bdf8" stroke-width="1.8" class="you-are-here-ring" style="animation-delay: 0.7s;" />
+                    <circle r="38" fill="none" stroke="#0ea5e9" stroke-width="1.2" class="you-are-here-ring" style="animation-delay: 1.4s;" />
+
+                    <!-- Base Ellipse Shadow -->
+                    <ellipse cx="0" cy="2" rx="7" ry="3.5" fill="rgba(2, 132, 199, 0.35)" />
+
+                    <!-- Bouncing Blue Pin -->
+                    <g class="pin-bounce-icon">
+                      <!-- Pin Teardrop Shape -->
+                      <path
+                        d="M 0 0 C -11 -16 -11 -34 0 -34 C 11 -34 11 -16 0 0 Z"
+                        fill="#0284c7"
+                        stroke="#ffffff"
+                        stroke-width="2.5"
+                        style="filter: drop-shadow(0 4px 6px rgba(2, 132, 199, 0.45));"
+                      />
+                      <!-- Pin Center Dot -->
+                      <circle cx="0" cy="-21" r="5" fill="#ffffff" />
+                      <circle cx="0" cy="-21" r="2.5" fill="#0284c7" />
+
+                      <!-- Floating "YOU ARE HERE" Badge -->
+                      <g transform="translate(0, -42)">
+                        <rect
+                          x="-58"
+                          y="-13"
+                          width="116"
+                          height="24"
+                          rx="12"
+                          fill="#0284c7"
+                          stroke="#ffffff"
+                          stroke-width="2"
+                          style="filter: drop-shadow(0 3px 6px rgba(2, 132, 199, 0.4));"
+                        />
+                        <circle cx="-43" cy="-1" r="3.5" fill="#38bdf8" />
+                        <text
+                          x="5"
+                          y="3"
+                          font-family="Inter, system-ui, sans-serif"
+                          font-size="10"
+                          font-weight="900"
+                          fill="#ffffff"
+                          text-anchor="middle"
+                          letter-spacing="0.8"
+                        >
+                          YOU ARE HERE
+                        </text>
+                      </g>
+                    </g>
                   </g>
                 </g>
               </g>
