@@ -17,7 +17,7 @@
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
     <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.1.7" defer></script>
+    <script src="app.js?v=2.1.8" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
@@ -399,6 +399,7 @@
         max-height: 100% !important;
         width: auto !important;
         max-width: 100% !important;
+        aspect-ratio: 830 / 1060;
         display: block;
         margin: 0 auto;
       }
@@ -439,21 +440,41 @@
         fill: #334155;
       }
       @keyframes shelfPulseAnim {
-        0% { filter: drop-shadow(0 0 2px rgba(217, 119, 6, 0.4)); }
-        100% { filter: drop-shadow(0 0 10px rgba(217, 119, 6, 0.8)); }
+        0% {
+          filter: drop-shadow(0 0 2px rgba(217, 119, 6, 0.4));
+        }
+        100% {
+          filter: drop-shadow(0 0 10px rgba(217, 119, 6, 0.8));
+        }
       }
       @keyframes pinRadarPulse {
-        0% { r: 12px; opacity: 0.9; stroke-width: 2.5px; }
-        50% { r: 24px; opacity: 0.4; stroke-width: 1.8px; }
-        100% { r: 38px; opacity: 0; stroke-width: 1px; }
+        0% {
+          r: 12px;
+          opacity: 0.9;
+          stroke-width: 2.5px;
+        }
+        50% {
+          r: 24px;
+          opacity: 0.4;
+          stroke-width: 1.8px;
+        }
+        100% {
+          r: 38px;
+          opacity: 0;
+          stroke-width: 1px;
+        }
       }
       .pin-radar-ring {
         animation: pinRadarPulse 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
         pointer-events: none;
       }
       @keyframes pinBounceAnim {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(-6px); }
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-6px);
+        }
       }
       .pin-bounce-icon {
         animation: pinBounceAnim 0.8s ease-in-out infinite alternate;
@@ -789,10 +810,18 @@
                 <tr>
                   <th class="py-3 px-3 text-center w-12">No</th>
                   <th class="py-3 px-4">Buku & Kategori</th>
-                  <th class="py-3 px-3 hidden sm:table-cell w-36 whitespace-nowrap">Kode Produk</th>
+                  <th
+                    class="py-3 px-3 hidden sm:table-cell w-36 whitespace-nowrap"
+                  >
+                    Kode Produk
+                  </th>
                   <th class="py-3 px-3 w-32 whitespace-nowrap">Kode Rak</th>
-                  <th class="py-3 px-3 text-center w-20 whitespace-nowrap">Stok</th>
-                  <th class="py-3 px-4 text-right w-32 whitespace-nowrap">Harga</th>
+                  <th class="py-3 px-3 text-center w-20 whitespace-nowrap">
+                    Stok
+                  </th>
+                  <th class="py-3 px-4 text-right w-32 whitespace-nowrap">
+                    Harga
+                  </th>
                 </tr>
               </thead>
               <tbody
@@ -970,43 +999,41 @@
 
           <!-- SELECTED CONTENT -->
           <div id="bookDetailContent" class="hidden space-y-5">
-            <!-- HIGHLIGHT LOKASI RAK UTAMA -->
+            <!-- HIGHLIGHT LOKASI RAK UTAMA (CARD HIJAU) -->
             <div
               class="bg-emerald-50 border border-emerald-500/30 rounded-xl p-4 relative overflow-hidden shadow-xs"
             >
-              <div class="flex items-start justify-between relative z-10 gap-2">
-                <div>
-                  <span
-                    class="text-[10px] font-extrabold tracking-wider uppercase text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded border border-emerald-300"
-                  >
-                    Lokasi Pengambilan
-                  </span>
-                  <h3
-                    id="detailShelfCode"
-                    class="text-3xl sm:text-4xl font-black text-emerald-950 mt-1.5 tracking-tight"
-                  >
-                    RAK A-02
-                  </h3>
-                  <div
-                    class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-emerald-900"
-                  >
-                    <span id="detailFloor">Lantai 1</span>
-                  </div>
-                </div>
-
-                <!-- Tombol Buka Denah Interaktif -->
-                <button
-                  type="button"
-                  id="openShelfOnMapBtn"
-                  onclick="openFloorPlanForCurrentBook()"
-                  class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5 active:scale-95 cursor-pointer shrink-0 mt-1"
-                  title="Lihat posisi rak buku di denah toko"
+              <div class="relative z-10">
+                <span
+                  class="text-[10px] font-extrabold tracking-wider uppercase text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded border border-emerald-300"
                 >
-                  <i data-lucide="map-pin" class="w-4 h-4 text-emerald-100"></i>
-                  <span>Buka Denah</span>
-                </button>
+                  Lokasi Pengambilan
+                </span>
+                <h3
+                  id="detailShelfCode"
+                  class="text-3xl sm:text-4xl font-black text-emerald-950 mt-1.5 tracking-tight"
+                >
+                  RAK A-02
+                </h3>
+                <div
+                  class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-emerald-900"
+                >
+                  <span id="detailFloor">Lantai 1</span>
+                </div>
               </div>
             </div>
+
+            <!-- TOMBOL BUKA DENAH FULL WIDTH DI BAWAH CARD HIJAU -->
+            <button
+              type="button"
+              id="openShelfOnMapBtn"
+              onclick="openFloorPlanForCurrentBook()"
+              class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-3 px-4 rounded-xl shadow-xs transition flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-[0.99] cursor-pointer"
+              title="Lihat posisi rak buku di denah toko"
+            >
+              <i data-lucide="map-pin" class="w-4 h-4 text-emerald-100 shrink-0"></i>
+              <span>Buka Denah Lokasi Buku Ini</span>
+            </button>
 
             <!-- DETAIL INFORMASI BUKU (CARD MODERN & ESTETIK) -->
             <div
@@ -1538,10 +1565,10 @@
     <!-- POPUP MODAL DENAH TOKO (STATIS 1 LAYAR & LIGHT MODE) -->
     <div
       id="floorPlanModal"
-      class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
+      class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1.5 sm:p-3"
     >
       <div
-        class="w-full max-w-6xl h-[92vh] max-h-[960px] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-800"
+        class="w-full max-w-[1440px] h-[96vh] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-800"
       >
         <!-- Modal Header -->
         <div
@@ -1555,7 +1582,9 @@
               <i data-lucide="map" class="w-5 h-5"></i>
             </div>
             <div>
-              <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+              <h3
+                class="text-sm sm:text-base font-bold text-slate-900 leading-tight"
+              >
                 Denah Toko Eureka Bookhouse
               </h3>
               <p class="text-[11px] text-slate-500 hidden sm:block">
@@ -1606,7 +1635,7 @@
         <div class="flex-1 flex min-h-0 min-w-0 overflow-hidden relative">
           <!-- Static Floor Plan Viewport: Fits 100% to Height -->
           <main
-            class="flex-1 min-w-0 min-h-0 h-full relative blueprint-bg overflow-hidden flex items-center justify-center p-2 sm:p-4 select-none"
+            class="flex-1 min-w-0 min-h-0 h-full relative blueprint-bg overflow-hidden flex items-center justify-center p-1 sm:p-2 select-none"
             id="mapViewportContainer"
           >
             <!-- Active Book Location Alert Strip (Shown if modal opened for a book) -->
@@ -1615,9 +1644,16 @@
               class="hidden absolute top-3 left-3 right-3 sm:left-6 sm:right-auto sm:max-w-md z-20 bg-emerald-50 border border-emerald-300 text-emerald-900 px-3.5 py-2 rounded-xl shadow-md flex items-center justify-between gap-3 text-xs"
             >
               <div class="flex items-center gap-2 truncate">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping shrink-0"></span>
+                <span
+                  class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping shrink-0"
+                ></span>
                 <span class="truncate">
-                  Lokasi Buku: <strong id="mapTargetBookTitle" class="text-emerald-950 font-bold">-</strong>
+                  Lokasi Buku:
+                  <strong
+                    id="mapTargetBookTitle"
+                    class="text-emerald-950 font-bold"
+                    >-</strong
+                  >
                 </span>
               </div>
               <span
@@ -1631,7 +1667,7 @@
             <!-- SVG Floor Plan Render (Constrained to container height: full 1-screen visible) -->
             <svg
               id="svgBlueprint"
-              viewBox="0 0 850 1100"
+              viewBox="10 0 830 1060"
               preserveAspectRatio="xMidYMid meet"
               class="h-full w-auto max-h-full max-w-full block mx-auto drop-shadow-xs"
             >
@@ -1651,7 +1687,13 @@
 
               <g id="viewportGroup">
                 <!-- Background Grid / Structure -->
-                <rect x="0" y="0" width="850" height="1100" fill="transparent" />
+                <rect
+                  x="0"
+                  y="0"
+                  width="850"
+                  height="1100"
+                  fill="transparent"
+                />
 
                 <!-- Walls Layer -->
                 <g id="walls" class="wall-line">
@@ -1670,7 +1712,7 @@
                   <line x1="40" y1="450" x2="130" y2="450" />
                   <line x1="80" y1="380" x2="130" y2="380" />
                   <line x1="80" y1="380" x2="80" y2="450" />
-                  
+
                   <!-- Main Entrance Vestibule Walls (Bottom Center) -->
                   <line x1="380" y1="920" x2="380" y2="1020" />
                   <line x1="485" y1="920" x2="485" y2="1020" />
@@ -1694,10 +1736,22 @@
                 <!-- Door Arcs -->
                 <g id="doors" stroke="#0284c7" stroke-width="1.5" fill="none">
                   <path d="M 120 270 A 30 30 0 0 1 150 240" />
-                  <line x1="120" y1="270" x2="150" y2="240" stroke-dasharray="2,2"/>
-                  
+                  <line
+                    x1="120"
+                    y1="270"
+                    x2="150"
+                    y2="240"
+                    stroke-dasharray="2,2"
+                  />
+
                   <path d="M 120 340 A 30 30 0 0 1 150 310" />
-                  <line x1="120" y1="340" x2="150" y2="310" stroke-dasharray="2,2"/>
+                  <line
+                    x1="120"
+                    y1="340"
+                    x2="150"
+                    y2="310"
+                    stroke-dasharray="2,2"
+                  />
 
                   <!-- Entrance Door Arc -->
                   <path d="M 450 920 A 35 35 0 0 1 485 885" />
@@ -1708,359 +1762,1787 @@
                 <!-- Interactive Shelves & Areas Layer -->
                 <g id="interactiveAreas">
                   <!-- Office Room -->
-                  <g class="shelf-group" data-id="office" data-title="OFFICE" data-category="Area Kerja" data-items="Meja Kerja, Berkas Kantor, Komputer Admin">
-                    <rect x="45" y="45" width="110" height="220" class="shelf-item" />
-                    <text x="100" y="150" class="shelf-text" text-anchor="middle" transform="rotate(-90, 100, 150)">OFFICE</text>
+                  <g
+                    class="shelf-group"
+                    data-id="office"
+                    data-title="OFFICE"
+                    data-category="Area Kerja"
+                    data-items="Meja Kerja, Berkas Kantor, Komputer Admin"
+                  >
+                    <rect
+                      x="45"
+                      y="45"
+                      width="110"
+                      height="220"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="100"
+                      y="150"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 100, 150)"
+                    >
+                      OFFICE
+                    </text>
                   </g>
 
                   <!-- Upper Storage / Top Perimeter Racks -->
-                  <g class="shelf-group" data-id="odner_top" data-title="odner" data-category="Arsip & Storage" data-items="Odner Binder, Box File">
-                    <rect x="180" y="45" width="55" height="25" class="shelf-item" />
-                    <text x="207" y="62" class="shelf-text" text-anchor="middle">odner</text>
+                  <g
+                    class="shelf-group"
+                    data-id="odner_top"
+                    data-title="odner"
+                    data-category="Arsip & Storage"
+                    data-items="Odner Binder, Box File"
+                  >
+                    <rect
+                      x="180"
+                      y="45"
+                      width="55"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="207"
+                      y="62"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      odner
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="file_1" data-title="file" data-category="Arsip & Storage" data-items="Map Dokumen, Folder Transparan">
-                    <rect x="270" y="45" width="55" height="25" class="shelf-item" />
-                    <text x="297" y="62" class="shelf-text" text-anchor="middle">file</text>
+                  <g
+                    class="shelf-group"
+                    data-id="file_1"
+                    data-title="file"
+                    data-category="Arsip & Storage"
+                    data-items="Map Dokumen, Folder Transparan"
+                  >
+                    <rect
+                      x="270"
+                      y="45"
+                      width="55"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="297"
+                      y="62"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      file
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="file_2" data-title="file" data-category="Arsip & Storage" data-items="Folder Plastik, File Organizer">
-                    <rect x="330" y="45" width="55" height="25" class="shelf-item" />
-                    <text x="357" y="62" class="shelf-text" text-anchor="middle">file</text>
+                  <g
+                    class="shelf-group"
+                    data-id="file_2"
+                    data-title="file"
+                    data-category="Arsip & Storage"
+                    data-items="Folder Plastik, File Organizer"
+                  >
+                    <rect
+                      x="330"
+                      y="45"
+                      width="55"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="357"
+                      y="62"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      file
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="file_3" data-title="file" data-category="Arsip & Storage" data-items="Dokumen Bag, Map Plastik">
-                    <rect x="390" y="45" width="55" height="25" class="shelf-item" />
-                    <text x="417" y="62" class="shelf-text" text-anchor="middle">file</text>
+                  <g
+                    class="shelf-group"
+                    data-id="file_3"
+                    data-title="file"
+                    data-category="Arsip & Storage"
+                    data-items="Dokumen Bag, Map Plastik"
+                  >
+                    <rect
+                      x="390"
+                      y="45"
+                      width="55"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="417"
+                      y="62"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      file
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="paper_gif" data-title="Paper gif" data-category="Kertas & Kado" data-items="Kertas Kado, Fancy Paper, Gift Wrap">
-                    <rect x="450" y="45" width="25" height="65" class="shelf-item" />
-                    <text x="465" y="80" class="shelf-text" text-anchor="middle" transform="rotate(90, 465, 80)">Paper gif</text>
+                  <g
+                    class="shelf-group"
+                    data-id="paper_gif"
+                    data-title="Paper gif"
+                    data-category="Kertas & Kado"
+                    data-items="Kertas Kado, Fancy Paper, Gift Wrap"
+                  >
+                    <rect
+                      x="450"
+                      y="45"
+                      width="25"
+                      height="65"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="465"
+                      y="80"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 465, 80)"
+                    >
+                      Paper gif
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="buku_tulis_top" data-title="buku tulis" data-category="Buku" data-items="Buku Tulis Sekolah, Notebook, Buku Halus">
-                    <rect x="520" y="45" width="110" height="25" class="shelf-item" />
-                    <text x="575" y="62" class="shelf-text" text-anchor="middle">buku tulis</text>
+                  <g
+                    class="shelf-group"
+                    data-id="buku_tulis_top"
+                    data-title="buku tulis"
+                    data-category="Buku"
+                    data-items="Buku Tulis Sekolah, Notebook, Buku Halus"
+                  >
+                    <rect
+                      x="520"
+                      y="45"
+                      width="110"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="575"
+                      y="62"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      buku tulis
+                    </text>
                   </g>
 
                   <!-- Gudang (Top Right Area) -->
-                  <g class="shelf-group" data-id="gudang" data-title="GUDANG" data-category="Storage Area" data-items="Stok Barang, Kardus Inventaris, Perataan Stok">
-                    <rect x="640" y="45" width="165" height="230" class="shelf-item" stroke-dasharray="4,4" />
-                    <text x="722" y="160" class="shelf-text" font-size="14" text-anchor="middle" transform="rotate(90, 722, 160)">GUDANG</text>
+                  <g
+                    class="shelf-group"
+                    data-id="gudang"
+                    data-title="GUDANG"
+                    data-category="Storage Area"
+                    data-items="Stok Barang, Kardus Inventaris, Perataan Stok"
+                  >
+                    <rect
+                      x="640"
+                      y="45"
+                      width="165"
+                      height="230"
+                      class="shelf-item"
+                      stroke-dasharray="4,4"
+                    />
+                    <text
+                      x="722"
+                      y="160"
+                      class="shelf-text"
+                      font-size="14"
+                      text-anchor="middle"
+                      transform="rotate(90, 722, 160)"
+                    >
+                      GUDANG
+                    </text>
                   </g>
 
                   <!-- Left Vertical Racks Top -->
-                  <g class="shelf-group" data-id="bag_1" data-title="Bag" data-category="Tas & Aksesoris" data-items="Tas Ransel, Tas Sekolah">
-                    <rect x="165" y="80" width="25" height="40" class="shelf-item" />
-                    <text x="177" y="100" class="shelf-text" text-anchor="middle" transform="rotate(-90, 177, 100)">Bag</text>
+                  <g
+                    class="shelf-group"
+                    data-id="bag_1"
+                    data-title="Bag"
+                    data-category="Tas & Aksesoris"
+                    data-items="Tas Ransel, Tas Sekolah"
+                  >
+                    <rect
+                      x="165"
+                      y="80"
+                      width="25"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="177"
+                      y="100"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 177, 100)"
+                    >
+                      Bag
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="bag_2" data-title="Bag" data-category="Tas & Aksesoris" data-items="Tas Laptop, Totebag">
-                    <rect x="165" y="125" width="25" height="40" class="shelf-item" />
-                    <text x="177" y="145" class="shelf-text" text-anchor="middle" transform="rotate(-90, 177, 145)">Bag</text>
+                  <g
+                    class="shelf-group"
+                    data-id="bag_2"
+                    data-title="Bag"
+                    data-category="Tas & Aksesoris"
+                    data-items="Tas Laptop, Totebag"
+                  >
+                    <rect
+                      x="165"
+                      y="125"
+                      width="25"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="177"
+                      y="145"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 177, 145)"
+                    >
+                      Bag
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="crayola" data-title="Crayola" data-category="Alat Mewarnai" data-items="Crayon Crayola, Pensil Warna, Cat Air">
-                    <rect x="165" y="170" width="25" height="60" class="shelf-item" />
-                    <text x="177" y="200" class="shelf-text" text-anchor="middle" transform="rotate(-90, 177, 200)">Crayola</text>
+                  <g
+                    class="shelf-group"
+                    data-id="crayola"
+                    data-title="Crayola"
+                    data-category="Alat Mewarnai"
+                    data-items="Crayon Crayola, Pensil Warna, Cat Air"
+                  >
+                    <rect
+                      x="165"
+                      y="170"
+                      width="25"
+                      height="60"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="177"
+                      y="200"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 177, 200)"
+                    >
+                      Crayola
+                    </text>
                   </g>
 
                   <!-- Central Grid Top Tables / Racks -->
-                  <g class="shelf-group" data-id="rak_amplop" data-title="Rak amplop" data-category="Amplop & Surat" data-items="Amplop Cokelat, Amplop Putih, Amplop Gelatik">
-                    <rect x="220" y="90" width="55" height="60" class="shelf-item" />
-                    <text x="247" y="120" class="shelf-text" text-anchor="middle" transform="rotate(-90, 247, 120)">Rak amplop</text>
+                  <g
+                    class="shelf-group"
+                    data-id="rak_amplop"
+                    data-title="Rak amplop"
+                    data-category="Amplop & Surat"
+                    data-items="Amplop Cokelat, Amplop Putih, Amplop Gelatik"
+                  >
+                    <rect
+                      x="220"
+                      y="90"
+                      width="55"
+                      height="60"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="247"
+                      y="120"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 247, 120)"
+                    >
+                      Rak amplop
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="cyclone" data-title="cyclone" data-category="Alat Tulis Special" data-items="Pena Cyclone, Marker, Highlighter">
-                    <rect x="290" y="90" width="55" height="60" class="shelf-item" />
-                    <text x="317" y="120" class="shelf-text" text-anchor="middle">cyclone</text>
+                  <g
+                    class="shelf-group"
+                    data-id="cyclone"
+                    data-title="cyclone"
+                    data-category="Alat Tulis Special"
+                    data-items="Pena Cyclone, Marker, Highlighter"
+                  >
+                    <rect
+                      x="290"
+                      y="90"
+                      width="55"
+                      height="60"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="317"
+                      y="120"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      cyclone
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="cart" data-title="cart" data-category="Perlengkapan Cart" data-items="Cartridge Ink, Pita Printer">
-                    <rect x="360" y="90" width="55" height="60" class="shelf-item" />
-                    <text x="387" y="120" class="shelf-text" text-anchor="middle">cart</text>
+                  <g
+                    class="shelf-group"
+                    data-id="cart"
+                    data-title="cart"
+                    data-category="Perlengkapan Cart"
+                    data-items="Cartridge Ink, Pita Printer"
+                  >
+                    <rect
+                      x="360"
+                      y="90"
+                      width="55"
+                      height="60"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="387"
+                      y="120"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      cart
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="odner_mid" data-title="odner" data-category="Arsip & Storage" data-items="Odner Bantex, Ring Binder">
-                    <rect x="220" y="170" width="55" height="60" class="shelf-item" />
-                    <text x="247" y="200" class="shelf-text" text-anchor="middle">odner</text>
+                  <g
+                    class="shelf-group"
+                    data-id="odner_mid"
+                    data-title="odner"
+                    data-category="Arsip & Storage"
+                    data-items="Odner Bantex, Ring Binder"
+                  >
+                    <rect
+                      x="220"
+                      y="170"
+                      width="55"
+                      height="60"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="247"
+                      y="200"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      odner
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="paper_mid" data-title="paper" data-category="Kertas HVS/Foto" data-items="Kertas HVS A4 80gr, Kertas Foto, Concorde">
-                    <rect x="290" y="170" width="55" height="60" class="shelf-item" />
-                    <text x="317" y="200" class="shelf-text" text-anchor="middle">paper</text>
+                  <g
+                    class="shelf-group"
+                    data-id="paper_mid"
+                    data-title="paper"
+                    data-category="Kertas HVS/Foto"
+                    data-items="Kertas HVS A4 80gr, Kertas Foto, Concorde"
+                  >
+                    <rect
+                      x="290"
+                      y="170"
+                      width="55"
+                      height="60"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="317"
+                      y="200"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      paper
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="meja_gambar" data-title="meja gambar" data-category="Alat Lukis / Arsitek" data-items="Meja Gambar, Drawing Board, Meja Jiplak">
-                    <rect x="360" y="170" width="55" height="60" class="shelf-item" />
-                    <text x="387" y="200" class="shelf-text" text-anchor="middle">meja gambar</text>
+                  <g
+                    class="shelf-group"
+                    data-id="meja_gambar"
+                    data-title="meja gambar"
+                    data-category="Alat Lukis / Arsitek"
+                    data-items="Meja Gambar, Drawing Board, Meja Jiplak"
+                  >
+                    <rect
+                      x="360"
+                      y="170"
+                      width="55"
+                      height="60"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="387"
+                      y="200"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      meja gambar
+                    </text>
                   </g>
 
                   <!-- Long Horiz Racks (Divider) -->
-                  <g class="shelf-group" data-id="divider_rack" data-title="Rak Panjang Pembatas" data-category="Display Utama" data-items="Display Buku Terbaru & Novel">
-                    <rect x="220" y="245" width="245" height="20" class="shelf-item" />
-                    <text x="342" y="260" class="shelf-text" text-anchor="middle">Rak Pembatas</text>
+                  <g
+                    class="shelf-group"
+                    data-id="divider_rack"
+                    data-title="Rak Panjang Pembatas"
+                    data-category="Display Utama"
+                    data-items="Display Buku Terbaru & Novel"
+                  >
+                    <rect
+                      x="220"
+                      y="245"
+                      width="245"
+                      height="20"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="342"
+                      y="260"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Rak Pembatas
+                    </text>
                   </g>
 
                   <!-- Vertical Racks (Rohani & Bismah Area) -->
-                  <g class="shelf-group" data-id="rohani" data-title="ROHANI" data-category="Buku Keagamaan" data-items="Kitab Suci, Buku Agama, Al-Qur'an, Alkitab">
-                    <rect x="500" y="130" width="30" height="150" class="shelf-item" />
-                    <text x="515" y="205" class="shelf-text" text-anchor="middle" transform="rotate(-90, 515, 205)">ROHANI</text>
+                  <g
+                    class="shelf-group"
+                    data-id="rohani"
+                    data-title="ROHANI"
+                    data-category="Buku Keagamaan"
+                    data-items="Kitab Suci, Buku Agama, Al-Qur'an, Alkitab"
+                  >
+                    <rect
+                      x="500"
+                      y="130"
+                      width="30"
+                      height="150"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="515"
+                      y="205"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 515, 205)"
+                    >
+                      ROHANI
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="bismah" data-title="Bismah" data-category="Buku Keagamaan / Bacaan" data-items="Buku Doa, Spiritualitas">
-                    <rect x="560" y="130" width="35" height="150" class="shelf-item" />
-                    <text x="577" y="205" class="shelf-text" text-anchor="middle" transform="rotate(-90, 577, 205)">Bismah</text>
+                  <g
+                    class="shelf-group"
+                    data-id="bismah"
+                    data-title="Bismah"
+                    data-category="Buku Keagamaan / Bacaan"
+                    data-items="Buku Doa, Spiritualitas"
+                  >
+                    <rect
+                      x="560"
+                      y="130"
+                      width="35"
+                      height="150"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="577"
+                      y="205"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 577, 205)"
+                    >
+                      Bismah
+                    </text>
                   </g>
 
                   <!-- Right Wall Long Racks -->
-                  <g class="shelf-group" data-id="rak_kaca" data-title="rak kaca hobby" data-category="Hobi & Koleksi" data-items="Model Kit, Action Figure, Miniatur">
-                    <rect x="625" y="90" width="20" height="110" class="shelf-item" />
-                    <text x="635" y="145" class="shelf-text" text-anchor="middle" transform="rotate(-90, 635, 145)">rak kaca hobby</text>
+                  <g
+                    class="shelf-group"
+                    data-id="rak_kaca"
+                    data-title="rak kaca hobby"
+                    data-category="Hobi & Koleksi"
+                    data-items="Model Kit, Action Figure, Miniatur"
+                  >
+                    <rect
+                      x="625"
+                      y="90"
+                      width="20"
+                      height="110"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="635"
+                      y="145"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 635, 145)"
+                    >
+                      rak kaca hobby
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="hobby_musik" data-title="hobby musik" data-category="Musik & Seni" data-items="Buku Musik, Partitur, Aksesoris Gitar/Pianica">
-                    <rect x="625" y="205" width="20" height="110" class="shelf-item" />
-                    <text x="635" y="260" class="shelf-text" text-anchor="middle" transform="rotate(-90, 635, 260)">hobby musik</text>
+                  <g
+                    class="shelf-group"
+                    data-id="hobby_musik"
+                    data-title="hobby musik"
+                    data-category="Musik & Seni"
+                    data-items="Buku Musik, Partitur, Aksesoris Gitar/Pianica"
+                  >
+                    <rect
+                      x="625"
+                      y="205"
+                      width="20"
+                      height="110"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="635"
+                      y="260"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 635, 260)"
+                    >
+                      hobby musik
+                    </text>
                   </g>
 
                   <!-- Right Wall Side Shelves -->
-                  <g class="shelf-group" data-id="cerita_1" data-title="cerita" data-category="Buku Cerita" data-items="Dongeng Anak, Cerita Rakyat">
-                    <rect x="645" y="325" width="55" height="20" class="shelf-item" />
-                    <text x="672" y="340" class="shelf-text" text-anchor="middle">cerita</text>
+                  <g
+                    class="shelf-group"
+                    data-id="cerita_1"
+                    data-title="cerita"
+                    data-category="Buku Cerita"
+                    data-items="Dongeng Anak, Cerita Rakyat"
+                  >
+                    <rect
+                      x="645"
+                      y="325"
+                      width="55"
+                      height="20"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="672"
+                      y="340"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      cerita
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="cerita_anak" data-title="cerita anak" data-category="Buku Anak" data-items="Buku Bergambar, Komik Anak">
-                    <rect x="715" y="315" width="20" height="60" class="shelf-item" />
-                    <text x="725" y="345" class="shelf-text" text-anchor="middle" transform="rotate(90, 725, 345)">cerita anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="cerita_anak"
+                    data-title="cerita anak"
+                    data-category="Buku Anak"
+                    data-items="Buku Bergambar, Komik Anak"
+                  >
+                    <rect
+                      x="715"
+                      y="315"
+                      width="20"
+                      height="60"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="725"
+                      y="345"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 725, 345)"
+                    >
+                      cerita anak
+                    </text>
                   </g>
 
                   <!-- Wall Shelves Right Edge (Anak Section) -->
-                  <g class="shelf-group" data-id="anak_wall_1" data-title="anak" data-category="Buku Anak" data-items="Buku Belajar Membaca, Aktivitas TK">
-                    <rect x="750" y="350" width="18" height="45" class="shelf-item" />
-                    <text x="759" y="372" class="shelf-text" text-anchor="middle" transform="rotate(90, 759, 372)">anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_wall_1"
+                    data-title="anak"
+                    data-category="Buku Anak"
+                    data-items="Buku Belajar Membaca, Aktivitas TK"
+                  >
+                    <rect
+                      x="750"
+                      y="350"
+                      width="18"
+                      height="45"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="759"
+                      y="372"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 759, 372)"
+                    >
+                      anak
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="anak_wall_2" data-title="anak" data-category="Buku Anak" data-items="Buku Mewarnai, Sticker Book">
-                    <rect x="748" y="405" width="18" height="45" class="shelf-item" />
-                    <text x="757" y="427" class="shelf-text" text-anchor="middle" transform="rotate(90, 757, 427)">anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_wall_2"
+                    data-title="anak"
+                    data-category="Buku Anak"
+                    data-items="Buku Mewarnai, Sticker Book"
+                  >
+                    <rect
+                      x="748"
+                      y="405"
+                      width="18"
+                      height="45"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="757"
+                      y="427"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 757, 427)"
+                    >
+                      anak
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="anak_wall_3" data-title="anak" data-category="Buku Anak" data-items="Buku Pop-Up, Encylopedia Kids">
-                    <rect x="744" y="525" width="18" height="45" class="shelf-item" />
-                    <text x="753" y="547" class="shelf-text" text-anchor="middle" transform="rotate(90, 753, 547)">anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_wall_3"
+                    data-title="anak"
+                    data-category="Buku Anak"
+                    data-items="Buku Pop-Up, Encylopedia Kids"
+                  >
+                    <rect
+                      x="744"
+                      y="525"
+                      width="18"
+                      height="45"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="753"
+                      y="547"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 753, 547)"
+                    >
+                      anak
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="anak_wall_4" data-title="anak" data-category="Buku Anak" data-items="Buku Pengetahuan Anak">
-                    <rect x="740" y="630" width="18" height="45" class="shelf-item" />
-                    <text x="749" y="652" class="shelf-text" text-anchor="middle" transform="rotate(90, 749, 652)">anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_wall_4"
+                    data-title="anak"
+                    data-category="Buku Anak"
+                    data-items="Buku Pengetahuan Anak"
+                  >
+                    <rect
+                      x="740"
+                      y="630"
+                      width="18"
+                      height="45"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="749"
+                      y="652"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 749, 652)"
+                    >
+                      anak
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="anak_wall_5" data-title="anak" data-category="Buku Anak" data-items="Komik Anak Edukasi">
-                    <rect x="736" y="735" width="18" height="45" class="shelf-item" />
-                    <text x="745" y="757" class="shelf-text" text-anchor="middle" transform="rotate(90, 745, 757)">anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_wall_5"
+                    data-title="anak"
+                    data-category="Buku Anak"
+                    data-items="Komik Anak Edukasi"
+                  >
+                    <rect
+                      x="736"
+                      y="735"
+                      width="18"
+                      height="45"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="745"
+                      y="757"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 745, 757)"
+                    >
+                      anak
+                    </text>
                   </g>
 
                   <!-- Alat Tulis Kantor (ATK) Racks Center -->
                   <!-- ATK Row 1 -->
-                  <g class="shelf-group" data-id="atk_1" data-title="Alat Tulis Kantor" data-category="ATK" data-items="Pulpen, Pensil 2B, Penghapus, Penggaris">
-                    <rect x="270" y="350" width="185" height="30" class="shelf-item" />
-                    <text x="362" y="370" class="shelf-text" text-anchor="middle">Alat Tulis Kantor</text>
+                  <g
+                    class="shelf-group"
+                    data-id="atk_1"
+                    data-title="Alat Tulis Kantor"
+                    data-category="ATK"
+                    data-items="Pulpen, Pensil 2B, Penghapus, Penggaris"
+                  >
+                    <rect
+                      x="270"
+                      y="350"
+                      width="185"
+                      height="30"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="362"
+                      y="370"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Alat Tulis Kantor
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="boneka_1" data-title="Boneka" data-category="Aksesoris/Hadiah" data-items="Boneka Kecil, Gantungan Kunci">
-                    <rect x="240" y="340" width="20" height="50" class="shelf-item" />
-                    <text x="250" y="365" class="shelf-text" text-anchor="middle" transform="rotate(-90, 250, 365)">Boneka</text>
+                  <g
+                    class="shelf-group"
+                    data-id="boneka_1"
+                    data-title="Boneka"
+                    data-category="Aksesoris/Hadiah"
+                    data-items="Boneka Kecil, Gantungan Kunci"
+                  >
+                    <rect
+                      x="240"
+                      y="340"
+                      width="20"
+                      height="50"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="250"
+                      y="365"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 250, 365)"
+                    >
+                      Boneka
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="penggaris" data-title="penggaris" data-category="ATK" data-items="Penggaris Besi, Busur, Set Siku">
-                    <rect x="465" y="340" width="20" height="50" class="shelf-item" />
-                    <text x="475" y="365" class="shelf-text" text-anchor="middle" transform="rotate(90, 475, 365)">penggaris</text>
+                  <g
+                    class="shelf-group"
+                    data-id="penggaris"
+                    data-title="penggaris"
+                    data-category="ATK"
+                    data-items="Penggaris Besi, Busur, Set Siku"
+                  >
+                    <rect
+                      x="465"
+                      y="340"
+                      width="20"
+                      height="50"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="475"
+                      y="365"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 475, 365)"
+                    >
+                      penggaris
+                    </text>
                   </g>
 
                   <!-- ATK Row 2 -->
-                  <g class="shelf-group" data-id="atk_2" data-title="Alat Tulis Kantor" data-category="ATK" data-items="Stapler, Isi Stapler, Gunting, Cutter, Lem">
-                    <rect x="270" y="415" width="185" height="30" class="shelf-item" />
-                    <text x="362" y="435" class="shelf-text" text-anchor="middle">Alat Tulis Kantor</text>
+                  <g
+                    class="shelf-group"
+                    data-id="atk_2"
+                    data-title="Alat Tulis Kantor"
+                    data-category="ATK"
+                    data-items="Stapler, Isi Stapler, Gunting, Cutter, Lem"
+                  >
+                    <rect
+                      x="270"
+                      y="415"
+                      width="185"
+                      height="30"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="362"
+                      y="435"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Alat Tulis Kantor
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="mouse_1" data-title="Mouse" data-category="Aksesoris Komputer" data-items="Mouse Wireless, Mousepad, Keyboard">
-                    <rect x="240" y="410" width="20" height="50" class="shelf-item" />
-                    <text x="250" y="435" class="shelf-text" text-anchor="middle" transform="rotate(-90, 250, 435)">Mouse</text>
+                  <g
+                    class="shelf-group"
+                    data-id="mouse_1"
+                    data-title="Mouse"
+                    data-category="Aksesoris Komputer"
+                    data-items="Mouse Wireless, Mousepad, Keyboard"
+                  >
+                    <rect
+                      x="240"
+                      y="410"
+                      width="20"
+                      height="50"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="250"
+                      y="435"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 250, 435)"
+                    >
+                      Mouse
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="amos_1" data-title="amos" data-category="Lem & Glue" data-items="Lem Amos Glue Stick, Color Dough">
-                    <rect x="465" y="410" width="20" height="50" class="shelf-item" />
-                    <text x="475" y="435" class="shelf-text" text-anchor="middle" transform="rotate(90, 475, 435)">amos</text>
+                  <g
+                    class="shelf-group"
+                    data-id="amos_1"
+                    data-title="amos"
+                    data-category="Lem & Glue"
+                    data-items="Lem Amos Glue Stick, Color Dough"
+                  >
+                    <rect
+                      x="465"
+                      y="410"
+                      width="20"
+                      height="50"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="475"
+                      y="435"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 475, 435)"
+                    >
+                      amos
+                    </text>
                   </g>
 
                   <!-- Central Tables (Parker, Amos, Big, Children Table) -->
-                  <g class="shelf-group" data-id="parker" data-title="parker" data-category="Pena Eksklusif" data-items="Pena Parker Premium, Tinta Parker, Gift Box">
-                    <rect x="280" y="475" width="20" height="50" class="shelf-item" />
-                    <text x="290" y="500" class="shelf-text" text-anchor="middle" transform="rotate(-90, 290, 500)">parker</text>
+                  <g
+                    class="shelf-group"
+                    data-id="parker"
+                    data-title="parker"
+                    data-category="Pena Eksklusif"
+                    data-items="Pena Parker Premium, Tinta Parker, Gift Box"
+                  >
+                    <rect
+                      x="280"
+                      y="475"
+                      width="20"
+                      height="50"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="290"
+                      y="500"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 290, 500)"
+                    >
+                      parker
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="meja_amos" data-title="meja amos" data-category="Display Brand" data-items="Produk Amos Display, Craft Set">
-                    <rect x="325" y="475" width="35" height="50" class="shelf-item" />
-                    <text x="342" y="500" class="shelf-text" text-anchor="middle" transform="rotate(-90, 342, 500)">meja amos</text>
+                  <g
+                    class="shelf-group"
+                    data-id="meja_amos"
+                    data-title="meja amos"
+                    data-category="Display Brand"
+                    data-items="Produk Amos Display, Craft Set"
+                  >
+                    <rect
+                      x="325"
+                      y="475"
+                      width="35"
+                      height="50"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="342"
+                      y="500"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 342, 500)"
+                    >
+                      meja amos
+                    </text>
                   </g>
                   <!-- Diamond Shaped Table "Big" -->
-                  <g class="shelf-group" data-id="big_table" data-title="Big" data-category="Display Promo" data-items="Produk Promosi Utama, Clearance Sale">
-                    <polygon points="415,465 440,490 415,515 390,490" class="shelf-item" />
-                    <text x="415" y="494" class="shelf-text" text-anchor="middle">Big</text>
+                  <g
+                    class="shelf-group"
+                    data-id="big_table"
+                    data-title="Big"
+                    data-category="Display Promo"
+                    data-items="Produk Promosi Utama, Clearance Sale"
+                  >
+                    <polygon
+                      points="415,465 440,490 415,515 390,490"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="415"
+                      y="494"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Big
+                    </text>
                   </g>
 
                   <!-- Middle Right Children Section -->
-                  <g class="shelf-group" data-id="meja_anak_grid" data-title="meja anak" data-category="Area Bermain/Baca" data-items="Kursi Anak, Meja Mewarnai">
-                    <rect x="515" y="360" width="60" height="50" class="shelf-item" />
-                    <line x1="545" y1="360" x2="545" y2="410" stroke="#94a3b8" />
-                    <line x1="515" y1="385" x2="575" y2="385" stroke="#94a3b8" />
-                    <text x="510" y="390" class="shelf-text" text-anchor="middle" transform="rotate(-90, 510, 390)">meja anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="meja_anak_grid"
+                    data-title="meja anak"
+                    data-category="Area Bermain/Baca"
+                    data-items="Kursi Anak, Meja Mewarnai"
+                  >
+                    <rect
+                      x="515"
+                      y="360"
+                      width="60"
+                      height="50"
+                      class="shelf-item"
+                    />
+                    <line
+                      x1="545"
+                      y1="360"
+                      x2="545"
+                      y2="410"
+                      stroke="#94a3b8"
+                    />
+                    <line
+                      x1="515"
+                      y1="385"
+                      x2="575"
+                      y2="385"
+                      stroke="#94a3b8"
+                    />
+                    <text
+                      x="510"
+                      y="390"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 510, 390)"
+                    >
+                      meja anak
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="buku_import" data-title="buku import" data-category="Buku Impor" data-items="English Books, Import Fiction, Best Sellers International">
-                    <rect x="620" y="365" width="70" height="30" class="shelf-item" />
-                    <text x="655" y="384" class="shelf-text" text-anchor="middle">buku import</text>
+                  <g
+                    class="shelf-group"
+                    data-id="buku_import"
+                    data-title="buku import"
+                    data-category="Buku Impor"
+                    data-items="English Books, Import Fiction, Best Sellers International"
+                  >
+                    <rect
+                      x="620"
+                      y="365"
+                      width="70"
+                      height="30"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="655"
+                      y="384"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      buku import
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="meja_anak_round" data-title="meja anak" data-category="Area Bermain/Baca" data-items="Meja Setsetengah Lingkaran Anak">
-                    <path d="M 630 450 A 40 40 0 0 1 700 450 Z" class="shelf-item" />
-                    <text x="665" y="470" class="shelf-text" text-anchor="middle">meja anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="meja_anak_round"
+                    data-title="meja anak"
+                    data-category="Area Bermain/Baca"
+                    data-items="Meja Setsetengah Lingkaran Anak"
+                  >
+                    <path
+                      d="M 630 450 A 40 40 0 0 1 700 450 Z"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="665"
+                      y="470"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      meja anak
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="kursi_center" data-title="Kursi" data-category="Fasilitas Toko" data-items="Kursi Tunggu Pengunjung, Bench">
-                    <rect x="538" y="440" width="30" height="120" rx="10" class="shelf-item" />
-                    <text x="553" y="500" class="shelf-text" text-anchor="middle" transform="rotate(90, 553, 500)">Kursi</text>
+                  <g
+                    class="shelf-group"
+                    data-id="kursi_center"
+                    data-title="Kursi"
+                    data-category="Fasilitas Toko"
+                    data-items="Kursi Tunggu Pengunjung, Bench"
+                  >
+                    <rect
+                      x="538"
+                      y="440"
+                      width="30"
+                      height="120"
+                      rx="10"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="553"
+                      y="500"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 553, 500)"
+                    >
+                      Kursi
+                    </text>
                   </g>
 
                   <!-- Cashier (Kasir Area Left) -->
-                  <g class="shelf-group" data-id="kasir" data-title="Kasir" data-category="Layanan" data-items="Meja Pembayaran, Mesin POS, EDC, Kantong Belanja">
-                    <path d="M 70 410 L 140 410 L 140 520 L 110 520 L 110 440 L 70 440 Z" class="shelf-item" />
-                    <text x="105" y="480" class="shelf-text" text-anchor="middle" font-size="13" transform="rotate(-90, 105, 480)">Kasir</text>
+                  <g
+                    class="shelf-group"
+                    data-id="kasir"
+                    data-title="Kasir"
+                    data-category="Layanan"
+                    data-items="Meja Pembayaran, Mesin POS, EDC, Kantong Belanja"
+                  >
+                    <path
+                      d="M 70 410 L 140 410 L 140 520 L 110 520 L 110 440 L 70 440 Z"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="105"
+                      y="480"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      font-size="13"
+                      transform="rotate(-90, 105, 480)"
+                    >
+                      Kasir
+                    </text>
                   </g>
 
                   <!-- Left Racks (VCD/DVD, Magazines, Maps) -->
-                  <g class="shelf-group" data-id="vcd_dvd_1" data-title="VCD/DVD" data-category="Media & CD" data-items="CD Edukasi, Film, Software">
-                    <rect x="98" y="555" width="45" height="75" class="shelf-item" />
-                    <text x="120" y="592" class="shelf-text" text-anchor="middle" transform="rotate(-90, 120, 592)">VCD/DVD</text>
+                  <g
+                    class="shelf-group"
+                    data-id="vcd_dvd_1"
+                    data-title="VCD/DVD"
+                    data-category="Media & CD"
+                    data-items="CD Edukasi, Film, Software"
+                  >
+                    <rect
+                      x="98"
+                      y="555"
+                      width="45"
+                      height="75"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="120"
+                      y="592"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 120, 592)"
+                    >
+                      VCD/DVD
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="vcd_dvd_2" data-title="VCD/DVD" data-category="Media & CD" data-items="CD Musik, Tutorial Audio">
-                    <rect x="98" y="640" width="45" height="75" class="shelf-item" />
-                    <text x="120" y="677" class="shelf-text" text-anchor="middle" transform="rotate(-90, 120, 677)">VCD/DVD</text>
+                  <g
+                    class="shelf-group"
+                    data-id="vcd_dvd_2"
+                    data-title="VCD/DVD"
+                    data-category="Media & CD"
+                    data-items="CD Musik, Tutorial Audio"
+                  >
+                    <rect
+                      x="98"
+                      y="640"
+                      width="45"
+                      height="75"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="120"
+                      y="677"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 120, 677)"
+                    >
+                      VCD/DVD
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="peta" data-title="peta" data-category="Peta & Atlas" data-items="Peta Dinding, Peta Lipat, Bola Dunia (Globe)">
-                    <rect x="45" y="540" width="20" height="40" class="shelf-item" />
-                    <text x="55" y="560" class="shelf-text" text-anchor="middle" transform="rotate(90, 55, 560)">peta</text>
+                  <g
+                    class="shelf-group"
+                    data-id="peta"
+                    data-title="peta"
+                    data-category="Peta & Atlas"
+                    data-items="Peta Dinding, Peta Lipat, Bola Dunia (Globe)"
+                  >
+                    <rect
+                      x="45"
+                      y="540"
+                      width="20"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="55"
+                      y="560"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 55, 560)"
+                    >
+                      peta
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="desain_majalah" data-title="desain majalah" data-category="Majalah & Publikasi" data-items="Majalah Desain, Arsitektur, Fashion, Tabloid">
-                    <rect x="45" y="590" width="20" height="110" class="shelf-item" />
-                    <text x="55" y="645" class="shelf-text" text-anchor="middle" transform="rotate(90, 55, 645)">desain majalah</text>
+                  <g
+                    class="shelf-group"
+                    data-id="desain_majalah"
+                    data-title="desain majalah"
+                    data-category="Majalah & Publikasi"
+                    data-items="Majalah Desain, Arsitektur, Fashion, Tabloid"
+                  >
+                    <rect
+                      x="45"
+                      y="590"
+                      width="20"
+                      height="110"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="55"
+                      y="645"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 55, 645)"
+                    >
+                      desain majalah
+                    </text>
                   </g>
 
                   <!-- Central Lower Shelves: Flash Disk, Tas, Novel, Best Novel -->
                   <!-- Row 1: Flash Disk & Tas -->
-                  <g class="shelf-group" data-id="flash_disk" data-title="flash disk" data-category="Aksesoris Komputer" data-items="Flashdisk Sandisk 32GB/64GB, OTG, Memory Card">
-                    <rect x="220" y="555" width="105" height="25" class="shelf-item" />
-                    <text x="272" y="572" class="shelf-text" text-anchor="middle">flash disk</text>
+                  <g
+                    class="shelf-group"
+                    data-id="flash_disk"
+                    data-title="flash disk"
+                    data-category="Aksesoris Komputer"
+                    data-items="Flashdisk Sandisk 32GB/64GB, OTG, Memory Card"
+                  >
+                    <rect
+                      x="220"
+                      y="555"
+                      width="105"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="272"
+                      y="572"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      flash disk
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="tas_mid" data-title="Tas" data-category="Tas" data-items="Tas Selempang, Pouch Pensil">
-                    <rect x="335" y="555" width="105" height="25" class="shelf-item" />
-                    <text x="387" y="572" class="shelf-text" text-anchor="middle">Tas</text>
+                  <g
+                    class="shelf-group"
+                    data-id="tas_mid"
+                    data-title="Tas"
+                    data-category="Tas"
+                    data-items="Tas Selempang, Pouch Pensil"
+                  >
+                    <rect
+                      x="335"
+                      y="555"
+                      width="105"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="387"
+                      y="572"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Tas
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="mouse_2" data-title="Mouse" data-category="Aksesoris Komputer" data-items="Mouse Gaming, Cable Clip">
-                    <rect x="200" y="550" width="15" height="40" class="shelf-item" />
-                    <text x="207" y="570" class="shelf-text" text-anchor="middle" transform="rotate(-90, 207, 570)">Mouse</text>
+                  <g
+                    class="shelf-group"
+                    data-id="mouse_2"
+                    data-title="Mouse"
+                    data-category="Aksesoris Komputer"
+                    data-items="Mouse Gaming, Cable Clip"
+                  >
+                    <rect
+                      x="200"
+                      y="550"
+                      width="15"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="207"
+                      y="570"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 207, 570)"
+                    >
+                      Mouse
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="amos_2" data-title="amos" data-category="Lem" data-items="Amos Liquid Glue">
-                    <rect x="445" y="550" width="15" height="40" class="shelf-item" />
-                    <text x="452" y="570" class="shelf-text" text-anchor="middle" transform="rotate(90, 452, 570)">amos</text>
+                  <g
+                    class="shelf-group"
+                    data-id="amos_2"
+                    data-title="amos"
+                    data-category="Lem"
+                    data-items="Amos Liquid Glue"
+                  >
+                    <rect
+                      x="445"
+                      y="550"
+                      width="15"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="452"
+                      y="570"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(90, 452, 570)"
+                    >
+                      amos
+                    </text>
                   </g>
 
                   <!-- Row 2: Novel Shelves -->
-                  <g class="shelf-group" data-id="novel_1" data-title="Novel" data-category="Buku Fiksi" data-items="Novel Fiksi Remaja, Fiksi Ilmiah">
-                    <rect x="220" y="610" width="105" height="25" class="shelf-item" />
-                    <text x="272" y="627" class="shelf-text" text-anchor="middle">Novel</text>
+                  <g
+                    class="shelf-group"
+                    data-id="novel_1"
+                    data-title="Novel"
+                    data-category="Buku Fiksi"
+                    data-items="Novel Fiksi Remaja, Fiksi Ilmiah"
+                  >
+                    <rect
+                      x="220"
+                      y="610"
+                      width="105"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="272"
+                      y="627"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Novel
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="novel_2" data-title="Novel" data-category="Buku Fiksi" data-items="Novel Terjemahan, Fantasy">
-                    <rect x="335" y="610" width="105" height="25" class="shelf-item" />
-                    <text x="387" y="627" class="shelf-text" text-anchor="middle">Novel</text>
+                  <g
+                    class="shelf-group"
+                    data-id="novel_2"
+                    data-title="Novel"
+                    data-category="Buku Fiksi"
+                    data-items="Novel Terjemahan, Fantasy"
+                  >
+                    <rect
+                      x="335"
+                      y="610"
+                      width="105"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="387"
+                      y="627"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Novel
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="staedtler_1" data-title="stadler" data-category="ATK / Pensil" data-items="Pensil Staedtler 2B, 4B, Eraser Staedtler">
-                    <rect x="200" y="605" width="15" height="40" class="shelf-item" />
-                    <text x="207" y="625" class="shelf-text" text-anchor="middle" transform="rotate(-90, 207, 625)">stadler</text>
+                  <g
+                    class="shelf-group"
+                    data-id="staedtler_1"
+                    data-title="stadler"
+                    data-category="ATK / Pensil"
+                    data-items="Pensil Staedtler 2B, 4B, Eraser Staedtler"
+                  >
+                    <rect
+                      x="200"
+                      y="605"
+                      width="15"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="207"
+                      y="625"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 207, 625)"
+                    >
+                      stadler
+                    </text>
                   </g>
 
                   <!-- Row 3: Novel Shelves -->
-                  <g class="shelf-group" data-id="novel_3" data-title="Novel" data-category="Buku Fiksi" data-items="Novel Romantis, Drama">
-                    <rect x="220" y="665" width="105" height="25" class="shelf-item" />
-                    <text x="272" y="682" class="shelf-text" text-anchor="middle">Novel</text>
+                  <g
+                    class="shelf-group"
+                    data-id="novel_3"
+                    data-title="Novel"
+                    data-category="Buku Fiksi"
+                    data-items="Novel Romantis, Drama"
+                  >
+                    <rect
+                      x="220"
+                      y="665"
+                      width="105"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="272"
+                      y="682"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Novel
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="novel_4" data-title="Novel" data-category="Buku Fiksi" data-items="Novel Misteri, Thriller">
-                    <rect x="335" y="665" width="105" height="25" class="shelf-item" />
-                    <text x="387" y="682" class="shelf-text" text-anchor="middle">Novel</text>
+                  <g
+                    class="shelf-group"
+                    data-id="novel_4"
+                    data-title="Novel"
+                    data-category="Buku Fiksi"
+                    data-items="Novel Misteri, Thriller"
+                  >
+                    <rect
+                      x="335"
+                      y="665"
+                      width="105"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="387"
+                      y="682"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Novel
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="staedtler_2" data-title="stadler" data-category="ATK / Pensil" data-items="Drawing Pen Staedtler, Penggaris Sablon">
-                    <rect x="200" y="660" width="15" height="40" class="shelf-item" />
-                    <text x="207" y="680" class="shelf-text" text-anchor="middle" transform="rotate(-90, 207, 680)">stadler</text>
+                  <g
+                    class="shelf-group"
+                    data-id="staedtler_2"
+                    data-title="stadler"
+                    data-category="ATK / Pensil"
+                    data-items="Drawing Pen Staedtler, Penggaris Sablon"
+                  >
+                    <rect
+                      x="200"
+                      y="660"
+                      width="15"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="207"
+                      y="680"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 207, 680)"
+                    >
+                      stadler
+                    </text>
                   </g>
 
                   <!-- Row 4: Best Novel Shelves -->
-                  <g class="shelf-group" data-id="best_novel" data-title="Best Novel" data-category="Buku Rekomendasi" data-items="Top 10 Best Seller Novel, Award-Winning Books">
-                    <rect x="270" y="720" width="170" height="25" class="shelf-item" />
-                    <text x="355" y="737" class="shelf-text" text-anchor="middle">Best Novel</text>
+                  <g
+                    class="shelf-group"
+                    data-id="best_novel"
+                    data-title="Best Novel"
+                    data-category="Buku Rekomendasi"
+                    data-items="Top 10 Best Seller Novel, Award-Winning Books"
+                  >
+                    <rect
+                      x="270"
+                      y="720"
+                      width="170"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="355"
+                      y="737"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Best Novel
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="atlas" data-title="atlas" data-category="Buku Referensi" data-items="Atlas Indonesia, Atlas Dunia, Kamus">
-                    <rect x="260" y="715" width="20" height="35" class="shelf-item" />
-                    <text x="270" y="732" class="shelf-text" text-anchor="middle" transform="rotate(-90, 270, 732)">atlas</text>
+                  <g
+                    class="shelf-group"
+                    data-id="atlas"
+                    data-title="atlas"
+                    data-category="Buku Referensi"
+                    data-items="Atlas Indonesia, Atlas Dunia, Kamus"
+                  >
+                    <rect
+                      x="260"
+                      y="715"
+                      width="20"
+                      height="35"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="270"
+                      y="732"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 270, 732)"
+                    >
+                      atlas
+                    </text>
                   </g>
 
                   <!-- Right Bottom Children Promosi & Floor Displays -->
-                  <g class="shelf-group" data-id="anak_1" data-title="anak" data-category="Buku Anak" data-items="Buku Komik Anak">
-                    <rect x="535" y="600" width="50" height="25" class="shelf-item" />
-                    <text x="560" y="617" class="shelf-text" text-anchor="middle">anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_1"
+                    data-title="anak"
+                    data-category="Buku Anak"
+                    data-items="Buku Komik Anak"
+                  >
+                    <rect
+                      x="535"
+                      y="600"
+                      width="50"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="560"
+                      y="617"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      anak
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="anak_2" data-title="anak" data-category="Buku Anak" data-items="Buku Aktivitas">
-                    <rect x="590" y="600" width="50" height="25" class="shelf-item" />
-                    <text x="615" y="617" class="shelf-text" text-anchor="middle">anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_2"
+                    data-title="anak"
+                    data-category="Buku Anak"
+                    data-items="Buku Aktivitas"
+                  >
+                    <rect
+                      x="590"
+                      y="600"
+                      width="50"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="615"
+                      y="617"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      anak
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="anak_3" data-title="anak" data-category="Buku Anak" data-items="Buku Dongeng">
-                    <rect x="645" y="600" width="50" height="25" class="shelf-item" />
-                    <text x="670" y="617" class="shelf-text" text-anchor="middle">anak</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_3"
+                    data-title="anak"
+                    data-category="Buku Anak"
+                    data-items="Buku Dongeng"
+                  >
+                    <rect
+                      x="645"
+                      y="600"
+                      width="50"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="670"
+                      y="617"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      anak
+                    </text>
                   </g>
 
-                  <g class="shelf-group" data-id="anak_promosi" data-title="anak promosi" data-category="Promo Anak" data-items="Diskon Buku Anak, Paket Super Murah">
-                    <rect x="535" y="660" width="160" height="25" class="shelf-item" />
-                    <text x="615" y="677" class="shelf-text" text-anchor="middle">anak promosi</text>
+                  <g
+                    class="shelf-group"
+                    data-id="anak_promosi"
+                    data-title="anak promosi"
+                    data-category="Promo Anak"
+                    data-items="Diskon Buku Anak, Paket Super Murah"
+                  >
+                    <rect
+                      x="535"
+                      y="660"
+                      width="160"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="615"
+                      y="677"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      anak promosi
+                    </text>
                   </g>
 
-                  <g class="shelf-group" data-id="floor_1" data-title="floor" data-category="Floor Display" data-items="Display Obral Buku">
-                    <rect x="510" y="745" width="35" height="20" class="shelf-item" />
-                    <text x="527" y="759" class="shelf-text" text-anchor="middle">floor</text>
+                  <g
+                    class="shelf-group"
+                    data-id="floor_1"
+                    data-title="floor"
+                    data-category="Floor Display"
+                    data-items="Display Obral Buku"
+                  >
+                    <rect
+                      x="510"
+                      y="745"
+                      width="35"
+                      height="20"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="527"
+                      y="759"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      floor
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="floor_promosi" data-title="floor promosi" data-category="Floor Display Promo" data-items="Display Event Spesial, Novel Diskon">
-                    <path d="M 560 765 A 40 40 0 0 1 640 765 Z" class="shelf-item" />
-                    <text x="600" y="760" class="shelf-text" text-anchor="middle">floor promosi</text>
+                  <g
+                    class="shelf-group"
+                    data-id="floor_promosi"
+                    data-title="floor promosi"
+                    data-category="Floor Display Promo"
+                    data-items="Display Event Spesial, Novel Diskon"
+                  >
+                    <path
+                      d="M 560 765 A 40 40 0 0 1 640 765 Z"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="600"
+                      y="760"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      floor promosi
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="floor_2" data-title="floor" data-category="Floor Display" data-items="Display Majalah Lama">
-                    <rect x="665" y="745" width="35" height="20" class="shelf-item" />
-                    <text x="682" y="759" class="shelf-text" text-anchor="middle">floor</text>
+                  <g
+                    class="shelf-group"
+                    data-id="floor_2"
+                    data-title="floor"
+                    data-category="Floor Display"
+                    data-items="Display Majalah Lama"
+                  >
+                    <rect
+                      x="665"
+                      y="745"
+                      width="35"
+                      height="20"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="682"
+                      y="759"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      floor
+                    </text>
                   </g>
 
                   <!-- Best Seller Display Stand (Near Entrance) -->
-                  <g class="shelf-group" data-id="best_seller_1" data-title="Best Seller" data-category="Rekomendasi Utama" data-items="Buku Paling Laku Bulan Ini">
-                    <rect x="275" y="780" width="70" height="40" class="shelf-item" />
-                    <text x="310" y="798" class="shelf-text" text-anchor="middle">Best</text>
-                    <text x="310" y="810" class="shelf-text" text-anchor="middle">Seller</text>
+                  <g
+                    class="shelf-group"
+                    data-id="best_seller_1"
+                    data-title="Best Seller"
+                    data-category="Rekomendasi Utama"
+                    data-items="Buku Paling Laku Bulan Ini"
+                  >
+                    <rect
+                      x="275"
+                      y="780"
+                      width="70"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="310"
+                      y="798"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Best
+                    </text>
+                    <text
+                      x="310"
+                      y="810"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Seller
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="best_seller_2" data-title="Best Seller" data-category="Rekomendasi Utama" data-items="Buku Populer & Trending">
-                    <rect x="350" y="780" width="70" height="40" class="shelf-item" />
-                    <text x="385" y="798" class="shelf-text" text-anchor="middle">Best</text>
-                    <text x="385" y="810" class="shelf-text" text-anchor="middle">Seller</text>
+                  <g
+                    class="shelf-group"
+                    data-id="best_seller_2"
+                    data-title="Best Seller"
+                    data-category="Rekomendasi Utama"
+                    data-items="Buku Populer & Trending"
+                  >
+                    <rect
+                      x="350"
+                      y="780"
+                      width="70"
+                      height="40"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="385"
+                      y="798"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Best
+                    </text>
+                    <text
+                      x="385"
+                      y="810"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      Seller
+                    </text>
                   </g>
 
                   <!-- Bottom Entrance Area Items -->
                   <!-- Staircase Area (Bottom Left) -->
                   <g id="staircase">
-                    <rect x="45" y="740" width="130" height="180" fill="none" stroke="#94a3b8" stroke-width="1.5" />
+                    <rect
+                      x="45"
+                      y="740"
+                      width="130"
+                      height="180"
+                      fill="none"
+                      stroke="#94a3b8"
+                      stroke-width="1.5"
+                    />
                     <line x1="45" y1="760" x2="175" y2="760" stroke="#94a3b8" />
                     <line x1="45" y1="780" x2="175" y2="780" stroke="#94a3b8" />
                     <line x1="45" y1="800" x2="175" y2="800" stroke="#94a3b8" />
                     <line x1="45" y1="820" x2="175" y2="820" stroke="#94a3b8" />
                     <line x1="45" y1="840" x2="175" y2="840" stroke="#94a3b8" />
                     <line x1="45" y1="860" x2="175" y2="860" stroke="#94a3b8" />
-                    <line x1="110" y1="910" x2="110" y2="750" stroke="#0284c7" stroke-width="1.5" marker-end="url(#arrow)" />
+                    <line
+                      x1="110"
+                      y1="910"
+                      x2="110"
+                      y2="750"
+                      stroke="#0284c7"
+                      stroke-width="1.5"
+                      marker-end="url(#arrow)"
+                    />
                   </g>
 
-                  <g class="shelf-group" data-id="new_arifal_1" data-title="New Arifal" data-category="Produk Baru" data-items="Buku Kedatangan Baru">
-                    <rect x="100" y="835" width="45" height="75" class="shelf-item" />
-                    <text x="122" y="872" class="shelf-text" text-anchor="middle" transform="rotate(-90, 122, 872)">New Arifal</text>
+                  <g
+                    class="shelf-group"
+                    data-id="new_arifal_1"
+                    data-title="New Arifal"
+                    data-category="Produk Baru"
+                    data-items="Buku Kedatangan Baru"
+                  >
+                    <rect
+                      x="100"
+                      y="835"
+                      width="45"
+                      height="75"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="122"
+                      y="872"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 122, 872)"
+                    >
+                      New Arifal
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="new_arifal_2" data-title="New Arifal" data-category="Produk Baru" data-items="ATK Model Terbaru">
-                    <rect x="130" y="915" width="85" height="25" class="shelf-item" />
-                    <text x="172" y="932" class="shelf-text" text-anchor="middle">New Arifal</text>
+                  <g
+                    class="shelf-group"
+                    data-id="new_arifal_2"
+                    data-title="New Arifal"
+                    data-category="Produk Baru"
+                    data-items="ATK Model Terbaru"
+                  >
+                    <rect
+                      x="130"
+                      y="915"
+                      width="85"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="172"
+                      y="932"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      New Arifal
+                    </text>
                   </g>
-                  <g class="shelf-group" data-id="new_arifal_3" data-title="New Arifal" data-category="Produk Baru" data-items="Display Barang Baru Masuk">
-                    <rect x="260" y="915" width="85" height="25" class="shelf-item" />
-                    <text x="302" y="932" class="shelf-text" text-anchor="middle">New Arifal</text>
+                  <g
+                    class="shelf-group"
+                    data-id="new_arifal_3"
+                    data-title="New Arifal"
+                    data-category="Produk Baru"
+                    data-items="Display Barang Baru Masuk"
+                  >
+                    <rect
+                      x="260"
+                      y="915"
+                      width="85"
+                      height="25"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="302"
+                      y="932"
+                      class="shelf-text"
+                      text-anchor="middle"
+                    >
+                      New Arifal
+                    </text>
                   </g>
 
                   <!-- Pintu Masuk Label -->
                   <g id="pintu_masuk_group">
-                    <text x="388" y="890" class="shelf-text" font-size="13" text-anchor="middle" transform="rotate(90, 388, 890)">pintu masuk</text>
+                    <text
+                      x="388"
+                      y="890"
+                      class="shelf-text"
+                      font-size="13"
+                      text-anchor="middle"
+                      transform="rotate(90, 388, 890)"
+                    >
+                      pintu masuk
+                    </text>
                   </g>
                 </g>
 
@@ -2074,11 +3556,18 @@
           <aside
             id="mapDetailSidebar"
             class="w-[340px] sm:w-[360px] flex-none shrink-0 grow-0 bg-white border-l border-slate-200 flex flex-col justify-between overflow-hidden z-10"
-            style="width: 350px; min-width: 350px; max-width: 350px;"
+            style="width: 350px; min-width: 350px; max-width: 350px"
           >
-            <div class="p-4 sm:p-5 overflow-y-auto flex-1 min-w-0" style="scrollbar-gutter: stable;">
-              <div class="flex items-center justify-between pb-3.5 border-b border-slate-200">
-                <span class="text-xs font-mono tracking-wider text-slate-500 uppercase font-bold">
+            <div
+              class="p-4 sm:p-5 overflow-y-auto flex-1 min-w-0"
+              style="scrollbar-gutter: stable"
+            >
+              <div
+                class="flex items-center justify-between pb-3.5 border-b border-slate-200"
+              >
+                <span
+                  class="text-xs font-mono tracking-wider text-slate-500 uppercase font-bold"
+                >
                   Informasi Rak / Lokasi
                 </span>
                 <span
@@ -2090,12 +3579,18 @@
               </div>
 
               <!-- Default Unselected State -->
-              <div id="mapDefaultState" class="py-10 text-center text-slate-400">
-                <div class="w-12 h-12 mx-auto mb-3 text-slate-300 flex items-center justify-center">
+              <div
+                id="mapDefaultState"
+                class="py-10 text-center text-slate-400"
+              >
+                <div
+                  class="w-12 h-12 mx-auto mb-3 text-slate-300 flex items-center justify-center"
+                >
                   <i data-lucide="map-pin" class="w-8 h-8 text-slate-300"></i>
                 </div>
                 <p class="text-xs sm:text-sm font-medium text-slate-500">
-                  Klik pada area atau rak di denah untuk melihat detail koleksi & lokasi rak.
+                  Klik pada area atau rak di denah untuk melihat detail koleksi
+                  & lokasi rak.
                 </p>
               </div>
 
@@ -2107,34 +3602,63 @@
                   class="hidden p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 shadow-xs min-w-0"
                 >
                   <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-black tracking-wider uppercase text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200">
+                    <span
+                      class="text-[10px] font-black tracking-wider uppercase text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200"
+                    >
                       Buku Yang Anda Cari
                     </span>
-                    <span id="mapBookContextFloor" class="text-[11px] font-bold text-emerald-700">
+                    <span
+                      id="mapBookContextFloor"
+                      class="text-[11px] font-bold text-emerald-700"
+                    >
                       Lantai 1
                     </span>
                   </div>
-                  <h4 id="mapBookContextTitle" class="font-bold text-slate-900 text-xs sm:text-sm leading-snug break-words">
+                  <h4
+                    id="mapBookContextTitle"
+                    class="font-bold text-slate-900 text-xs sm:text-sm leading-snug break-words"
+                  >
                     -
                   </h4>
-                  <div class="flex items-center justify-between text-[11px] text-slate-600 font-mono">
-                    <span>Kode Rak: <strong id="mapBookContextShelf" class="text-emerald-700 font-bold">-</strong></span>
-                    <span id="mapBookContextStock" class="text-emerald-700 font-semibold">-</span>
+                  <div
+                    class="flex items-center justify-between text-[11px] text-slate-600 font-mono"
+                  >
+                    <span
+                      >Kode Rak:
+                      <strong
+                        id="mapBookContextShelf"
+                        class="text-emerald-700 font-bold"
+                        >-</strong
+                      ></span
+                    >
+                    <span
+                      id="mapBookContextStock"
+                      class="text-emerald-700 font-semibold"
+                      >-</span
+                    >
                   </div>
                 </div>
 
                 <!-- Shelf Info -->
                 <div class="min-w-0">
-                  <h3 id="mapShelfTitle" class="text-lg font-bold text-slate-900 break-words leading-tight">
+                  <h3
+                    id="mapShelfTitle"
+                    class="text-lg font-bold text-slate-900 break-words leading-tight"
+                  >
                     Alat Tulis Kantor
                   </h3>
-                  <p id="mapShelfID" class="text-xs font-mono text-slate-500 mt-0.5 truncate">
+                  <p
+                    id="mapShelfID"
+                    class="text-xs font-mono text-slate-500 mt-0.5 truncate"
+                  >
                     ID: atk_1
                   </p>
                 </div>
 
                 <div class="min-w-0">
-                  <h4 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                  <h4
+                    class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2"
+                  >
                     Item & Koleksi Tersedia
                   </h4>
                   <div id="mapItemList" class="flex flex-wrap gap-1.5 min-w-0">
@@ -2143,8 +3667,13 @@
                 </div>
 
                 <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <div class="flex items-center space-x-2 text-slate-700 text-xs">
-                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                  <div
+                    class="flex items-center space-x-2 text-slate-700 text-xs"
+                  >
+                    <i
+                      data-lucide="check-circle"
+                      class="w-4 h-4 text-emerald-600 shrink-0"
+                    ></i>
                     <span>Status: Area Aktif / Terisi</span>
                   </div>
                 </div>
@@ -2155,8 +3684,15 @@
             <div
               class="p-3.5 border-t border-slate-200 bg-slate-50/80 text-xs text-slate-500 flex justify-between items-center shrink-0"
             >
-              <span>Total Area: <strong id="mapTotalRacksCount" class="text-slate-700">0</strong></span>
-              <span class="font-mono text-[10px] text-slate-400">Denah Toko Fisik</span>
+              <span
+                >Total Area:
+                <strong id="mapTotalRacksCount" class="text-slate-700"
+                  >0</strong
+                ></span
+              >
+              <span class="font-mono text-[10px] text-slate-400"
+                >Denah Toko Fisik</span
+              >
             </div>
           </aside>
         </div>
