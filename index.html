@@ -17,7 +17,7 @@
     <!-- Offline-First Local Lucide Icons -->
     <script src="assets/js/lucide.min.js"></script>
     <!-- Kiosk Application Logic -->
-    <script src="app.js?v=2.2.0" defer></script>
+    <script src="app.js?v=2.2.1" defer></script>
     <style>
       /* Soft Amber Table Hover & Active States */
       .table-row-item {
@@ -1688,7 +1688,7 @@
             <!-- SVG Floor Plan Render (Scaled via fitMapToContainer to fit full container height) -->
             <svg
               id="svgBlueprint"
-              viewBox="10 0 830 1060"
+              viewBox="0 0 1800 1110"
               preserveAspectRatio="xMidYMid meet"
               class="block mx-auto drop-shadow-xs"
             >
@@ -1711,13 +1711,78 @@
                 <rect
                   x="0"
                   y="0"
-                  width="850"
-                  height="1100"
+                  width="1800"
+                  height="1110"
                   fill="transparent"
                 />
 
-                <!-- Walls Layer -->
-                <g id="walls" class="wall-line">
+                <!-- Floor 1 Title Header -->
+                <g id="floor1_header">
+                  <rect
+                    x="355"
+                    y="16"
+                    width="200"
+                    height="40"
+                    rx="8"
+                    fill="#f8fafc"
+                    stroke="#cbd5e1"
+                    stroke-width="1.5"
+                  />
+                  <text
+                    x="455"
+                    y="42"
+                    font-family="Inter, system-ui, sans-serif"
+                    font-size="18"
+                    font-weight="900"
+                    fill="#0f172a"
+                    text-anchor="middle"
+                    letter-spacing="2"
+                  >
+                    LANTAI 1
+                  </text>
+                </g>
+
+                <!-- Floor 2 Title Header -->
+                <g id="floor2_header">
+                  <rect
+                    x="1255"
+                    y="16"
+                    width="200"
+                    height="40"
+                    rx="8"
+                    fill="#f8fafc"
+                    stroke="#cbd5e1"
+                    stroke-width="1.5"
+                  />
+                  <text
+                    x="1355"
+                    y="42"
+                    font-family="Inter, system-ui, sans-serif"
+                    font-size="18"
+                    font-weight="900"
+                    fill="#0f172a"
+                    text-anchor="middle"
+                    letter-spacing="2"
+                  >
+                    LANTAI 2
+                  </text>
+                </g>
+
+                <!-- Floor Divider Line -->
+                <line
+                  x1="895"
+                  y1="20"
+                  x2="895"
+                  y2="1080"
+                  stroke="#cbd5e1"
+                  stroke-width="2"
+                  stroke-dasharray="6 6"
+                />
+
+                <!-- LANTAI 1 CONTAINER GROUP -->
+                <g id="floor1_group" transform="translate(30, 40)">
+                  <!-- Walls Layer -->
+                  <g id="walls" class="wall-line">
                   <!-- Outer Boundary -->
                   <line x1="40" y1="40" x2="810" y2="40" />
                   <line x1="810" y1="40" x2="780" y2="1020" />
@@ -3566,9 +3631,833 @@
                     </text>
                   </g>
                 </g>
+              </g>
+              <!-- END OF LANTAI 1 CONTAINER GROUP -->
 
-                <!-- Dynamic Pin Marker Layer (Over Shelves) -->
-                <g id="mapPinMarkerLayer"></g>
+              <!-- LANTAI 2 CONTAINER GROUP -->
+              <g id="floor2_group" transform="translate(930, 40)">
+                <!-- Floor 2 Outer Walls & Internal Partitions -->
+                <g id="floor2_walls" class="wall-line">
+                  <!-- Outer Boundary matching Floor 1 contour -->
+                  <line x1="40" y1="40" x2="810" y2="40" />
+                  <line x1="810" y1="40" x2="780" y2="1020" />
+                  <line x1="780" y1="1020" x2="40" y2="1020" />
+                  <line x1="40" y1="1020" x2="40" y2="40" />
+
+                  <!-- STOK BUPEL Partition Walls (Top-Right) -->
+                  <line x1="500" y1="40" x2="500" y2="160" />
+                  <line x1="500" y1="160" x2="810" y2="160" />
+
+                  <!-- Stairs Enclosure (Top-Left from Floor 1) -->
+                  <line x1="160" y1="40" x2="160" y2="180" />
+                  <line x1="40" y1="180" x2="160" y2="180" />
+                </g>
+
+                <!-- Floor 2 Structural Pillars -->
+                <g id="floor2_pillars">
+                  <rect x="250" y="38" width="16" height="16" class="pillar" />
+                  <rect x="480" y="38" width="16" height="16" class="pillar" />
+                  <rect x="250" y="320" width="16" height="16" class="pillar" />
+                  <rect x="480" y="320" width="16" height="16" class="pillar" />
+                  <rect x="250" y="520" width="16" height="16" class="pillar" />
+                  <rect x="480" y="520" width="16" height="16" class="pillar" />
+                  <rect x="250" y="720" width="16" height="16" class="pillar" />
+                  <rect x="480" y="720" width="16" height="16" class="pillar" />
+                </g>
+
+                <!-- Floor 2 Architectural Features (Stairs & Voids) -->
+                <g id="floor2_architectural">
+                  <!-- Tangga Masuk dari Lantai 1 (Top-Left) -->
+                  <g id="floor2_tangga_naik">
+                    <rect x="40" y="40" width="120" height="140" fill="#f8fafc" />
+                    <line x1="40" y1="60" x2="160" y2="60" stroke="#cbd5e1" stroke-width="1.2" />
+                    <line x1="40" y1="80" x2="160" y2="80" stroke="#cbd5e1" stroke-width="1.2" />
+                    <line x1="40" y1="100" x2="160" y2="100" stroke="#cbd5e1" stroke-width="1.2" />
+                    <line x1="40" y1="120" x2="160" y2="120" stroke="#cbd5e1" stroke-width="1.2" />
+                    <line x1="40" y1="140" x2="160" y2="140" stroke="#cbd5e1" stroke-width="1.2" />
+                    <line x1="40" y1="160" x2="160" y2="160" stroke="#cbd5e1" stroke-width="1.2" />
+                    <text x="100" y="105" class="shelf-text" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle">DARI LT 1</text>
+                    <!-- Door Arc -->
+                    <path d="M 160 180 A 35 35 0 0 1 125 180" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="2 2" />
+                  </g>
+
+                  <!-- Door Arc to STOK BUPEL -->
+                  <path d="M 500 120 A 40 40 0 0 0 500 160" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="2 2" />
+
+                  <!-- Void Bawah-Kiri (Crossed Diagonal Lines) -->
+                  <g id="floor2_void_kiri">
+                    <rect x="45" y="800" width="285" height="140" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4" />
+                    <line x1="45" y1="800" x2="330" y2="940" stroke="#e2e8f0" stroke-width="1.5" />
+                    <line x1="45" y1="940" x2="330" y2="800" stroke="#e2e8f0" stroke-width="1.5" />
+                    <text x="187" y="875" class="shelf-text" font-size="14" font-weight="800" fill="#94a3b8" text-anchor="middle" letter-spacing="3">VOID</text>
+                  </g>
+
+                  <!-- Tangga Turun (Bottom-Left underneath Void) -->
+                  <g id="floor2_tangga_turun">
+                    <rect x="45" y="955" width="200" height="55" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" />
+                    <line x1="75" y1="955" x2="75" y2="1010" stroke="#94a3b8" stroke-width="1" />
+                    <line x1="100" y1="955" x2="100" y2="1010" stroke="#94a3b8" stroke-width="1" />
+                    <line x1="125" y1="955" x2="125" y2="1010" stroke="#94a3b8" stroke-width="1" />
+                    <line x1="150" y1="955" x2="150" y2="1010" stroke="#94a3b8" stroke-width="1" />
+                    <line x1="175" y1="955" x2="175" y2="1010" stroke="#94a3b8" stroke-width="1" />
+                    <line x1="200" y1="955" x2="200" y2="1010" stroke="#94a3b8" stroke-width="1" />
+                    <line x1="225" y1="955" x2="225" y2="1010" stroke="#94a3b8" stroke-width="1" />
+                    <text x="145" y="986" class="shelf-text" font-size="10" font-weight="700" fill="#475569" text-anchor="middle">TANGGA TURUN</text>
+                    <path d="M 60 982 L 72 982" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+                  </g>
+
+                  <!-- Void Bawah-Kanan (Crossed Diagonal Lines) -->
+                  <g id="floor2_void_kanan">
+                    <rect x="380" y="680" width="385" height="325" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4" />
+                    <line x1="380" y1="680" x2="765" y2="1005" stroke="#e2e8f0" stroke-width="1.5" />
+                    <line x1="380" y1="1005" x2="765" y2="680" stroke="#e2e8f0" stroke-width="1.5" />
+                    <text x="572" y="850" class="shelf-text" font-size="16" font-weight="800" fill="#94a3b8" text-anchor="middle" letter-spacing="4">VOID</text>
+                  </g>
+                </g>
+
+                <!-- Floor 2 Interactive Shelves Layer -->
+                <g id="floor2_shelves">
+                  <!-- Ruang STOK BUPEL (Top-Right) -->
+                  <g
+                    class="shelf-group"
+                    data-id="stok_bupel"
+                    data-title="STOK BUPEL"
+                    data-category="Gudang & Stok"
+                    data-items="Stok Buku Pelajaran, Buku Cadangan"
+                  >
+                    <rect
+                      x="510"
+                      y="45"
+                      width="295"
+                      height="110"
+                      class="shelf-item"
+                      style="stroke-dasharray: 4 4; fill: #f8fafc;"
+                    />
+                    <text
+                      x="657"
+                      y="105"
+                      class="shelf-text"
+                      font-size="14"
+                      font-weight="900"
+                      fill="#1e293b"
+                      letter-spacing="2"
+                      text-anchor="middle"
+                    >
+                      STOK BUPEL
+                    </text>
+                  </g>
+
+                  <!-- Soal di Bawah Tangga Masuk (Top-Left) -->
+                  <g
+                    class="shelf-group"
+                    data-id="soal_top_3"
+                    data-title="soal"
+                    data-category="Bank Soal & Ujian"
+                    data-items="Kumpulan Soal Ujian, Tes Masuk"
+                  >
+                    <rect
+                      x="65"
+                      y="200"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="107" y="217" class="shelf-text" text-anchor="middle">soal</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="soal_top_4"
+                    data-title="soal"
+                    data-category="Bank Soal & Ujian"
+                    data-items="Kumpulan Soal Ujian, Tes Masuk"
+                  >
+                    <rect
+                      x="65"
+                      y="235"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="107" y="252" class="shelf-text" text-anchor="middle">soal</text>
+                  </g>
+
+                  <!-- Soal di Bawah Ruang STOK BUPEL (Top-Right) -->
+                  <g
+                    class="shelf-group"
+                    data-id="soal_top_1"
+                    data-title="soal"
+                    data-category="Bank Soal & Ujian"
+                    data-items="Bank Soal UTBK, SBMPTN, SNBT"
+                  >
+                    <rect
+                      x="525"
+                      y="180"
+                      width="115"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="582" y="197" class="shelf-text" text-anchor="middle">soal</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="soal_top_2"
+                    data-title="soal"
+                    data-category="Bank Soal & Ujian"
+                    data-items="Bank Soal CPNS, Ujian Kedinasan"
+                  >
+                    <rect
+                      x="655"
+                      y="180"
+                      width="115"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="712" y="197" class="shelf-text" text-anchor="middle">soal</text>
+                  </g>
+
+                  <!-- Baris 1: SMA (2 unit) & SMK (2 unit) -->
+                  <g
+                    class="shelf-group"
+                    data-id="sma_1"
+                    data-title="SMA"
+                    data-category="Buku SMA"
+                    data-items="Matematika SMA, Fisika, Biologi"
+                  >
+                    <rect
+                      x="340"
+                      y="265"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="382" y="282" class="shelf-text" text-anchor="middle">SMA</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sma_2"
+                    data-title="SMA"
+                    data-category="Buku SMA"
+                    data-items="Kimia, Bahasa Indonesia SMA, Sejarah"
+                  >
+                    <rect
+                      x="445"
+                      y="265"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="487" y="282" class="shelf-text" text-anchor="middle">SMA</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="smk_1"
+                    data-title="SMK"
+                    data-category="Buku SMK"
+                    data-items="Teknik Komputer & Jaringan, Otomotif, Listrik"
+                  >
+                    <rect
+                      x="555"
+                      y="265"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="597" y="282" class="shelf-text" text-anchor="middle">SMK</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="smk_2"
+                    data-title="SMK"
+                    data-category="Buku SMK"
+                    data-items="Tata Boga, Akuntansi SMK, Bisnis & Manajemen"
+                  >
+                    <rect
+                      x="660"
+                      y="265"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="702" y="282" class="shelf-text" text-anchor="middle">SMK</text>
+                  </g>
+
+                  <!-- Baris 2: SMA (4 unit) -->
+                  <g
+                    class="shelf-group"
+                    data-id="sma_3"
+                    data-title="SMA"
+                    data-category="Buku SMA"
+                    data-items="Kelas 10 Kurikulum Merdeka SMA"
+                  >
+                    <rect
+                      x="340"
+                      y="325"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="382" y="342" class="shelf-text" text-anchor="middle">SMA</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sma_4"
+                    data-title="SMA"
+                    data-category="Buku SMA"
+                    data-items="Kelas 11 Kurikulum Merdeka SMA"
+                  >
+                    <rect
+                      x="445"
+                      y="325"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="487" y="342" class="shelf-text" text-anchor="middle">SMA</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sma_5"
+                    data-title="SMA"
+                    data-category="Buku SMA"
+                    data-items="Kelas 12 Kurikulum Merdeka SMA"
+                  >
+                    <rect
+                      x="555"
+                      y="325"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="597" y="342" class="shelf-text" text-anchor="middle">SMA</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sma_6"
+                    data-title="SMA"
+                    data-category="Buku SMA"
+                    data-items="LKS & Mandiri SMA, Pengayaan Ujian"
+                  >
+                    <rect
+                      x="660"
+                      y="325"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="702" y="342" class="shelf-text" text-anchor="middle">SMA</text>
+                  </g>
+
+                  <!-- Baris 3: SMP (3 unit) -->
+                  <g
+                    class="shelf-group"
+                    data-id="smp_1"
+                    data-title="SMP"
+                    data-category="Buku SMP"
+                    data-items="Matematika SMP & IPA Terpadu"
+                  >
+                    <rect
+                      x="340"
+                      y="385"
+                      width="100"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="390" y="402" class="shelf-text" text-anchor="middle">SMP</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="smp_2"
+                    data-title="SMP"
+                    data-category="Buku SMP"
+                    data-items="Bahasa Indonesia SMP & IPS Terpadu"
+                  >
+                    <rect
+                      x="460"
+                      y="385"
+                      width="100"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="510" y="402" class="shelf-text" text-anchor="middle">SMP</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="smp_3"
+                    data-title="SMP"
+                    data-category="Buku SMP"
+                    data-items="Bahasa Inggris SMP, PKn, Seni Budaya"
+                  >
+                    <rect
+                      x="580"
+                      y="385"
+                      width="100"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="630" y="402" class="shelf-text" text-anchor="middle">SMP</text>
+                  </g>
+
+                  <!-- Baris 4: perti (Perguruan Tinggi - 4 unit) -->
+                  <g
+                    class="shelf-group"
+                    data-id="perti_1"
+                    data-title="perti"
+                    data-category="Perguruan Tinggi"
+                    data-items="Ekonomi, Manajemen & Akuntansi Kuliah"
+                  >
+                    <rect
+                      x="340"
+                      y="445"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="382" y="462" class="shelf-text" text-anchor="middle">perti</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="perti_2"
+                    data-title="perti"
+                    data-category="Perguruan Tinggi"
+                    data-items="Statistika, Metode Penelitian, Skripsi"
+                  >
+                    <rect
+                      x="445"
+                      y="445"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="487" y="462" class="shelf-text" text-anchor="middle">perti</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="perti_3"
+                    data-title="perti"
+                    data-category="Perguruan Tinggi"
+                    data-items="Kedokteran, Kesehatan Masyarakat, Farmasi"
+                  >
+                    <rect
+                      x="555"
+                      y="445"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="597" y="462" class="shelf-text" text-anchor="middle">perti</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="perti_4"
+                    data-title="perti"
+                    data-category="Perguruan Tinggi"
+                    data-items="Hukum Perdata & Pidana, Ilmu Komunikasi"
+                  >
+                    <rect
+                      x="660"
+                      y="445"
+                      width="85"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="702" y="462" class="shelf-text" text-anchor="middle">perti</text>
+                  </g>
+
+                  <!-- Baris 5: komputer & Sospol -->
+                  <g
+                    class="shelf-group"
+                    data-id="komputer_1"
+                    data-title="komputer"
+                    data-category="Komputer & Teknologi"
+                    data-items="Pemrograman, Web Design, Data, Jaringan"
+                  >
+                    <rect
+                      x="340"
+                      y="505"
+                      width="145"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="412" y="522" class="shelf-text" text-anchor="middle">komputer</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sospol_1"
+                    data-title="Sospol"
+                    data-category="Sosial & Politik"
+                    data-items="Ilmu Sosial, Politik Pemerintahan, Antropologi"
+                  >
+                    <rect
+                      x="505"
+                      y="505"
+                      width="145"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="577" y="522" class="shelf-text" text-anchor="middle">Sospol</text>
+                  </g>
+
+                  <!-- Baris 6: psikologi (Rak Memanjang) -->
+                  <g
+                    class="shelf-group"
+                    data-id="psikologi_1"
+                    data-title="psikologi"
+                    data-category="Psikologi"
+                    data-items="Psikologi Klinis, Perkembangan, Kepribadian"
+                  >
+                    <rect
+                      x="340"
+                      y="565"
+                      width="220"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="450" y="582" class="shelf-text" text-anchor="middle">psikologi</text>
+                  </g>
+
+                  <!-- Area Kiri: Rak Dinding SD (6 unit vertikal) -->
+                  <g
+                    class="shelf-group"
+                    data-id="sd_wall_1"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Kelas 1 SD Tematik & Mandiri"
+                  >
+                    <rect
+                      x="50"
+                      y="280"
+                      width="28"
+                      height="62"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="64"
+                      y="316"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 64, 316)"
+                    >
+                      SD
+                    </text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_wall_2"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Kelas 2 SD Tematik & Mandiri"
+                  >
+                    <rect
+                      x="50"
+                      y="352"
+                      width="28"
+                      height="62"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="64"
+                      y="388"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 64, 388)"
+                    >
+                      SD
+                    </text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_wall_3"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Kelas 3 SD Tematik & Mandiri"
+                  >
+                    <rect
+                      x="50"
+                      y="424"
+                      width="28"
+                      height="62"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="64"
+                      y="460"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 64, 460)"
+                    >
+                      SD
+                    </text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_wall_4"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Kelas 4 SD Kurikulum Merdeka"
+                  >
+                    <rect
+                      x="50"
+                      y="496"
+                      width="28"
+                      height="62"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="64"
+                      y="532"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 64, 532)"
+                    >
+                      SD
+                    </text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_wall_5"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Kelas 5 SD Kurikulum Merdeka"
+                  >
+                    <rect
+                      x="50"
+                      y="568"
+                      width="28"
+                      height="62"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="64"
+                      y="604"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 64, 604)"
+                    >
+                      SD
+                    </text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_wall_6"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Kelas 6 SD Ujian Sekolah & Asesmen"
+                  >
+                    <rect
+                      x="50"
+                      y="640"
+                      width="28"
+                      height="62"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="64"
+                      y="676"
+                      class="shelf-text"
+                      text-anchor="middle"
+                      transform="rotate(-90, 64, 676)"
+                    >
+                      SD
+                    </text>
+                  </g>
+
+                  <!-- Area Kiri: Rak Sudut SD (2 unit horizontal) -->
+                  <g
+                    class="shelf-group"
+                    data-id="sd_corner_1"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Latihan Soal SD & Bank Soal Ulangan"
+                  >
+                    <rect
+                      x="50"
+                      y="720"
+                      width="70"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="85" y="737" class="shelf-text" text-anchor="middle">SD</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_corner_2"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Kamus Bergambar SD & Hafalan Rumus"
+                  >
+                    <rect
+                      x="130"
+                      y="720"
+                      width="70"
+                      height="26"
+                      class="shelf-item"
+                    />
+                    <text x="165" y="737" class="shelf-text" text-anchor="middle">SD</text>
+                  </g>
+
+                  <!-- Area Kiri: Island Display Racks (Kolom Kiri - 5 kotak) -->
+                  <g
+                    class="shelf-group"
+                    data-id="sd_island_1"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Display Buku Pelajaran SD"
+                  >
+                    <rect
+                      x="105"
+                      y="295"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <text x="126" y="321" class="shelf-text" text-anchor="middle">SD</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_island_2"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Display Buku Pelajaran SD"
+                  >
+                    <rect
+                      x="105"
+                      y="357"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <text x="126" y="383" class="shelf-text" text-anchor="middle">SD</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_island_3"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Display Buku Pelajaran SD"
+                  >
+                    <rect
+                      x="105"
+                      y="419"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <text x="126" y="445" class="shelf-text" text-anchor="middle">SD</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_island_4"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Display Buku Pelajaran SD"
+                  >
+                    <rect
+                      x="105"
+                      y="481"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <text x="126" y="507" class="shelf-text" text-anchor="middle">SD</text>
+                  </g>
+                  <g
+                    class="shelf-group"
+                    data-id="sd_island_5"
+                    data-title="SD"
+                    data-category="Buku SD"
+                    data-items="Display Buku Pelajaran SD"
+                  >
+                    <rect
+                      x="105"
+                      y="543"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <text x="126" y="569" class="shelf-text" text-anchor="middle">SD</text>
+                  </g>
+
+                  <!-- Area Kiri: Island Display Racks (Kolom Kanan - Best Seller) -->
+                  <!-- Best SMP/SMA (3 kotak) -->
+                  <g
+                    class="shelf-group"
+                    data-id="best_smp_sma"
+                    data-title="Best SMP/SMA"
+                    data-category="Best Seller Sekolah"
+                    data-items="Buku Terlaris SMP & SMA"
+                  >
+                    <rect
+                      x="165"
+                      y="295"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <rect
+                      x="165"
+                      y="357"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <rect
+                      x="165"
+                      y="419"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="222"
+                      y="378"
+                      class="shelf-text"
+                      font-weight="700"
+                      text-anchor="middle"
+                      transform="rotate(90, 222, 378)"
+                    >
+                      Best SMP/SMA
+                    </text>
+                  </g>
+
+                  <!-- Best SD (2 kotak) -->
+                  <g
+                    class="shelf-group"
+                    data-id="best_sd"
+                    data-title="Best SD"
+                    data-category="Best Seller SD"
+                    data-items="Buku Terlaris Sekolah Dasar (SD)"
+                  >
+                    <rect
+                      x="165"
+                      y="481"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <rect
+                      x="165"
+                      y="543"
+                      width="42"
+                      height="42"
+                      class="shelf-item"
+                    />
+                    <text
+                      x="222"
+                      y="534"
+                      class="shelf-text"
+                      font-weight="700"
+                      text-anchor="middle"
+                      transform="rotate(90, 222, 534)"
+                    >
+                      Best SD
+                    </text>
+                  </g>
+                </g>
+              </g>
+              <!-- END OF LANTAI 2 CONTAINER GROUP -->
+
+              <!-- Dynamic Pin Marker Layer (Over Shelves) -->
+              <g id="mapPinMarkerLayer"></g>
               </g>
             </svg>
           </main>

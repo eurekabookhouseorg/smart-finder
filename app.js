@@ -1856,6 +1856,65 @@ const SHELF_TO_MAP_ID = {
   "AK1-004": "tas_mid",
   "AK1-005": "bag_1",
   "AK1-006": "bag_2",
+
+  // LANTAI 2 MAPPINGS
+  // SD Wall & Corner & Island
+  "BR2-001": "sd_wall_1",
+  "BR2-002": "sd_wall_2",
+  "BR2-003": "sd_wall_3",
+  "BR2-004": "sd_wall_4",
+  "BR2-005": "sd_wall_5",
+  "BR2-006": "sd_wall_6",
+  "BR2-007": "sd_corner_1",
+  "BR2-008": "sd_corner_2",
+  "BR2-009": "sd_island_1",
+  "BR2-010": "sd_island_2",
+  "BR2-011": "sd_island_3",
+  "BR2-012": "sd_island_4",
+  "BR2-013": "sd_island_5",
+  "BR2-014": "best_sd",
+  "BR2-015": "best_smp_sma",
+
+  // SMP (Baris 3)
+  "BR2-020": "smp_1",
+  "BR2-021": "smp_1",
+  "BR2-022": "smp_2",
+  "BR2-023": "smp_2",
+  "BR2-024": "smp_3",
+  "BR2-025": "smp_3",
+
+  // SMA & SMK (Baris 1 & 2)
+  "BR2-030": "sma_1",
+  "BR2-031": "sma_2",
+  "BR2-032": "smk_1",
+  "BR2-033": "smk_2",
+  "BR2-034": "sma_3",
+  "BR2-035": "sma_4",
+  "BR2-036": "sma_5",
+  "BR2-037": "sma_6",
+
+  // Perguruan Tinggi (perti - Baris 4)
+  "BR2-040": "perti_1",
+  "BR2-041": "perti_2",
+  "BR2-042": "perti_3",
+  "BR2-043": "perti_4",
+
+  // Komputer & Sospol (Baris 5)
+  "BR2-050": "komputer_1",
+  "BR2-051": "komputer_1",
+  "BR2-052": "sospol_1",
+  "BR2-053": "sospol_1",
+
+  // Psikologi (Baris 6)
+  "BR2-060": "psikologi_1",
+  "BR2-061": "psikologi_1",
+
+  // Soal (Atas Kiri & Atas Kanan)
+  "BR2-070": "soal_top_1",
+  "BR2-071": "soal_top_2",
+  "BR2-072": "soal_top_3",
+  "BR2-073": "soal_top_4",
+  "BR2-080": "stok_bupel",
 };
 
 function fitMapToContainer() {
@@ -1872,8 +1931,8 @@ function fitMapToContainer() {
   const availW = Math.max(rect.width - padW, 50);
   const availH = Math.max(rect.height - padH, 50);
 
-  // SVG viewBox aspect ratio: width 830 / height 1060 = ~0.783
-  const svgRatio = 830 / 1060;
+  // SVG viewBox aspect ratio: width 1800 / height 1110 = ~1.6216
+  const svgRatio = 1800 / 1110;
   const availRatio = availW / availH;
 
   let targetW, targetH;
@@ -1918,7 +1977,10 @@ function centerMapOn(cx, cy) {
 }
 
 function getElementCenter(element) {
-  if (!element) return { cx: 425, cy: 550 };
+  if (!element) return { cx: 455, cy: 550 };
+
+  let localCenter = { cx: 0, cy: 0 };
+  let found = false;
 
   const rect = element.querySelector("rect");
   if (rect) {
@@ -1926,36 +1988,76 @@ function getElementCenter(element) {
     const y = parseFloat(rect.getAttribute("y")) || 0;
     const w = parseFloat(rect.getAttribute("width")) || 0;
     const h = parseFloat(rect.getAttribute("height")) || 0;
-    return { cx: x + w / 2, cy: y + h / 2 };
-  }
-
-  const poly = element.querySelector("polygon");
-  if (poly && poly.points && poly.points.length > 0) {
-    let sumX = 0,
-      sumY = 0;
-    for (let i = 0; i < poly.points.length; i++) {
-      sumX += poly.points[i].x;
-      sumY += poly.points[i].y;
+    localCenter = { cx: x + w / 2, cy: y + h / 2 };
+    found = true;
+  } else {
+    const poly = element.querySelector("polygon");
+    if (poly && poly.points && poly.points.length > 0) {
+      let sumX = 0,
+        sumY = 0;
+      for (let i = 0; i < poly.points.length; i++) {
+        sumX += poly.points[i].x;
+        sumY += poly.points[i].y;
+      }
+      localCenter = {
+        cx: sumX / poly.points.length,
+        cy: sumY / poly.points.length,
+      };
+      found = true;
+    } else {
+      const path = element.querySelector("path");
+      if (path && typeof path.getBBox === "function") {
+        try {
+          const bbox = path.getBBox();
+          localCenter = {
+            cx: bbox.x + bbox.width / 2,
+            cy: bbox.y + bbox.height / 2,
+          };
+          found = true;
+        } catch (e) {}
+      }
     }
-    return { cx: sumX / poly.points.length, cy: sumY / poly.points.length };
   }
 
-  const path = element.querySelector("path");
-  if (path && typeof path.getBBox === "function") {
-    try {
-      const bbox = path.getBBox();
-      return { cx: bbox.x + bbox.width / 2, cy: bbox.y + bbox.height / 2 };
-    } catch (e) {}
-  }
-
-  if (typeof element.getBBox === "function") {
+  if (!found && typeof element.getBBox === "function") {
     try {
       const bbox = element.getBBox();
-      return { cx: bbox.x + bbox.width / 2, cy: bbox.y + bbox.height / 2 };
+      localCenter = {
+        cx: bbox.x + bbox.width / 2,
+        cy: bbox.y + bbox.height / 2,
+      };
+      found = true;
     } catch (e) {}
   }
 
-  return { cx: 425, cy: 550 };
+  if (!found) {
+    return { cx: 455, cy: 550 };
+  }
+
+  // Accumulate translation offsets from parent groups up to viewportGroup
+  let cur = element.parentElement;
+  let offsetX = 0;
+  let offsetY = 0;
+  while (
+    cur &&
+    cur.id !== "viewportGroup" &&
+    cur.tagName &&
+    cur.tagName.toLowerCase() !== "svg"
+  ) {
+    const transform = cur.getAttribute("transform");
+    if (transform) {
+      const match = /translate\(\s*([-\d.]+)[,\s]+([-\d.]+)\s*\)/.exec(
+        transform,
+      );
+      if (match) {
+        offsetX += parseFloat(match[1]) || 0;
+        offsetY += parseFloat(match[2]) || 0;
+      }
+    }
+    cur = cur.parentElement;
+  }
+
+  return { cx: localCenter.cx + offsetX, cy: localCenter.cy + offsetY };
 }
 
 function findShelfElementForBook(book) {
@@ -1964,6 +2066,8 @@ function findShelfElementForBook(book) {
   const cat1 = (book.category1 || "").toUpperCase();
   const cat2 = (book.category2 || "").toUpperCase();
   const title = (book.title || "").toUpperCase();
+  const floor = String(book.floor || "").toUpperCase().trim();
+  const allCat = `${cat1} ${cat2} ${title} ${shelfCode}`;
 
   // 1. Direct ID match
   let target = document.querySelector(
@@ -1978,7 +2082,88 @@ function findShelfElementForBook(book) {
     if (target) return target;
   }
 
-  // 3. Prefix & Number Range Mapping
+  // 3. Floor 2 Shelf Code Prefix (BR2-, LT2-, or floor 2)
+  if (
+    shelfCode.startsWith("BR2-") ||
+    shelfCode.startsWith("LT2-") ||
+    floor === "2" ||
+    floor === "LANTAI 2"
+  ) {
+    const num = parseInt(shelfCode.replace(/[^0-9]/g, ""), 10);
+    if (!isNaN(num)) {
+      // SD (BR2-001 s/d BR2-015)
+      if (num >= 1 && num <= 15) {
+        const wallIndex = ((num - 1) % 6) + 1;
+        return (
+          document.querySelector(
+            `.shelf-group[data-id="sd_wall_${wallIndex}"]`,
+          ) ||
+          document.querySelector('.shelf-group[data-id="sd_wall_1"]') ||
+          document.querySelector('.shelf-group[data-id="best_sd"]')
+        );
+      }
+      // SMP (BR2-016 s/d BR2-025)
+      if (num >= 16 && num <= 25) {
+        const smpIndex = ((num - 16) % 3) + 1;
+        return (
+          document.querySelector(`.shelf-group[data-id="smp_${smpIndex}"]`) ||
+          document.querySelector('.shelf-group[data-id="smp_1"]')
+        );
+      }
+      // SMA & SMK Baris 1 (BR2-026 s/d BR2-035)
+      if (num >= 26 && num <= 35) {
+        if (num <= 30) {
+          return (
+            document.querySelector('.shelf-group[data-id="sma_1"]') ||
+            document.querySelector('.shelf-group[data-id="sma_2"]')
+          );
+        } else {
+          return (
+            document.querySelector('.shelf-group[data-id="smk_1"]') ||
+            document.querySelector('.shelf-group[data-id="smk_2"]')
+          );
+        }
+      }
+      // SMA Baris 2 (BR2-036 s/d BR2-045)
+      if (num >= 36 && num <= 45) {
+        const smaIdx = 3 + ((num - 36) % 4);
+        return (
+          document.querySelector(`.shelf-group[data-id="sma_${smaIdx}"]`) ||
+          document.querySelector('.shelf-group[data-id="sma_3"]')
+        );
+      }
+      // Perguruan Tinggi / perti (BR2-046 s/d BR2-055)
+      if (num >= 46 && num <= 55) {
+        const pertiIdx = 1 + ((num - 46) % 4);
+        return (
+          document.querySelector(`.shelf-group[data-id="perti_${pertiIdx}"]`) ||
+          document.querySelector('.shelf-group[data-id="perti_1"]')
+        );
+      }
+      // Komputer & Sospol (BR2-056 s/d BR2-065)
+      if (num >= 56 && num <= 65) {
+        if (num <= 60) {
+          return document.querySelector('.shelf-group[data-id="komputer_1"]');
+        } else {
+          return document.querySelector('.shelf-group[data-id="sospol_1"]');
+        }
+      }
+      // Psikologi (BR2-066 s/d BR2-075)
+      if (num >= 66 && num <= 75) {
+        return document.querySelector('.shelf-group[data-id="psikologi_1"]');
+      }
+      // Soal & Stok Bupel (BR2-076+)
+      if (num >= 76) {
+        return (
+          document.querySelector('.shelf-group[data-id="soal_top_1"]') ||
+          document.querySelector('.shelf-group[data-id="soal_top_3"]') ||
+          document.querySelector('.shelf-group[data-id="stok_bupel"]')
+        );
+      }
+    }
+  }
+
+  // 4. Floor 1 Prefix & Number Range Mapping
   if (shelfCode.startsWith("BR1-") || shelfCode.startsWith("BR-")) {
     const num = parseInt(shelfCode.replace(/[^0-9]/g, ""), 10);
     if (!isNaN(num)) {
@@ -2043,8 +2228,102 @@ function findShelfElementForBook(book) {
     );
   }
 
-  // 4. Category & Content Heuristics
-  const allCat = `${cat1} ${cat2} ${title}`;
+  // 5. Category & Content Heuristics (Floor 2 Categories First)
+  if (allCat.includes("PSIKOLOGI") || allCat.includes("PSYCHOLOGY")) {
+    return document.querySelector('.shelf-group[data-id="psikologi_1"]');
+  }
+  if (
+    allCat.includes("KOMPUTER") ||
+    allCat.includes("INFORMATIKA") ||
+    allCat.includes("PROGRAMMING") ||
+    allCat.includes("CODING") ||
+    allCat.includes("JARINGAN") ||
+    allCat.includes("SOFTWARE")
+  ) {
+    return document.querySelector('.shelf-group[data-id="komputer_1"]');
+  }
+  if (
+    allCat.includes("SOSPOL") ||
+    allCat.includes("SOSIAL") ||
+    allCat.includes("POLITIK") ||
+    allCat.includes("HUKUM")
+  ) {
+    return document.querySelector('.shelf-group[data-id="sospol_1"]');
+  }
+  if (
+    allCat.includes("PERTI") ||
+    allCat.includes("PERGURUAN TINGGI") ||
+    allCat.includes("KULIAH") ||
+    allCat.includes("UNIVERSITAS") ||
+    allCat.includes("MAHASISWA") ||
+    allCat.includes("AKADEMIK") ||
+    allCat.includes("MANAJEMEN") ||
+    allCat.includes("EKONOMI")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="perti_1"]') ||
+      document.querySelector('.shelf-group[data-id="perti_2"]')
+    );
+  }
+  if (allCat.includes("SMK") || allCat.includes("KEJURUAN")) {
+    return (
+      document.querySelector('.shelf-group[data-id="smk_1"]') ||
+      document.querySelector('.shelf-group[data-id="smk_2"]')
+    );
+  }
+  if (
+    allCat.includes("SMA") ||
+    allCat.includes("SLTA") ||
+    allCat.includes("ALIAH")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="sma_1"]') ||
+      document.querySelector('.shelf-group[data-id="sma_3"]') ||
+      document.querySelector('.shelf-group[data-id="best_smp_sma"]')
+    );
+  }
+  if (
+    allCat.includes("SMP") ||
+    allCat.includes("SLTP") ||
+    allCat.includes("MTS")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="smp_1"]') ||
+      document.querySelector('.shelf-group[data-id="smp_2"]') ||
+      document.querySelector('.shelf-group[data-id="best_smp_sma"]')
+    );
+  }
+  if (
+    allCat.includes("SD") ||
+    allCat.includes("SEKOLAH DASAR") ||
+    allCat.includes("TEMATIK") ||
+    allCat.includes("MADRASAH IBTIDAIYAH")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="sd_wall_1"]') ||
+      document.querySelector('.shelf-group[data-id="sd_wall_2"]') ||
+      document.querySelector('.shelf-group[data-id="best_sd"]')
+    );
+  }
+  if (
+    allCat.includes("SOAL") ||
+    allCat.includes("UJIAN") ||
+    allCat.includes("SBMPTN") ||
+    allCat.includes("SNBT") ||
+    allCat.includes("UTBK") ||
+    allCat.includes("CPNS") ||
+    allCat.includes("KISI")
+  ) {
+    return (
+      document.querySelector('.shelf-group[data-id="soal_top_1"]') ||
+      document.querySelector('.shelf-group[data-id="soal_top_3"]')
+    );
+  }
+  if (allCat.includes("BUPEL")) {
+    return document.querySelector('.shelf-group[data-id="stok_bupel"]');
+  }
+
+  // 6. Category & Content Heuristics (Floor 1 Categories)
   if (
     allCat.includes("ANAK") ||
     allCat.includes("TK") ||
@@ -2173,10 +2452,8 @@ function selectShelfOnMap(groupElement) {
     el.classList.remove("highlighted");
   });
 
-  const rectItem = groupElement.querySelector(".shelf-item");
-  if (rectItem) {
-    rectItem.classList.add("highlighted");
-  }
+  const rectItems = groupElement.querySelectorAll(".shelf-item");
+  rectItems.forEach((r) => r.classList.add("highlighted"));
 
   const title = groupElement.getAttribute("data-title") || "Area Toko";
   const id = groupElement.getAttribute("data-id") || "-";
