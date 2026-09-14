@@ -178,20 +178,57 @@ window.addEventListener("DOMContentLoaded", () => {
   // 6. Inisialisasi tampilan awal tabel
   renderTable([]);
 
-  // 7. Listener klik di luar untuk menutup custom dropdown
-  window.addEventListener("click", (e) => {
-    if (!e.target.closest(".custom-dropdown")) {
+  // 7. Listener klik/tap di luar untuk menutup custom dropdown & virtual keyboard
+  const handleOutsideClick = (e) => {
+    // A. Tutup custom dropdown jika klik di luar .custom-dropdown
+    if (!e.target.closest || !e.target.closest(".custom-dropdown")) {
       closeAllCustomDropdowns();
     }
-  });
 
-  // 8. Pasang listener infinite scroll pada tabel
+    // B. Tutup virtual keyboard jika klik di luar form input pencarian
+    const kbDock = document.getElementById("virtualKbDock");
+    if (kbDock && kbDock.classList.contains("is-open")) {
+      const target =
+        e.target instanceof Element ? e.target : e.target.parentElement;
+      if (target) {
+        const isInputArea =
+          target.closest("#searchInput") ||
+          target.closest("#clearSearchBtn") ||
+          target.closest("#searchBarContainer");
+        const isKeyboardArea = target.closest("#virtualKbDock");
+        const isKbToggleBtn = target.closest("#virtualKbBtn");
+
+        if (!isInputArea && !isKeyboardArea && !isKbToggleBtn) {
+          closeVirtualKeyboard();
+        }
+      }
+    }
+  };
+
+  window.addEventListener("pointerdown", handleOutsideClick);
+  window.addEventListener("click", handleOutsideClick);
+
+  // 8. Pasang listener infinite scroll pada tabel & penutup keyboard saat scroll
   if (tableContainer) {
     tableContainer.addEventListener("scroll", () => {
+      const kbDock = document.getElementById("virtualKbDock");
+      if (kbDock && kbDock.classList.contains("is-open")) {
+        closeVirtualKeyboard();
+      }
       if (renderedBatchCount >= currentResults.length) return;
       const { scrollTop, scrollHeight, clientHeight } = tableContainer;
       if (scrollTop + clientHeight >= scrollHeight - 120) {
         renderNextBatch();
+      }
+    });
+  }
+
+  const detailContainer = document.getElementById("detailContainer");
+  if (detailContainer) {
+    detailContainer.addEventListener("scroll", () => {
+      const kbDock = document.getElementById("virtualKbDock");
+      if (kbDock && kbDock.classList.contains("is-open")) {
+        closeVirtualKeyboard();
       }
     });
   }
@@ -1104,6 +1141,7 @@ function selectBook(bookId, updateTable = true) {
   if (!book) return;
 
   if (updateTable) {
+    closeVirtualKeyboard();
     const allRows = booksTableBody.querySelectorAll("tr");
     allRows.forEach((row) => {
       if (row.getAttribute("data-book-id") === bookId) {
@@ -1362,6 +1400,10 @@ function closeVirtualKeyboard() {
   if (currentKbMode !== "abc") {
     currentKbMode = "abc";
     setupVirtualKeyboard();
+  }
+  // Lepaskan fokus kursor dari input saat keyboard ditutup
+  if (searchInput && document.activeElement === searchInput) {
+    searchInput.blur();
   }
 }
 
@@ -2066,7 +2108,9 @@ function findShelfElementForBook(book) {
   const cat1 = (book.category1 || "").toUpperCase();
   const cat2 = (book.category2 || "").toUpperCase();
   const title = (book.title || "").toUpperCase();
-  const floor = String(book.floor || "").toUpperCase().trim();
+  const floor = String(book.floor || "")
+    .toUpperCase()
+    .trim();
   const allCat = `${cat1} ${cat2} ${title} ${shelfCode}`;
 
   // 1. Direct ID match
@@ -2493,6 +2537,7 @@ function selectShelfOnMap(groupElement) {
 }
 
 function openFloorPlanModal(targetBook = null) {
+  closeVirtualKeyboard();
   const modal = document.getElementById("floorPlanModal");
   if (!modal) return;
 
