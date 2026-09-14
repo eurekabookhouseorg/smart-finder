@@ -1033,25 +1033,23 @@ function renderNextBatch() {
       const rowNumber = renderedBatchCount + idx + 1;
       const isSelected = book.id === selectedBookId;
       const isOutOfStock = book.stock === 0;
+      const displayProductCode =
+        book.productCode && book.productCode !== "-"
+          ? book.productCode
+          : book.sku || "-";
 
       return `
         <tr onclick="selectBook('${book.id}')" 
             data-book-id="${book.id}"
             class="table-row-item ${isSelected ? "is-selected" : ""}">
-            <!-- Kolom Nomor Urut Baris (Paling Kiri) -->
-            <td class="py-3 px-3 text-center font-mono text-xs font-semibold text-slate-500">
-            <td class="py-3.5 sm:py-4 px-3 text-center font-mono text-xs font-semibold text-slate-500">
-            <td class="text-center font-mono text-xs font-semibold text-slate-500">
+            <!-- 1. Nomor Urut Baris -->
+            <td class="py-3.5 px-3 text-center font-mono text-xs font-semibold text-slate-500 w-12">
                 ${rowNumber}
             </td>
-            <td class="py-3 px-4">
-                <div class="font-semibold text-slate-900 text-sm leading-snug">${book.title}</div>
-            <td class="py-3.5 sm:py-4 px-4">
-                <div class="font-semibold text-slate-900 text-sm sm:text-base leading-snug">${book.title}</div>
-            <td>
+            <!-- 2. Judul & Kategori Buku -->
+            <td class="py-3.5 px-4">
                 <div class="font-bold text-slate-900 text-sm sm:text-base leading-snug">${book.title}</div>
                 <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
-                    <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                     <span class="inline-flex items-center text-[10px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                         ${book.category1 || "Umum"}
                     </span>
@@ -1060,38 +1058,28 @@ function renderNextBatch() {
                     <span class="text-[11px] text-slate-400">${book.publisher}</span>
                 </div>
             </td>
-            <td class="py-3 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
-            <td class="py-3.5 sm:py-4 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell">
-                <span class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded border border-slate-200">${book.sku || "-"}</span>
-            <td class="font-mono text-xs text-slate-700 hidden sm:table-cell">
-                <span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">${book.sku || "-"}</span>
+            <!-- 3. Kode Produk -->
+            <td class="py-3.5 px-3 font-mono text-xs text-slate-700 hidden sm:table-cell w-36 whitespace-nowrap">
+                <span class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">${displayProductCode}</span>
             </td>
-            <td class="py-3 px-3">
-            <td class="py-3.5 sm:py-4 px-3">
-            <td>
+            <!-- 4. Kode Rak Lokasi -->
+            <td class="py-3.5 px-3 w-32 whitespace-nowrap">
                 <span class="inline-flex items-center gap-1 text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200 px-2.5 py-1 rounded-md">
-                    <i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i>
-                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
                     ${book.shelfCode}
                 </span>
             </td>
-            <td class="py-3 px-3 text-center">
-            <td class="py-3.5 sm:py-4 px-3 text-center">
-            <td class="text-center">
+            <!-- 5. Stok -->
+            <td class="py-3.5 px-3 text-center w-20 whitespace-nowrap">
                 ${
                   isOutOfStock
-                    ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Habis</span>`
-                    : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">${book.stock}</span>`
-                      ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">Habis</span>`
-                      : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">${book.stock}</span>`
+                    ? `<span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full">Habis</span>`
+                    : `<span class="inline-block text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">${book.stock}</span>`
                 }
             </td>
-            <!-- Kolom Harga Produk -->
-            <td class="py-3 px-3 text-right">
-            <td class="py-3.5 sm:py-4 px-3 text-right">
-                <span class="font-bold text-slate-900 text-xs font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
-            <td class="text-right">
-                <span class="font-bold text-slate-900 text-xs sm:text-sm font-mono whitespace-nowrap">${formatRupiah(book.price)}</span>
+            <!-- 6. Harga Produk -->
+            <td class="py-3.5 px-4 text-right w-32 whitespace-nowrap">
+                <span class="font-bold text-slate-900 text-xs sm:text-sm font-mono">${formatRupiah(book.price)}</span>
             </td>
         </tr>
       `;
@@ -1219,7 +1207,9 @@ function setupVirtualKeyboard() {
     // Baris 1 Render:
     r1.innerHTML = row1
       .map((item) => {
-        const char = isKbShiftActive ? item.key.toUpperCase() : item.key.toLowerCase();
+        const char = isKbShiftActive
+          ? item.key.toUpperCase()
+          : item.key.toLowerCase();
         return `<button type="button" onclick="kbInput('${char}')" class="kb-key-btn kb-col-2">
           <span>${item.key}</span>
           <span class="kb-hint">${item.hint}</span>
@@ -1232,7 +1222,9 @@ function setupVirtualKeyboard() {
       `<div class="kb-col-1 pointer-events-none select-none"></div>` +
       row2
         .map((char) => {
-          const charToType = isKbShiftActive ? char.toUpperCase() : char.toLowerCase();
+          const charToType = isKbShiftActive
+            ? char.toUpperCase()
+            : char.toLowerCase();
           return `<button type="button" onclick="kbInput('${charToType}')" class="kb-key-btn kb-col-2">
             <span>${char}</span>
           </button>`;
@@ -1251,7 +1243,9 @@ function setupVirtualKeyboard() {
       </button>` +
       row3
         .map((char) => {
-          const charToType = isKbShiftActive ? char.toUpperCase() : char.toLowerCase();
+          const charToType = isKbShiftActive
+            ? char.toUpperCase()
+            : char.toLowerCase();
           return `<button type="button" onclick="kbInput('${charToType}')" class="kb-key-btn kb-col-2">
             <span>${char}</span>
           </button>`;
@@ -1282,11 +1276,14 @@ function setupVirtualKeyboard() {
 
     const numbersRow = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
     const symbolsRow2 = ["@", "#", "$", "%", "&", "-", "+", "(", ")"];
-    const symbolsRow3 = ["*", "\"", "'", ":", ";", "!", "?"];
+    const symbolsRow3 = ["*", '"', "'", ":", ";", "!", "?"];
 
     // Baris 1: Angka 1-0 (10 tombol, span 2 = 20 kolom)
     r1.innerHTML = numbersRow
-      .map((num) => `<button type="button" onclick="kbInput('${num}')" class="kb-key-btn kb-col-2"><span>${num}</span></button>`)
+      .map(
+        (num) =>
+          `<button type="button" onclick="kbInput('${num}')" class="kb-key-btn kb-col-2"><span>${num}</span></button>`,
+      )
       .join("");
 
     // Baris 2: Spacer 1 + 9 Simbol (Span 2) + Spacer 1 = 20 kolom
